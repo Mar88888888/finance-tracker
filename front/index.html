@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Фінанси домогосподарства</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.3/css/selectize.default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.3/js/standalone/selectize.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Фінанси домогосподарства</h1>
+  </header>
+  <main>
+    <section class="transactions">
+      <div class="add-buttons-container">
+        <button class="button add" data-type="member">Список членів родини</button>
+        <button class="button add" data-type="purpose">Список призначень</button>
+        <button class="button add" data-type="ta">Додати транзакцію</button>
+      </div>
+
+      <div id="blur" class="hidden"></div>
+
+      <form id="form-delete-confirm" class="form hidden">
+        <h2 class="confirm-msg">Підтвердіть видалення</h2>
+        <button class="button" id="confirm-delete">Видалити</button>
+        <button class="button" id="cancel-delete">Скасувати</button>
+      </form>
+
+
+      <form id="form-ta-edit" class="form hidden">
+        <h2 class="centered">Редагувати транзакцію</h2>
+        <br>
+        <label for="family-member-t-edit">Член родини</label>
+        <select id="family-member-t-edit">
+        </select>
+        <br>
+        <label for="purpose-t-edit">Цільове призначення</label>
+        <select id="purpose-t-edit">
+        </select>
+
+        <br>
+        <label for="date-ta">Дата</label>
+        <input type="date" id="date-ta-edit">
+
+        <br>
+
+        <label for="sum-ta">Сума</label>
+        <input type="number" name="sum-ta" placeholder="Сума" min="0" id="sum-ta-edit" />
+
+        
+        
+        <br>
+        <button class="button save-ta">Зберегти</button>
+      </form>
+      
+      <form id="form-purpose-edit" class="form hidden" item-id="2">
+        <h2 class="centered">Редагувати призначення</h2>
+        <br>
+        <label for="name">Назва</label>
+        <input type="text" id="category-edit" placeholder="Ім'я" />
+        
+        <br>
+        <label for="type-purpose">Тип транзакції</label>
+        <select id="type-purpose-edit">
+          <option value="false">Витрата</option>
+          <option value="true">Дохід</option>
+        </select>
+        <br>
+        <button class="button save-purpose" id="save-purpose">Зберегти</button>
+      </form>
+
+      <form id="form-member-edit" class="form hidden">
+        <h2 class="centered">Редагувати члена родини</h2>
+        <br>
+        <label for="name">Ім'я</label>
+        <input type="text" id="name-edit" placeholder="Ім'я" />
+        <label for="age">Вік</label>
+        <input type="number" id="age-edit" placeholder="Вік" min="0" max="110" />
+        <label for="gender">Стать</label>
+        <select id="family-member-ta-edit" name="gender">
+          <option value="true">Ч</option>
+          <option value="false">Ж</option>
+        </select>
+        <br>
+        <button class="button save-member">Зберегти</button>
+      </form>
+
+      <form id="form-member" class="form hidden" item="member">
+        <h2 class="centered">Члени родини</h2>
+        <br>
+        <label for="name">Ім'я</label>
+        <input type="text" id="name" placeholder="Ім'я"/>
+        <label for="age">Вік</label>
+        <input type="number" id="age" placeholder="Вік" min="1" max="110"/>
+        <label for="gender">Стать</label>
+        <select id="family-member-ta" name="gender">
+          <option value="true">Ч</option>
+          <option value="false">Ж</option>
+        </select>
+        <br>
+        <button class="button"  id="add-member">Додати</button>
+        
+        <h2>Члени родини</h2>
+        <table style="width: 98%;">
+          <colgroup>
+            <col style="width: 25%;">
+            <col style="width: 25%;">
+            <col style="width: 25%;">
+            <col style="width: 25%;">
+          </colgroup>
+          <thead>
+            <tr>
+              <th data-type="name">Ім'я</th>
+              <th data-type="gender">Стать</th>
+              <th data-type="age">Вік</th>
+              <th data-type="delete" colspan="2">Змінити</th>
+            </tr>
+          </thead>
+        </table>
+        <div class="table-container">
+          <table style="width: 100%;">
+            <colgroup>
+              <col style="width: 28%;">
+              <col style="width: 28%;">
+              <col style="width: 27.5%;">
+              <col style="width: 10%;">
+              <col style="width: 10%;">
+            </colgroup>
+            <tbody id="table-users-body">
+            </tbody>
+          </table>
+        </div>
+      </form>
+      
+      <form id="form-purpose" class="form hidden" item="purpose">
+        <h2 class="centered">Додати призначення</h2>
+        <br>
+        <label for="name">Назва</label>
+        <input type="text" name="name" placeholder="Ім'я" id="category"/>
+        <label for="purpose-type">Тип</label>
+        <select id="purpose-type" name="purpose-type">
+          <option value="false">Витрата</option>
+          <option value="true">Дохід</option>
+        </select>
+        <button class="button"  id="add-purpose">Додати</button>
+
+        <table style="width: 98%;">
+          <thead>
+            <colgroup>
+              <col style="width: 84%;">
+              <col style="width: 16%;">
+            </colgroup>
+            <tr>
+              <th data-type="name">Призначення</th>
+              <th data-type="delete">Змінити</th>
+            </tr>
+          </thead>
+        </table>
+        <div class="table-container">
+          <table style="width: 100%;">
+            <tbody id="table-purposes-body">
+              <colgroup>
+                <col style="width: 78%;">
+                <col style="width: 50%;">
+                <col style="width: 50%;">
+              </colgroup>
+              
+            </tbody>
+          </table>
+        </div>
+      </form>
+      
+      <form id="form-transaction" class="form hidden" item="transaction">
+        <h2 class="centered">Додати транзакцію</h2>
+        <label for="family-member-t-add">Член родини</label>
+        <br>
+        <select id="family-member-t-add">
+        </select>
+        <br>
+        <label for="purpose-t-add">Цільове призначення</label>
+        <br>
+        <select id="purpose-t-add">
+        </select>
+        
+        <br>
+        <label for="date-ta">Дата</label>
+        <br>
+        <input type="date" id="date-ta">
+        
+        <br>
+        
+        <label for="sum-ta">Сума</label>
+        <br>
+        <input type="number" name="sum-ta" placeholder="Сума" min="0" id="sum-ta-add"/>
+        
+        <br>
+        <button class="button" id="add-ta">Додати</button>
+      </form>
+
+      <div class="filters">
+        <div id="date">
+
+            <label for="date-filter">Фільтр за датою:</label>
+            <select id="date-filter">
+              <option value="current-month">Поточний місяць</option>
+              <option value="last-month">Попередній місяць</option>
+              <option value="all-time">Весь час</option>
+              <option value="custom">Обрати період</option>
+            </select>
+            <div id="date-period">
+              Від <input type="date" id="start-date">
+              До <input type="date" id="end-date">
+            </div>
+          </div>
+          
+          
+          <div id="purpose">
+            <label for="purpose-filter">Фільтр за призначенням:</label>
+            <select id="purpose-filter" multiple>
+            </select>
+          </div>
+          
+          <div id="member">
+            <label for="family-member-filter">Фільтр за членом родини:</label>
+            <select id="family-member-filter" multiple>
+            </select>
+          </div>
+          <div id="order">
+            <label for="orderBy-filter">Сортувати за:</label>
+            <select id="orderBy-filter">
+              <option value="member">Член родини</option>
+              <option value="date">Дата</option>
+              <option value="sum">Сума</option>
+              <option value="purpose">Призначення</option>
+            </select>
+            <select id="order-type-filter">
+              <option value="ASC">За зростанням</option>
+              <option value="DESC">За спаданням</option>
+            </select>
+          </div>
+          <div id="type">
+            <label for="type-filter">Тип транзакцій</label>
+            <select id="type-filter">
+              <option value="false">Витрата</option>
+              <option value="true">Дохід</option>
+            </select>          
+          </div>
+          <button class="button" id="apply-filters-btn">Застосувати</button>
+        </div>
+        <h2>Транзакції</h2>
+        <div id="ta-table-container">
+          
+          <table>
+            <thead>
+              <tr>
+                <th data-type="date">Дата</th>
+                <th data-type="type">Тип</th>
+                <th data-type="member">Член родини</th>
+                <th data-type="purpose">Цільове призначення</th>
+                <th data-type="sum">Сума</th>
+              </tr>
+            </thead>
+            <tbody id="table-body">
+              
+            </tbody>
+          </table>
+        </div>
+          
+        </section>
+      </main>
+      <footer class="footer">
+        <div class="container">
+          <div class="author-info">
+            <h2>About</h2>
+            <p><strong>Прізвище Ім'я:</strong> Марченко Артем</p>
+            <p><strong>Група:</strong> ІС-23</p>
+        <p><strong>Дисципліна:</strong> Бази даних</p>
+      </div>
+    </div>
+  </footer>
+  <script src="./script.js"></script>
+</body>
+
+</html>
