@@ -26,6 +26,13 @@ export class GroupsController {
   }
 
   @UseGuards(AuthGuard)
+  @Get()
+  async getUserGroups(@Req() request: Request) {
+    const userId = request['userId'];
+    return await this.groupsService.getUserGroups(userId);
+  }
+
+  @UseGuards(AuthGuard)
   @Post()
   async create(@Body() createGroupDto: CreateGroupDto, @Req() request): Promise<Group> {
     return this.groupsService.create(request.userId, createGroupDto);

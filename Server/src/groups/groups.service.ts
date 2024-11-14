@@ -22,6 +22,18 @@ export class GroupsService {
     return (await this.findById(id)).joinCode;
   }
 
+  async getUserGroups(userId: number) {
+    return await this.groupRepo.find({
+      where: {
+        members: {
+          id: userId,
+        },
+      },
+      relations: ['members'],
+    });
+  }
+
+
 
   async create(ownerId: number, createGroupDto: CreateGroupDto): Promise<Group> {
     const newGroup = this.groupRepo.create(createGroupDto);

@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
-import '../styles/darkTheme.css';
+import '../styles/Login.css'
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -10,16 +10,19 @@ const Login = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
     const { setUser } = useContext(AuthContext);
+    const { setAuthToken } = useContext(AuthContext);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const url = `${process.env.REACT_APP_API_URL}/user/auth/signin`;
+            const url = `${process.env.REACT_APP_API_URL}/users/auth/signin`;
             const response = await axios.post(url, { email, password }, { withCredentials: true });
 
-            if (response.status === 200) {
+            if (response.status === 200 || response.status === 201) {
+                console.log(response.data);
                 setUser(response.data.user);
-                navigate('/dashboard');
+                setAuthToken(response.data.accessToken);
+                navigate('/');
             } else {
                 setError('Password or email is incorrect');
             }
@@ -54,7 +57,7 @@ const Login = () => {
                 {error && <p style={{ color: 'red' }}>{error}</p>}
                 <button type="submit">Login</button>
             </form>
-            <p>Don't have an account? <Link to="/signup">Sign Up</Link></p>
+            <p>Don't have an account? <Link to="/signup"><strong>Sign Up</strong></Link></p>
         </div>
     );
 };

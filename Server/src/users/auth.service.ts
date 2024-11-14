@@ -66,9 +66,9 @@ export class AuthService {
       throw new BadRequestException('bad password');
     }
     const payload = { sub: user.id };
-    const access_token = this.jwtService.sign(payload);
+    const accessToken = this.jwtService.sign(payload);
 
-    return { access_token, user };
+    return { accessToken: accessToken, user };
   }
 
   async verifyEmail(token: string) {

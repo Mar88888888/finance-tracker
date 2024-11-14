@@ -1,0 +1,43 @@
+.groupspage-container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+  background-color: #1A1A1A;
+  color: #E0E0E0;
+}
+
+.groupspage-container h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.groups-list {
+  margin-top: 20px;
+}
+
+.group-item {
+  background-color: #222;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.group-item h3 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+.group-item p {
+  font-size: 1.1rem;
+}
+
+.group-item a {
+  color: #E0E0E0;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.group-item a:hover {
+  color: #bbb;
+}

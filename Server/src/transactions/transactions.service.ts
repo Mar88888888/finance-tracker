@@ -24,6 +24,13 @@ export class TransactionsService {
     .getMany();
   }
 
+  async getUserTransactions(userId: number) {
+    return await this.transactionRepository.find({
+      where: { member: { id: userId } },
+      order: { date: 'DESC' }, 
+      relations: ['purpose']
+    });
+  }
 
   async find(queryParams: {
     startdate?: string,

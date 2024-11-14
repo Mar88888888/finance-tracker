@@ -16,11 +16,6 @@ export class UsersController {
     private readonly usersService: UsersService,
     private readonly authService: AuthService
   ) {}
-  
-  // @Get()
-  // async findAll(): Promise<User[]> {
-  //   return this.usersService.findAll();
-  // }
     
   @Post('/auth/signup')
   async createUser(
@@ -35,15 +30,9 @@ export class UsersController {
   @Post('/auth/signin')
   async signin(@Body() signinDto: LoginUserDto, @Res({passthrough: true}) res: Response) {
     try {
-      const { access_token, user } = await this.authService.signin(signinDto);
-      res.cookie('authToken', access_token, {
-        httpOnly: true, 
-        secure: true, 
-        sameSite: 'none', 
-        maxAge: 1000 * 60 * 60 * 24 * 7,
-      });
-      
-      return user;
+      const { accessToken, user } = await this.authService.signin(signinDto);
+
+      return {user, accessToken};
     } catch (e) {
       console.error(e.message);
       throw e;
@@ -78,38 +67,27 @@ export class UsersController {
   }
 
   @Get('/auth/bytoken')
-  async getUser(@Req() req: Request, @Res({passthrough: true}) res: Response) {
-    const authHeader = req.headers['cookie'];
+  async getUser(@Req() req: Request) {
+    const authHeader = req.headers['authorization'];
     if (!authHeader || typeof authHeader !== 'string') {
+      console.log('Not header')
       throw new UnauthorizedException('Authorization header is missing');
     }
-
-    const token = authHeader.split('=')[1]; 
+    
+    const token = authHeader.split(' ')[1]; 
     if (!token) {
+      console.log('Not token')
       throw new UnauthorizedException('Token is missing');
     }
-
-    res.cookie('authToken', token, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'none',
-      maxAge: 1000 * 60 * 60 * 24 * 7, 
-    });
-
+    
     try {
-      const user = await this.authService.getUserFromToken(token); 
+      console.log(token);
+      const user = await this.authService.getUserFromToken(token);
       return user;
     } catch (error) {
+      console.log('Invalid token')
       throw new UnauthorizedException('Invalid token');
     }
-  }  
- 
-  // @Delete('/:id')
-  // async remove(@Param('id') id: string): Promise<void> {
-  //   const user = await this.usersService.findOne(parseInt(id));
-  //   if (!user) {
-  //     throw new NotFoundException('User not found');
-  //   }
-  //   await this.usersService.remove(parseInt(id));
-  // }
+  }
+
 }

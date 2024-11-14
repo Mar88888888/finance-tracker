@@ -12,10 +12,6 @@ import { SerializeTransactionDto } from './dto/serialize.transaction.dto';
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
-  @Get('/all')
-  async findAll(): Promise<Transaction[]> {
-    return this.transactionsService.findAll();
-  }
 
  @Get()
   async find(
@@ -29,6 +25,14 @@ export class TransactionsController {
     const purposesArray = purposes ? purposes.split(',') : undefined;
 
     return this.transactionsService.find({ startdate, enddate, type, purposes: purposesArray, orderBy, sortOrder });
+  }
+
+
+  @UseGuards(AuthGuard)
+  @Get('/my')
+  async getMyTransactions(@Req() request) {
+    const userId = request.userId;
+    return await this.transactionsService.getUserTransactions(userId);
   }
 
   @UseGuards(AuthGuard)
