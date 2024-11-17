@@ -5,13 +5,13 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { PurposesModule } from './purposes/purposes.module';
-import { User } from './users/user.entity';
-import { Purpose } from './purposes/purpose.entity';
-import { Transaction } from './transactions/transaction.entity';
+import { UserEntity } from './users/user.entity';
+import { PurposeEntity } from './purposes/purpose.entity';
+import { TransactionEntity } from './transactions/transaction.entity';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { GroupsModule } from './groups/groups.module';
-import { Group } from './groups/group.entity';
+import { GroupEntity } from './groups/group.entity';
 
 @Module({
   imports: [    
@@ -22,7 +22,7 @@ import { Group } from './groups/group.entity';
     username: "postgres",
     password: "password",
     database: "finance",
-    entities: [User, Purpose, Transaction, Group],
+    entities: [UserEntity, PurposeEntity, TransactionEntity, GroupEntity],
     synchronize: true,
     logging: true,
   }),

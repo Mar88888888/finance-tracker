@@ -1,15 +1,16 @@
-import { Body, ClassSerializerInterceptor, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Req, SerializeOptions, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Delete, ForbiddenException, Get, HttpStatus, NotFoundException,
+   Param, Patch, Post, Req, Res, SerializeOptions, UseGuards, UseInterceptors } from '@nestjs/common';
 import { GroupsService } from './groups.service';
-import { Group } from './group.entity';
 import { CreateGroupDto } from './dto/create.group.dto';
 import { UpdateGroupDto } from './dto/update.group.dto';
 import { AuthGuard } from '../guards/auth.guard';
-import { UserSerializeDto } from '../users/dto/serialize.user.dto';
 import { JoinGroupDto } from './dto/join-group.dto';
+import { GroupModel } from './group.model';
+import { Response } from 'express';
 
 @Controller('groups')
 @UseInterceptors(ClassSerializerInterceptor)
-@SerializeOptions({ type: UserSerializeDto })
+@SerializeOptions({ type: GroupModel })
 export class GroupsController {
   constructor(
     private groupsService: GroupsService,
@@ -34,12 +35,12 @@ export class GroupsController {
 
   @UseGuards(AuthGuard)
   @Post()
-  async create(@Body() createGroupDto: CreateGroupDto, @Req() request): Promise<Group> {
+  async create(@Body() createGroupDto: CreateGroupDto, @Req() request): Promise<GroupModel> {
     return this.groupsService.create(request.userId, createGroupDto);
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updatePurposeDto: UpdateGroupDto): Promise<Group> {
+  async update(@Param('id') id: string, @Body() updatePurposeDto: UpdateGroupDto): Promise<GroupModel> {
     const group = await this.groupsService.findById(parseInt(id));
     if (!group) {
       throw new NotFoundException('Group not found');
@@ -48,7 +49,7 @@ export class GroupsController {
   }
 
   @UseGuards(AuthGuard)
-  @Post('/join')
+  @Post('/members')
   async joinGroup(
     @Body() joinGroupDto: JoinGroupDto,
     @Req() request
@@ -56,12 +57,20 @@ export class GroupsController {
     return this.groupsService.joinGroup(joinGroupDto.joinCode, request.userId);
   }
 
-  @Delete(':id')
-  async remove(@Param('id') id: string): Promise<Group> {
+  @UseGuards(AuthGuard)
+  @Delete('/:id')
+  async remove(@Param('id') id: string, @Req() request, @Res({passthrough: true}) res: Response): Promise<void> {
     const group = await this.groupsService.findById(parseInt(id));
+    
     if (!group) {
       throw new NotFoundException('Group not found');
     }
-    return await this.groupsService.remove(parseInt(id));
+
+    if (group.getOwner().getId() !== request.userId) {
+      throw new ForbiddenException('You are not the owner of this group');
+    }
+
+    await this.groupsService.remove(parseInt(id));
+    res.status(HttpStatus.NO_CONTENT);
   }
 }

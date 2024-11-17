@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
-import { User } from '../users/user.entity';
+import { UserEntity } from '../users/user.entity';
 
 @Injectable()
 export class MailService {
   constructor(private readonly mailerService: MailerService) {}
 
-  async sendVerificationEmail(token: string, user: User) {
+  async sendVerificationEmail(token: string, user: UserEntity) {
     const templateName = './verification';
     console.log('Sending email using template:', templateName);
 

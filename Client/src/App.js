@@ -9,6 +9,7 @@ import EmailVerificationRequired from './pages/EmailVerificationRequired';
 import UnAuthRoute from './utils/UnAuthRoute';
 import Navbar from './components/Navbar';
 import GroupsPage from './pages/GroupsPage';
+import GroupDetailPage from './pages/GroupDetailPage';
 
 const App = () => {
     return (
@@ -21,7 +22,8 @@ const App = () => {
                     <Route path="/email-verification-required" element={<EmailVerificationRequired />} />
                     <Route path="/" element={<HomePage />} />
                     <Route path="/groups" element={<GroupsPage />} />
-                </Routes>
+                    <Route path="/groups/:groupId" element={<GroupDetailPage />} />
+                 </Routes>
             </Router>
         </AuthProvider>
     );

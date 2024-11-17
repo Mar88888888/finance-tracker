@@ -48,7 +48,6 @@ const GroupsPage = () => {
             <div key={group.id} className="group-item">
               <h3>{group.title}</h3>
               <p>Join Code: {group.joinCode}</p>
-              <p>Members: {group.members.length}</p>
               <Link to={`/groups/${group.id}`}>View Details</Link>
             </div>
           ))

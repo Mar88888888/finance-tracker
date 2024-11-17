@@ -1,30 +1,31 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Purpose } from './purpose.entity';
+import { PurposeEntity } from './purpose.entity';
 import { CreatePurposeDto } from './dto/create-purpose.dto';
 import { UpdatePurposeDto } from './dto/update-purpose.dto';
+import { PurposeModel } from './purpose.model';
 
 @Injectable()
 export class PurposesService {
   constructor(
-    @InjectRepository(Purpose)
-    private readonly purposeRepository: Repository<Purpose>,
+    @InjectRepository(PurposeEntity)
+    private readonly purposeRepository: Repository<PurposeEntity>,
   ) {}
 
-  async findAll(): Promise<Purpose[]> {
-    return await this.purposeRepository.createQueryBuilder()
-    .select('*').orderBy('category').getRawMany();
+  async findAll(): Promise<PurposeModel[]> {
+    return (await this.purposeRepository.createQueryBuilder()
+    .select('*').orderBy('category').getRawMany()).map(PurposeModel.fromEntity);
   }
 
 
-  async create(createPurposeDto: CreatePurposeDto): Promise<Purpose> {
+  async create(createPurposeDto: CreatePurposeDto): Promise<PurposeModel> {
     try {
       const { category, type } = createPurposeDto;
       const newPurpose = await this.purposeRepository
         .createQueryBuilder()
         .insert()
-        .into(Purpose)
+        .into(PurposeEntity)
         .values({ category, type })
         .execute();
 
@@ -39,7 +40,7 @@ export class PurposesService {
   }
 
 
-  async findOne(id: number): Promise<Purpose> {
+  async findOne(id: number): Promise<PurposeModel> {
     const purpose = await this.purposeRepository
       .createQueryBuilder('trans_category')
       .where('id = :id', { id })
@@ -49,17 +50,17 @@ export class PurposesService {
       throw new NotFoundException(`Purpose with id ${id} not found`);
     }
 
-    return purpose;
+    return PurposeModel.fromEntity(purpose);
   }
 
-  async update(id: number, updatePurposeDto: UpdatePurposeDto): Promise<Purpose> {
+  async update(id: number, updatePurposeDto: UpdatePurposeDto): Promise<PurposeModel> {
     try {
       const purpose = await this.findOne(id);
       const { category, type } = updatePurposeDto;
 
       await this.purposeRepository
         .createQueryBuilder()
-        .update(Purpose)
+        .update(PurposeEntity)
         .set({ category, type })
         .where('id = :id', { id })
         .execute();
@@ -74,13 +75,13 @@ export class PurposesService {
     }
   }
 
-  async remove(id: number): Promise<Purpose> {
+  async remove(id: number): Promise<PurposeModel> {
     const purposeToDelete = await this.findOne(id);
 
     await this.purposeRepository
       .createQueryBuilder()
       .delete()
-      .from(Purpose)
+      .from(PurposeEntity)
       .where('id = :id', { id })
       .execute();
 

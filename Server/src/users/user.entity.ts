@@ -1,10 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from 'typeorm';
-import { Transaction } from '../transactions/transaction.entity';
+import { TransactionEntity } from '../transactions/transaction.entity';
 import { Exclude } from 'class-transformer';
-import { Group } from 'src/groups/group.entity';
+import { GroupEntity } from 'src/groups/group.entity';
 
 @Entity({ name: 'user' })
-export class User {
+export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -31,15 +31,15 @@ export class User {
   @Exclude()
   verificationToken?: string;
 
-  @OneToMany(() => Transaction, transaction => transaction.member)
+  @OneToMany(() => TransactionEntity, transaction => transaction.member)
   @Exclude()
-  transactions: Transaction[];
+  transactions: TransactionEntity[];
 
-  @OneToMany(() => Group, group => group.owner)
+  @OneToMany(() => GroupEntity, group => group.owner)
   @Exclude()
-  myGroups: Group[];
+  myGroups: GroupEntity[];
 
-  @ManyToMany(() => Group)
+  @ManyToMany(() => GroupEntity)
   @JoinTable()
-  groups: Group[];
+  groups: GroupEntity[];
 }

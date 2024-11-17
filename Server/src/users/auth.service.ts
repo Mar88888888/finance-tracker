@@ -11,8 +11,9 @@ import { MailService } from '../mail/mail.service';
 import { v4 as uuidv4 } from 'uuid';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create.user.dto';
-import { InnerUserUpdateDto, UpdateUserDto } from './dto/update.user.dto';
+import { InnerUserUpdateDto } from './dto/inner-update.user.dto';
 import { LoginUserDto } from './dto/login.user.dto';
+import { UserModel } from './user.model';
 
 const scrypt = promisify(_scrypt);
 
@@ -42,7 +43,7 @@ export class AuthService {
     Object.assign(createdUser, userDto)
     createdUser.verificationToken = verificationToken;
     
-    await this.usersService.update(user.id, createdUser);
+    await this.usersService.update(user.getId(), createdUser);
     // await this.mailService.sendVerificationEmail(verificationToken, user);
 
     // const payload = { sub: user.id, email: user.email };
@@ -58,14 +59,14 @@ export class AuthService {
       throw new NotFoundException(`User with email ${email} not found`);
     }
 
-    const [salt, storedHash] = user.password.split('.');
+    const [salt, storedHash] = user.getPassword().split('.');
 
     const hash = (await scrypt(password, salt, 32)) as Buffer;
 
     if (storedHash !== hash.toString('hex')) {
       throw new BadRequestException('bad password');
     }
-    const payload = { sub: user.id };
+    const payload = { sub: user.getId() };
     const accessToken = this.jwtService.sign(payload);
 
     return { accessToken: accessToken, user };
@@ -76,8 +77,8 @@ export class AuthService {
     if (!user) {
       throw new BadRequestException('Invalid verification token');
     }
-    user.isEmailVerified = true;
-    await this.usersService.update(user.id, user);
+    user.setIsEmailVerified(true);
+    await this.usersService.updateFromModel(user.getId(), user);
     return { message: 'Email verified successfully' };
   }
 
@@ -85,7 +86,7 @@ export class AuthService {
     return this.jwtService.sign(payload);
   }
 
-   async getUserFromToken(token: string): Promise<CreateUserDto> {
+  async getUserFromToken(token: string): Promise<UserModel> {
     try {
       const payload = this.jwtService.verify(token);
       const user = await this.usersService.findOne(payload.sub);

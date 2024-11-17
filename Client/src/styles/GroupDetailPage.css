@@ -1,0 +1,91 @@
+.groupdetailpage-container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+  background-color: #1A1A1A;
+  color: #E0E0E0;
+}
+
+.groupdetailpage-container h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.join-code-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #333;
+  padding: 10px;
+  border-radius: 8px;
+  margin: 20px 0;
+  cursor: pointer;
+  border: 1px solid #444;
+}
+
+.join-code-container:hover {
+  background-color: #444;
+}
+
+.join-code-label {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.join-code {
+  font-size: 1.5rem;
+  color: #4CAF50;
+}
+
+.copy-success {
+  color: #4CAF50;
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+.members-list {
+  margin-top: 20px;
+}
+
+.member-item {
+  background-color: #222;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.member-item h3 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+.member-item p {
+  font-size: 1rem;
+  margin: 5px 0;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 20px;
+  text-decoration: none;
+  font-weight: bold;
+  color: #E0E0E0;
+}
+
+.back-link:hover {
+  color: #bbb;
+}
+
+.owner-badge {
+  background-color: #4caf50;
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 12px;
+  margin-left: 8px;
+  display: inline-block;
+  text-transform: uppercase;
+  transform: translate(0, -4px);
+}

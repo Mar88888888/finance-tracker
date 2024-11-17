@@ -39,13 +39,8 @@ const SignUp = () => {
             if(response.status === 400){
                 throw new Error('Email already in use!')
             }
-            const userData = await response.json();
-            console.log(userData);
-            setUser(userData.user); 
-
             alert('Check your email to verify it and use the app without limits!');
-            navigate('/');
-
+            navigate('/login');
         } catch (err) {
             setError(err.message);
         }

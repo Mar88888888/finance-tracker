@@ -19,9 +19,8 @@ const Login = () => {
             const response = await axios.post(url, { email, password }, { withCredentials: true });
 
             if (response.status === 200 || response.status === 201) {
-                console.log(response.data);
                 setUser(response.data.user);
-                setAuthToken(response.data.accessToken);
+                setAuthToken(response.data.token);
                 navigate('/');
             } else {
                 setError('Password or email is incorrect');

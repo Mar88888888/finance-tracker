@@ -1,10 +1,10 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, Unique } from 'typeorm';
-import { User } from '../users/user.entity';
-import { Purpose } from '../purposes/purpose.entity';
+import { UserEntity } from '../users/user.entity';
+import { PurposeEntity } from '../purposes/purpose.entity';
 
 @Entity({ name: 'transaction' })
 @Unique(['sum', 'date', 'member', 'purpose'])
-export class Transaction {
+export class TransactionEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -14,9 +14,9 @@ export class Transaction {
   @Column({ type: 'date', nullable: false })
   date: Date;
 
-  @ManyToOne(() => User, user => user.transactions, { onDelete: 'CASCADE', nullable: false })
-  member: User;
+  @ManyToOne(() => UserEntity, user => user.transactions, { onDelete: 'CASCADE', nullable: false })
+  member: UserEntity;
 
-  @ManyToOne(() => Purpose, purpose => purpose.transactions, { onDelete: 'CASCADE', nullable: false  })
-  purpose: Purpose;
+  @ManyToOne(() => PurposeEntity, purpose => purpose.transactions, { onDelete: 'CASCADE', nullable: false  })
+  purpose: PurposeEntity;
 }

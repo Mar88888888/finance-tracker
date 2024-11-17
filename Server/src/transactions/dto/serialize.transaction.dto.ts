@@ -1,32 +1,7 @@
 import { IsNotEmpty, IsNumber, IsDate, IsString, IsBoolean } from 'class-validator';
 import { Type, Expose, Exclude, Transform } from 'class-transformer';
-
-export class MemberDto {
-  @IsNotEmpty()
-  @IsNumber()
-  @Expose()
-  id: number;
-
-  @IsNotEmpty()
-  @IsString()
-  @Expose()
-  name: string;
-
-  @IsNotEmpty()
-  @IsNumber()
-  @Expose() 
-  age: number;
-  
-  @IsNotEmpty()
-  @IsBoolean()
-  @Expose() 
-  gender: boolean;
-
-  @Exclude() email: string;
-  @Exclude() password: string;
-  @Exclude() isEmailVerified: boolean;
-  @Exclude() verificationToken: string;
-}
+import { UserSerializeDto } from 'src/users/dto/serialize.user.dto';
+import { UserModel } from 'src/users/user.model';
 
 export class PurposeDto {
   @IsNotEmpty()
@@ -57,9 +32,9 @@ export class SerializeTransactionDto {
   date: string;
 
   @IsNotEmpty()
-  @Type(() => MemberDto)
+  @Type(() => UserSerializeDto)
   @Expose()
-  member: MemberDto;
+  member: UserModel;
   
   @IsNotEmpty()
   @Expose()

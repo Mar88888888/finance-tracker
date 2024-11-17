@@ -28,7 +28,6 @@ export const AuthProvider = ({ children }) => {
                     },
                     withCredentials: true,
                 });
-                console.log('Fetched user details:', response.data.user);
                 setUser(response.data.user);
                 setAuthToken(response.data.authToken);
             } catch (error) {

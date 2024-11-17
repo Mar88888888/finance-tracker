@@ -1,23 +1,5 @@
 import { OmitType } from '@nestjs/mapped-types';
-import { CreateUserDto } from './create.user.dto';
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { ConcreteBaseUserDto } from './base.user.dto.concrete';
 
-export class UpdateUserDto extends OmitType(CreateUserDto, ['password', 'email'] as const) {}
+export class UpdateUserDto extends OmitType(ConcreteBaseUserDto, ['password', 'email'] as const) {}
 
-export class InnerUserUpdateDto extends UpdateUserDto {
-  @IsOptional()
-  @IsString()
-  password?: string;
-
-  @IsOptional()
-  @IsString()
-  email?: string;
-
-  @IsOptional()
-  @IsString()
-  verificationToken?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  isEmailVerified?: boolean;
-}

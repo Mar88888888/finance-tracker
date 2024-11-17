@@ -1,15 +1,15 @@
-import { Expose } from 'class-transformer';
-import { IsNotEmpty, IsString, MinLength, IsEmail } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { BaseUserDto } from './abstracts/base.user.dto';
 
-export class LoginUserDto {
+export class LoginUserDto extends BaseUserDto {
   @IsNotEmpty()
   @IsEmail()
   email: string;
 
-  @Expose()
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   @MinLength(5)
   password: string;
-
 }
+
+

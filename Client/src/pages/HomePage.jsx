@@ -14,7 +14,7 @@ const HomePage = () => {
   useEffect(() => {
    const fetchTransactions = async () => {
       try {
-        const transactionsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/transactions/my`, {
+        const transactionsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/transactions`, {
           headers: {
             Authorization: `Bearer ${authToken}`,
           },

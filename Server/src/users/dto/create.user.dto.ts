@@ -1,24 +1,19 @@
-import { IsNotEmpty, IsOptional, IsString, IsInt, IsBoolean, MinLength, IsEmail } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
+import { BaseUserDto } from './abstracts/base.user.dto';
 
-export class CreateUserDto {
+export class CreateUserDto extends BaseUserDto {
   @IsNotEmpty()
-  @IsString()
   name: string;
 
   @IsNotEmpty()
-  @IsEmail()
   email: string;
 
   @IsNotEmpty()
-  @IsString()
-  @MinLength(5)
   password: string;
 
-  @IsOptional()
-  @IsInt()
-  age?: number;
+  @IsNotEmpty()
+  age: number;
 
-  @IsOptional()
-  @IsBoolean()
-  gender?: boolean;
+  @IsNotEmpty()
+  gender: boolean;
 }
