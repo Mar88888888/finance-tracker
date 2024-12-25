@@ -1,5 +1,10 @@
-import { Body, ClassSerializerInterceptor, Controller, Delete, ForbiddenException, Get, HttpStatus, NotFoundException,
-   Param, Patch, Post, Req, Res, SerializeOptions, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Body, ClassSerializerInterceptor, Controller,
+  Delete, ForbiddenException, Get, HttpStatus,
+  NotFoundException, Param, Patch, Post, Req, Res,
+  SerializeOptions, UseGuards, UseInterceptors,
+  ParseIntPipe
+} from '@nestjs/common';
 import { GroupsService } from './groups.service';
 import { CreateGroupDto } from './dto/create.group.dto';
 import { UpdateGroupDto } from './dto/update.group.dto';
@@ -7,24 +12,33 @@ import { AuthGuard } from '../guards/auth.guard';
 import { JoinGroupDto } from './dto/join-group.dto';
 import { GroupModel } from './group.model';
 import { Response } from 'express';
+import { SerializeTransactionDto } from 'src/transactions/dto/serialize.transaction.dto';
 
 @Controller('groups')
 @UseInterceptors(ClassSerializerInterceptor)
-@SerializeOptions({ type: GroupModel })
+@SerializeOptions({ type: GroupModel, })
 export class GroupsController {
   constructor(
     private groupsService: GroupsService,
-  ){}
+  ) { }
 
   @Get('/:id/code')
-  async getJoinCode(@Param('id') id: number){
+  async getJoinCode(@Param('id', ParseIntPipe) id: number) {
     return await this.groupsService.getGroupCode(id);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
+  @SerializeOptions({ type: SerializeTransactionDto })
+  @Get('/:id/transactions')
+  async getTransactions(@Param('id', ParseIntPipe) id: number) {
+    return await this.groupsService.getTransactions(id);
+  }
+
   @Get('/:id')
-  async getById(@Param('id') id: number){
+  async getById(@Param('id', ParseIntPipe) id: number) {
     return await this.groupsService.findById(id);
   }
+
 
   @UseGuards(AuthGuard)
   @Get()
@@ -40,7 +54,7 @@ export class GroupsController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updatePurposeDto: UpdateGroupDto): Promise<GroupModel> {
+  async update(@Param('id', ParseIntPipe) id: string, @Body() updatePurposeDto: UpdateGroupDto): Promise<GroupModel> {
     const group = await this.groupsService.findById(parseInt(id));
     if (!group) {
       throw new NotFoundException('Group not found');
@@ -59,9 +73,9 @@ export class GroupsController {
 
   @UseGuards(AuthGuard)
   @Delete('/:id')
-  async remove(@Param('id') id: string, @Req() request, @Res({passthrough: true}) res: Response): Promise<void> {
+  async remove(@Param('id', ParseIntPipe) id: string, @Req() request, @Res({ passthrough: true }) res: Response): Promise<void> {
     const group = await this.groupsService.findById(parseInt(id));
-    
+
     if (!group) {
       throw new NotFoundException('Group not found');
     }

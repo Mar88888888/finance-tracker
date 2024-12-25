@@ -3,10 +3,12 @@ import { PurposesController } from './purposes.controller';
 import { PurposesService } from './purposes.service';
 import { PurposeEntity } from './purpose.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersModule } from '../users/users.module';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PurposeEntity])],
+  imports: [TypeOrmModule.forFeature([PurposeEntity]), UsersModule],
   controllers: [PurposesController],
-  providers: [PurposesService]
+  providers: [PurposesService, JwtService]
 })
-export class PurposesModule {}
+export class PurposesModule { }

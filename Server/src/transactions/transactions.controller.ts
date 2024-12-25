@@ -1,7 +1,8 @@
 import { Controller, Get, Post, Patch, Delete, Body,
    Param, NotFoundException, Query, UseGuards, Req,
     UseInterceptors, SerializeOptions, ClassSerializerInterceptor,
-     Res, HttpStatus } from '@nestjs/common';
+     Res, HttpStatus, 
+     ParseIntPipe} from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
@@ -55,7 +56,7 @@ export class TransactionsController {
 
   @SerializeOptions({ type: UserSerializeDto})
   @Get('/:id/member')
-  async getUser(@Param('id') id: number): Promise<UserModel> {
+  async getUser(@Param('id', ParseIntPipe) id: number): Promise<UserModel> {
     try {
       return (await this.transactionsService.findOne(id)).getMember();
     } catch (error) {
@@ -64,7 +65,7 @@ export class TransactionsController {
   }
 
   @Get('/:id')
-  async findOne(@Param('id') id: number): Promise<TransactionModel> {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<TransactionModel> {
     try {
       return await this.transactionsService.findOne(id);
     } catch (error) {
@@ -73,12 +74,12 @@ export class TransactionsController {
   }
 
   @Patch('/:id')
-  async update(@Param('id') id: number, @Body() updateTransactionDto: UpdateTransactionDto): Promise<TransactionModel> {
+  async update(@Param('id', ParseIntPipe) id: number, @Body() updateTransactionDto: UpdateTransactionDto): Promise<TransactionModel> {
     return await this.transactionsService.update(id, updateTransactionDto);
   }
 
   @Delete('/:id')
-  async remove(@Param('id') id: number): Promise<TransactionModel> {
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<TransactionModel> {
     try {
       return await this.transactionsService.remove(id);
     } catch (error) {

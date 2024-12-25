@@ -1,7 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { TransactionEntity } from '../transactions/transaction.entity';
 import { Exclude } from 'class-transformer';
-import { GroupEntity } from 'src/groups/group.entity';
+import { GroupEntity } from '../groups/group.entity';
+import { PurposeEntity } from '../purposes/purpose.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity {
@@ -42,4 +43,7 @@ export class UserEntity {
   @ManyToMany(() => GroupEntity)
   @JoinTable()
   groups: GroupEntity[];
+
+  @OneToMany(() => PurposeEntity, purpose => purpose.user)
+  purposes: PurposeEntity[];
 }

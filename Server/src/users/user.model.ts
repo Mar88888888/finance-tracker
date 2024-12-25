@@ -2,6 +2,7 @@ import { TransactionEntity } from "src/transactions/transaction.entity";
 import { AbstractUserModel } from "./abstracts/user.model.abstract";
 import { GroupEntity } from "src/groups/group.entity";
 import { UserEntity } from "src/users/user.entity";
+import { PurposeEntity } from "../purposes/purpose.entity";
 
 export class UserModel extends AbstractUserModel {
   constructor(
@@ -15,7 +16,8 @@ export class UserModel extends AbstractUserModel {
     verificationToken?: string,
     transactions: TransactionEntity[] = [],
     myGroups: GroupEntity[] = [],
-    groups: GroupEntity[] = []
+    groups: GroupEntity[] = [],
+    purposes: PurposeEntity[] = []
   ) {
     super();
     this.id = id;
@@ -123,6 +125,14 @@ export class UserModel extends AbstractUserModel {
     return this.isEmailVerified;
   }
 
+  getPurposes(): PurposeEntity[] {
+    return this.purposes;
+  }
+
+  setPurposes(purposes: PurposeEntity[]): void {
+    this.purposes = purposes;
+  }
+
   static fromEntity(entity: UserEntity): UserModel {
     return new UserModel(
       entity.id,
@@ -135,7 +145,8 @@ export class UserModel extends AbstractUserModel {
       entity.verificationToken,
       entity.transactions || [],
       entity.myGroups || [],
-      entity.groups || []
+      entity.groups || [],
+      entity.purposes || []
     );
   }
 
@@ -152,6 +163,7 @@ export class UserModel extends AbstractUserModel {
     entity.transactions = model.getTransactions();
     entity.myGroups = model.getMyGroups();
     entity.groups = model.getGroups();
+    entity.purposes = model.getPurposes();
     return entity;
   }
 }

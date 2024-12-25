@@ -24,7 +24,6 @@ import { GroupEntity } from './groups/group.entity';
     database: "finance",
     entities: [UserEntity, PurposeEntity, TransactionEntity, GroupEntity],
     synchronize: true,
-    logging: true,
   }),
   UsersModule, TransactionsModule, PurposesModule, GroupsModule],
   controllers: [AppController],

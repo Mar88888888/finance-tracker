@@ -1,6 +1,8 @@
-import { UserModel } from 'src/users/user.model';
+import { Transaction } from 'typeorm';
+import { UserModel } from '../users/user.model';
 import { AbstractGroupModel } from './abstracts/group.model.abstract';
 import { GroupEntity } from './group.entity';
+import { TransactionModel } from 'src/transactions/transaction.model';
 
 export class GroupModel extends AbstractGroupModel {
   constructor(
@@ -80,9 +82,12 @@ export class GroupModel extends AbstractGroupModel {
     const entity = new GroupEntity();
     entity.id = model.getId();
     entity.title = model.getTitle();
-    entity.owner = UserModel.toEntity(model.getOwner()); 
+    entity.owner = UserModel.toEntity(model.getOwner());
     entity.members = model.getMembers().map(user => UserModel.toEntity(user));
     entity.joinCode = model.getJoinCode();
     return entity;
   }
+
+
+
 }

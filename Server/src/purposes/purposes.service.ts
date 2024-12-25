@@ -11,22 +11,22 @@ export class PurposesService {
   constructor(
     @InjectRepository(PurposeEntity)
     private readonly purposeRepository: Repository<PurposeEntity>,
-  ) {}
+  ) { }
 
   async findAll(): Promise<PurposeModel[]> {
     return (await this.purposeRepository.createQueryBuilder()
-    .select('*').orderBy('category').getRawMany()).map(PurposeModel.fromEntity);
+      .select('*').orderBy('category').getRawMany()).map(PurposeModel.fromEntity);
   }
 
 
-  async create(createPurposeDto: CreatePurposeDto): Promise<PurposeModel> {
+  async create(userId: number, createPurposeDto: CreatePurposeDto): Promise<PurposeModel> {
     try {
       const { category, type } = createPurposeDto;
       const newPurpose = await this.purposeRepository
         .createQueryBuilder()
         .insert()
         .into(PurposeEntity)
-        .values({ category, type })
+        .values({ category, type, user: { id: userId } })
         .execute();
 
       return this.findOne(newPurpose.raw[0].id);
@@ -43,7 +43,8 @@ export class PurposesService {
   async findOne(id: number): Promise<PurposeModel> {
     const purpose = await this.purposeRepository
       .createQueryBuilder('trans_category')
-      .where('id = :id', { id })
+      .leftJoinAndSelect('trans_category.user', 'user')
+      .where('trans_category.id = :id', { id })
       .getOne();
 
     if (!purpose) {

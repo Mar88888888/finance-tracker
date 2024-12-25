@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Body, Param, NotFoundException, Res, Query, Req, UnauthorizedException, UseInterceptors, ClassSerializerInterceptor, SerializeOptions, Inject, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, Param, NotFoundException, Res, Query, Req, UnauthorizedException, UseInterceptors, ClassSerializerInterceptor, SerializeOptions, Inject, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create.user.dto';
 import { UpdateUserDto } from './dto/update.user.dto';
@@ -45,7 +45,7 @@ export class UsersController {
   }
 
   @Patch('/:id')
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto): Promise<UserModel> {
+  async update(@Param('id', ParseIntPipe) id: string, @Body() updateUserDto: UpdateUserDto): Promise<UserModel> {
     const user = await this.usersService.findOne(parseInt(id));
     if (!user) {
       throw new NotFoundException('User not found');

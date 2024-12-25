@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { TransactionEntity } from './transaction.entity';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
@@ -14,23 +14,35 @@ export class TransactionsService {
     @InjectRepository(TransactionEntity)
     private readonly transactionRepository: Repository<TransactionEntity>,
     private readonly purposeService: PurposesService,
-  ) {}
+  ) { }
 
   async findAll(): Promise<TransactionModel[]> {
     return (await this.transactionRepository.createQueryBuilder('transaction')
-    .innerJoinAndSelect('transaction.member', 'member')
-    .innerJoinAndSelect('transaction.purpose', 'purpose')
-    .getMany()).map(TransactionModel.fromEntity);
+      .innerJoinAndSelect('transaction.member', 'member')
+      .innerJoinAndSelect('transaction.purpose', 'purpose')
+      .getMany()).map(TransactionModel.fromEntity);
   }
 
   async getUserTransactions(userId: number): Promise<TransactionModel[]> {
     return (await this.transactionRepository.find({
       where: { member: { id: userId } },
-      order: { date: 'DESC' }, 
-      relations: ['purpose']
+      order: { date: 'DESC' },
+      relations: ['purpose', 'member']
     })).map(TransactionModel.fromEntity);
   }
 
+  async getGroupTransactions(memberIds: Number[]): Promise<TransactionModel[]> {
+    const transactions = await this.transactionRepository.find({
+      where: {
+        member: {
+          id: In(memberIds),
+        },
+      },
+      relations: ['member', 'purpose'],
+    });
+
+    return transactions.map(TransactionModel.fromEntity);
+  }
   async find(userId: number, queryParams: {
     startdate?: string,
     enddate?: string,
@@ -60,11 +72,11 @@ export class TransactionsService {
       queryBuilder.andWhere('purpose.id IN (:...purposes)', { purposes });
     }
 
-    if (type !== undefined) { 
+    if (type !== undefined) {
       queryBuilder.andWhere('purpose.type = :type', { type });
     }
 
-    switch(orderBy) {
+    switch (orderBy) {
       case 'purpose':
         queryBuilder.orderBy('purpose.category', sortOrder || 'ASC');
         break;
@@ -96,12 +108,12 @@ export class TransactionsService {
       if (error.code === '23505') {
         throw new ConflictException('Transaction with these values already exists.');
       }
-      throw error; 
+      throw error;
     }
   }
 
   async findOne(id: number): Promise<TransactionModel> {
-    const transaction = await this.transactionRepository.findOne({where: {id}, relations: ['member', 'purpose']});
+    const transaction = await this.transactionRepository.findOne({ where: { id }, relations: ['member', 'purpose'] });
 
     if (!transaction) {
       throw new NotFoundException('Transaction not found');
@@ -111,9 +123,9 @@ export class TransactionsService {
   }
 
   async update(id: number, updateTransactionDto: UpdateTransactionDto): Promise<TransactionModel> {
-    const transaction =  TransactionModel.toEntity(await this.findOne(id));
+    const transaction = TransactionModel.toEntity(await this.findOne(id));
     Object.assign(transaction, updateTransactionDto);
-    if(updateTransactionDto.purposeId){
+    if (updateTransactionDto.purposeId) {
       const purpose = await this.purposeService.findOne(updateTransactionDto.purposeId);
       transaction.purpose = PurposeModel.toEntity(purpose);
     }

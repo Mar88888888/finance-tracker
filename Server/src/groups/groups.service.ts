@@ -5,16 +5,19 @@ import { GroupEntity } from './group.entity';
 import { UpdateGroupDto } from './dto/update.group.dto';
 import { CreateGroupDto } from './dto/create.group.dto';
 import { UsersService } from 'src/users/users.service';
+import { TransactionsService } from '../transactions/transactions.service';
 import { GroupModel } from './group.model';
-import { UserModel } from 'src/users/user.model';
+import { UserModel } from '../users/user.model';
+import { TransactionModel } from '../transactions/transaction.model';
 
 @Injectable()
 export class GroupsService {
   constructor(
     @InjectRepository(GroupEntity)
     private groupRepo: Repository<GroupEntity>,
-    private userService: UsersService
-  ) {}
+    private userService: UsersService,
+    private transactionService: TransactionsService,
+  ) { }
 
   async findById(id: number): Promise<GroupModel> {
     const groupEntity = await this.groupRepo.findOne({ where: { id }, relations: ['members', 'owner'] });
@@ -29,16 +32,18 @@ export class GroupsService {
   }
 
   async getUserGroups(userId: number): Promise<GroupModel[]> {
-    const groupEntities = await this.groupRepo.find({
-      where: {
-        members: {
-          id: userId,
-        },
-      },
-      relations: ['members', 'owner'],
-    });
+    const groupEntities = await this.groupRepo
+      .createQueryBuilder('group')
+      .innerJoin('group.members', 'member', 'member.id = :userId', { userId })
+      .leftJoinAndSelect('group.members', 'allMembers')
+      .leftJoinAndSelect('group.owner', 'owner')
+      .getMany();
+
     return groupEntities.map(GroupModel.fromEntity);
   }
+
+
+
 
   async create(ownerId: number, createGroupDto: CreateGroupDto): Promise<GroupModel> {
     const newGroupEntity = this.groupRepo.create(createGroupDto);
@@ -53,7 +58,7 @@ export class GroupsService {
 
   async joinGroup(joinCode: string, userId: number): Promise<GroupModel> {
     const groupEntity = await this.groupRepo.findOne({ where: { joinCode }, relations: ['members', 'owner'] });
-    
+
     if (!groupEntity) {
       throw new NotFoundException('Group with this code not found');
     }
@@ -89,6 +94,19 @@ export class GroupsService {
   private generateJoinCode(): string {
     return Math.random().toString(36).slice(2, 10);
   }
+
+
+  async getTransactions(id: number): Promise<TransactionModel[]> {
+    const group = await this.findById(id);
+
+    const memberIds = group.getMembers().map(member => member.getId());
+    if (memberIds.length === 0) {
+      return [];
+    }
+
+    return this.transactionService.getGroupTransactions(memberIds);
+  }
+
 
   async remove(id: number): Promise<GroupModel> {
     const groupEntity = await this.findById(id);
