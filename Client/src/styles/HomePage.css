@@ -3,35 +3,10 @@ body {
   color: #E0E0E0;
 }
 
-.navbar {
-  background-color: #222;
-  padding: 10px 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.navbar a {
-  color: #fff;
-  text-decoration: none;
-  margin-right: 20px;
-  font-weight: bold;
-}
-
-.navbar a:hover {
-  color: #bbb;
-}
-
 .homepage-container {
   max-width: 800px;
   margin: auto;
   padding: 20px;
-}
-
-.homepage-container h1,
-.homepage-container h2,
-.homepage-container p {
-  color: #E0E0E0;
 }
 
 .info-section,
@@ -40,18 +15,12 @@ body {
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 20px;
-  /* text-align: center; */
-}
-
-.info-section h1,
-.transactions-section h1 {
-  text-align: center;
-  color: #ddd;
 }
 
 .info-section h1 {
   font-size: 2.5rem;
   margin-bottom: 20px;
+  text-align: center;
 }
 
 .info-section p,
@@ -85,27 +54,6 @@ body {
 .transactions-section h2 {
   font-size: 2rem;
   margin-bottom: 15px;
-}
-
-.transaction-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid #333;
-  color: #CCCCCC;
-}
-
-.transaction-item div {
-  flex: 1;
-  text-align: center;
-}
-
-.transaction-item div:first-child {
-  text-align: left;
-}
-
-.transaction-item div:last-child {
-  text-align: right;
 }
 
 a {

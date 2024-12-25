@@ -23,6 +23,7 @@ const Navbar = () => {
             <>
                 <Link to="/">Home</Link>
                 <Link to="/groups">Groups</Link>
+                <Link to="/transactions">Transactions</Link>
                 <span 
               className="navbar-username"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)} 

@@ -8,11 +8,7 @@ const PrivateRoute = ({ children }) => {
     if (!user) {
         return <Navigate to="/login" />;
     }
-
-    if (!user.isEmailVerified) {
-        return <Navigate to="/email-verification-required" />;
-    }
-
+    
     return children;
 };
 

@@ -41,3 +41,61 @@
 .group-item a:hover {
   color: #bbb;
 }
+
+
+.join-group-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.join-group-container input {
+  padding: 8px;
+  border: 1px solid #333;
+  background-color: #222;
+  color: #E0E0E0;
+  border-radius: 5px;
+  font-size: 16px;
+  width: 200px;
+}
+
+.join-group-container button {
+  padding: 8px 15px;
+  background-color: #6C63FF;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.join-group-container button:hover {
+  background-color: #5750d0;
+}
+
+.join-error-message {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #c12020;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 14px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  opacity: 0;
+  animation: fadeInOut 3s forwards;
+}
+
+.join-error-message p {
+  margin: 0;
+}
+
+.join-error-message.hide {
+  opacity: 0;
+}

@@ -89,3 +89,86 @@
   text-transform: uppercase;
   transform: translate(0, -4px);
 }
+
+.create-group-btn {
+  padding: 10px 20px;
+  background-color: #6C63FF;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: fit-content;
+  margin: 20px auto;
+  display: block;
+}
+
+.create-group-btn:hover {
+  background-color: #5750d0;
+}
+
+.copy-success-message {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 14px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  opacity: 0;
+  animation: fadeInOut 3s forwards;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  80% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+
+.view-mode-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.view-mode-toggle button {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #E0E0E0;
+  background-color: #222;
+  border: 1px solid #333;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.view-mode-toggle button:hover {
+  background-color: #333;
+  border-color: #444;
+}
+
+.view-mode-toggle button.active {
+  background-color: #6C63FF;
+  border-color: #5750d0;
+  color: #fff;
+}
