@@ -31,6 +31,7 @@ export class UserModel extends AbstractUserModel {
     this.transactions = transactions;
     this.myGroups = myGroups;
     this.groups = groups;
+    this.purposes = purposes;
   }
 
   getId(): number {

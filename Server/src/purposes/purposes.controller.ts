@@ -9,9 +9,21 @@ import { AuthGuard } from '../guards/auth.guard';
 export class PurposesController {
   constructor(private readonly purposeService: PurposesService) { }
 
+
+  @UseGuards(AuthGuard)
   @Get()
-  async findAll(): Promise<PurposeModel[]> {
-    return this.purposeService.findAll();
+  async findAll(@Req() req): Promise<PurposeModel[]> {
+    return this.purposeService.findUserPurposes(req.userId);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('/:id')
+  async findOne(@Param('id', ParseIntPipe) id: string): Promise<PurposeModel> {
+    const purpose = await this.purposeService.findOne(parseInt(id));
+    if (!purpose) {
+      throw new NotFoundException('Purpose not found');
+    }
+    return purpose;
   }
 
   @UseGuards(AuthGuard)

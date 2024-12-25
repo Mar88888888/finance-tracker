@@ -18,6 +18,15 @@ export class PurposesService {
       .select('*').orderBy('category').getRawMany()).map(PurposeModel.fromEntity);
   }
 
+  async findUserPurposes(userId: number): Promise<PurposeModel[]> {
+    return (await this.purposeRepository.find(
+      {
+        where: { user: { id: userId } },
+        relations: ['user']
+      }
+    )).map(PurposeModel.fromEntity);
+  }
+
 
   async create(userId: number, createPurposeDto: CreatePurposeDto): Promise<PurposeModel> {
     try {

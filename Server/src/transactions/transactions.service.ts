@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { TransactionEntity } from './transaction.entity';
@@ -56,6 +56,8 @@ export class TransactionsService {
     const queryBuilder = this.transactionRepository.createQueryBuilder('transaction');
 
     queryBuilder.innerJoinAndSelect('transaction.purpose', 'purpose');
+
+    queryBuilder.innerJoinAndSelect('purpose.user', 'user');
 
     queryBuilder.innerJoinAndSelect('transaction.member', 'member')
       .andWhere('member.id = :userId', { userId });

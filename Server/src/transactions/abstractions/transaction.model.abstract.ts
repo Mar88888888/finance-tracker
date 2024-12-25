@@ -2,6 +2,8 @@ export abstract class AbstractTransaction {
   protected id: number;
   protected sum: number;
   protected date: Date;
+  protected memberId: number;
+  protected purposeId: number;
 
   getId(): number {
     return this.id;
@@ -25,5 +27,21 @@ export abstract class AbstractTransaction {
 
   setDate(date: Date): void {
     this.date = date;
+  }
+
+  getMemberId(): number {
+    return this.memberId;
+  }
+
+  setMemberId(memberId: number): void {
+    this.memberId = memberId;
+  }
+
+  getPurposeId(): number {
+    return this.purposeId;
+  }
+
+  setPurposeId(purposeId: number): void {
+    this.purposeId = purposeId;
   }
 }

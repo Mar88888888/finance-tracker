@@ -15,8 +15,19 @@ export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly authService: AuthService,
-  ) {}
-  
+  ) { }
+
+  @Get('/:id')
+  async findOne(@Param('id', ParseIntPipe) id: string): Promise<UserModel> {
+    const user = await this.usersService.findOne(parseInt(id));
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
+
+
+
   @Post('/auth/signup')
   async createUser(
     @Body() userDto: CreateUserDto,
@@ -24,8 +35,8 @@ export class UsersController {
     const user = await this.authService.signup(userDto);
     return user;
   }
-  
-  
+
+
   @SerializeOptions({ type: LoginResponseDto })
   @Post('/auth/signin')
   async signin(@Body() signinDto: LoginUserDto): Promise<LoginResponseDto> {
@@ -37,10 +48,10 @@ export class UsersController {
       throw e;
     }
   }
-  
+
   @Post('/auth/verify-email')
   async verifyEmail(@Query('token') token: string) {
-    let res  = await this.authService.verifyEmail(token);
+    let res = await this.authService.verifyEmail(token);
     return res;
   }
 
@@ -59,12 +70,12 @@ export class UsersController {
     if (!authHeader || typeof authHeader !== 'string') {
       throw new UnauthorizedException('Authorization header is missing');
     }
-    
-    const token = authHeader.split(' ')[1]; 
+
+    const token = authHeader.split(' ')[1];
     if (!token) {
       throw new UnauthorizedException('Token is missing');
     }
-    
+
     try {
       const user = await this.authService.getUserFromToken(token);
       return user;
