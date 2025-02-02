@@ -9,6 +9,7 @@ import { TransactionsService } from '../transactions/transactions.service';
 import { GroupModel } from './group.model';
 import { UserModel } from '../users/user.model';
 import { TransactionModel } from '../transactions/transaction.model';
+import { AddPurposeDto } from './dto/add-purpose.dto';
 
 @Injectable()
 export class GroupsService {
@@ -20,7 +21,7 @@ export class GroupsService {
   ) { }
 
   async findById(id: number): Promise<GroupModel> {
-    const groupEntity = await this.groupRepo.findOne({ where: { id }, relations: ['members', 'owner'] });
+    const groupEntity = await this.groupRepo.findOne({ where: { id }, relations: ['members', 'owner', 'purposes'] });
     if (!groupEntity) {
       throw new NotFoundException('Group not found');
     }
@@ -95,16 +96,34 @@ export class GroupsService {
     return Math.random().toString(36).slice(2, 10);
   }
 
+  async addPurposes(groupId: string, purposes: AddPurposeDto): Promise<GroupModel> {
+    const group = await this.findById(parseInt(groupId));
+    if (!group) {
+      throw new NotFoundException('Group not found');
+    }
+
+    const { purposeIds } = purposes;
+    group.addPurposes(purposeIds);
+
+    await this.groupRepo
+      .createQueryBuilder()
+      .relation(GroupEntity, 'purposes')
+      .of(group.getId())
+      .add(purposeIds);
+
+    return group;
+  }
 
   async getTransactions(id: number): Promise<TransactionModel[]> {
     const group = await this.findById(id);
 
     const memberIds = group.getMembers().map(member => member.getId());
-    if (memberIds.length === 0) {
+    const purposeIds = group.getPurposes();
+    if (memberIds.length === 0 || purposeIds.length === 0) {
       return [];
     }
 
-    return this.transactionService.getGroupTransactions(memberIds);
+    return this.transactionService.getGroupTransactions(memberIds, purposeIds);
   }
 
 

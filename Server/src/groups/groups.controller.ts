@@ -13,6 +13,7 @@ import { JoinGroupDto } from './dto/join-group.dto';
 import { GroupModel } from './group.model';
 import { Response } from 'express';
 import { SerializeTransactionDto } from 'src/transactions/dto/serialize.transaction.dto';
+import { AddPurposeDto } from './dto/add-purpose.dto';
 
 @Controller('groups')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -51,6 +52,12 @@ export class GroupsController {
   @Post()
   async create(@Body() createGroupDto: CreateGroupDto, @Req() request): Promise<GroupModel> {
     return this.groupsService.create(request.userId, createGroupDto);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('/:id/purposes')
+  async addPurposes(@Param('id', ParseIntPipe) groupId: string, @Body() purposes: AddPurposeDto): Promise<GroupModel> {
+    return this.groupsService.addPurposes(groupId, purposes);
   }
 
   @Patch(':id')

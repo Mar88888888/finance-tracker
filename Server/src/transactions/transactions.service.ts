@@ -31,11 +31,14 @@ export class TransactionsService {
     })).map(TransactionModel.fromEntity);
   }
 
-  async getGroupTransactions(memberIds: Number[]): Promise<TransactionModel[]> {
+  async getGroupTransactions(memberIds: Number[], purposeIds: Number[]): Promise<TransactionModel[]> {
     const transactions = await this.transactionRepository.find({
       where: {
         member: {
           id: In(memberIds),
+        },
+        purpose: {
+          id: In(purposeIds),
         },
       },
       relations: ['member', 'purpose'],

@@ -2,26 +2,26 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
-import TransactionsList from '../components/TransactionsList';
+import PurposesList from '../components/PurposesList';
 
-import '../styles/TransactionsPage.css';
+import '../styles/PurposesPage.css';
 
-const TransactionsPage = () => {
+const PurposesPage = () => {
   const { authToken, setUser, setAuthToken } = useContext(AuthContext);
-  const [transactions, setTransactions] = useState([]);
+  const [purposes, setPurposes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchTransactions = async () => {
+    const fetchPurposes = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/transactions`, {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/purposes`, {
           headers: {
             Authorization: `Bearer ${authToken}`,
           },
         });
-        setTransactions(response.data);
+        setPurposes(response.data);
         setLoading(false);
       } catch (err) {
         if (err.response && err.response.status === 401) {
@@ -29,14 +29,14 @@ const TransactionsPage = () => {
           setUser(null);
           navigate('/login');
         } else {
-          setError('Failed to load transactions.');
+          setError('Failed to load purposes.');
           setLoading(false);
         }
       }
     };
 
     if (authToken) {
-      fetchTransactions();
+      fetchPurposes();
     } else {
       setLoading(false);
     }
@@ -46,17 +46,17 @@ const TransactionsPage = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="transactions-page-container">
-      <h1>My Transactions</h1>
+    <div className="purposes-page-container">
+      <h1>My Purposes</h1>
       <button
         className="create-btn"
-        onClick={() => navigate('/transactions/add')}
+        onClick={() => navigate('/purposes/add')}
       >
-        Add Transaction
+        Add Purpose
       </button>
-      <TransactionsList transactionsData={transactions} authToken={authToken} />
+      <PurposesList purposesData={purposes} />
     </div>
   );
 };
 
-export default TransactionsPage;
+export default PurposesPage;

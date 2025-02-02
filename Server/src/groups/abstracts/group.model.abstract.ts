@@ -12,6 +12,8 @@ export abstract class AbstractGroupModel {
   @Type(() => UserSerializeDto)
   protected members: UserModel[] = [];
 
+  protected purposes: number[] = [];
+
   protected joinCode: string;
 
   abstract getId(): number;

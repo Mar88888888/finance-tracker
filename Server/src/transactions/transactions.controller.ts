@@ -38,7 +38,6 @@ export class TransactionsController {
   ): Promise<TransactionModel[]> {
     const purposesArray = purposes ? purposes.split(',') : undefined;
     let res = await this.transactionsService.find(req.userId, { startdate, enddate, type, purposes: purposesArray, orderBy, sortOrder });
-    console.log(res);
     return res;
   }
 

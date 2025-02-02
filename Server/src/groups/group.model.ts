@@ -1,15 +1,15 @@
-import { Transaction } from 'typeorm';
 import { UserModel } from '../users/user.model';
 import { AbstractGroupModel } from './abstracts/group.model.abstract';
 import { GroupEntity } from './group.entity';
-import { TransactionModel } from 'src/transactions/transaction.model';
+import { PurposeEntity } from 'src/purposes/purpose.entity';
 
 export class GroupModel extends AbstractGroupModel {
   constructor(
     id: number,
     title: string,
     owner: UserModel,
-    members: UserModel[],
+    members: UserModel[] = [],
+    purposes: number[] = [],
     joinCode: string,
   ) {
     super();
@@ -18,6 +18,7 @@ export class GroupModel extends AbstractGroupModel {
     this.owner = owner;
     this.members = members;
     this.joinCode = joinCode;
+    this.purposes = purposes;
   }
 
   getId(): number {
@@ -68,13 +69,30 @@ export class GroupModel extends AbstractGroupModel {
     this.members = this.members.filter((member) => member.getId() !== user.getId());
   }
 
+
+  getPurposes(): number[] {
+    return this.purposes;
+  }
+
+  setPurposes(purposes: number[]): void {
+    this.purposes = purposes;
+  }
+
+  addPurpose(purpose: number): void {
+    this.purposes.push(purpose);
+  }
+  addPurposes(purposes: number[]): void {
+    this.purposes.push(...purposes);
+  }
+
   static fromEntity(entity: GroupEntity): GroupModel {
     return new GroupModel(
       entity.id,
       entity.title,
       UserModel.fromEntity(entity.owner),
-      entity.members.map(user => UserModel.fromEntity(user)),
-      entity.joinCode
+      entity.members?.map(user => UserModel.fromEntity(user)) || [],
+      entity.purposes?.map(purpose => purpose.id) || [],
+      entity.joinCode,
     );
   }
 
@@ -85,6 +103,11 @@ export class GroupModel extends AbstractGroupModel {
     entity.owner = UserModel.toEntity(model.getOwner());
     entity.members = model.getMembers().map(user => UserModel.toEntity(user));
     entity.joinCode = model.getJoinCode();
+    entity.purposes = model.getPurposes().map(purpose => {
+      const purposeEntity = new PurposeEntity();
+      purposeEntity.id = purpose;
+      return purposeEntity;
+    });
     return entity;
   }
 

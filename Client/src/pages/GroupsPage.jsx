@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../styles/GroupsPage.css';
 
 const GroupsPage = () => {
-  const { authToken, user, setUser, setAuthToken } = useContext(AuthContext);
+  const { authToken, setUser, setAuthToken } = useContext(AuthContext);
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -41,7 +41,7 @@ const GroupsPage = () => {
     } else {
       setLoading(false);
     }
-  }, [authToken]);
+  }, [authToken, navigate, setAuthToken, setUser]);
 
   const handleJoinGroup = async () => {
     try {
@@ -60,9 +60,9 @@ const GroupsPage = () => {
         navigate(`/groups/${response.data.id}`);
       }
     } catch (err) {
-      if(err.status === 409){
+      if (err.status === 409) {
         setJoinError('You are already a member of this group')
-      }else{
+      } else {
         setJoinError('Failed to join group. Please check the join code.');
       }
       if (errorTimeout) clearTimeout(errorTimeout);
@@ -83,7 +83,7 @@ const GroupsPage = () => {
       <h1>Your Groups</h1>
 
       <div className="create-group-btn-container">
-        <button className="create-group-btn" onClick={handleCreateGroup}>
+        <button className="create-btn" onClick={handleCreateGroup}>
           Create Group
         </button>
       </div>

@@ -1,0 +1,19 @@
+.purposes-list {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.purposes-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  padding: 20px;
+  border-bottom: 2px solid #000;
+  text-align: center;
+}
+
+.purposes-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
