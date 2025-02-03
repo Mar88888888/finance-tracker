@@ -5,6 +5,8 @@ import { UserModel } from "src/users/user.model";
 export abstract class AbstractGroupModel {
   protected id: number;
   protected title: string;
+  protected mindate: Date;
+  protected maxdate: Date;
 
   @Type(() => UserSerializeDto)
   protected owner: UserModel;

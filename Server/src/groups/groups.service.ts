@@ -51,6 +51,8 @@ export class GroupsService {
     const owner = UserModel.toEntity(await this.userService.findOne(ownerId));
     newGroupEntity.owner = owner;
     newGroupEntity.joinCode = this.generateJoinCode();
+    newGroupEntity.mindate = createGroupDto.mindate;
+    newGroupEntity.maxdate = createGroupDto.maxdate;
     newGroupEntity.members = [owner];
 
     const savedGroupEntity = await this.groupRepo.save(newGroupEntity);
@@ -123,7 +125,7 @@ export class GroupsService {
       return [];
     }
 
-    return this.transactionService.getGroupTransactions(memberIds, purposeIds);
+    return this.transactionService.getGroupTransactions(memberIds, purposeIds, group.getMindate(), group.getMaxdate());
   }
 
 

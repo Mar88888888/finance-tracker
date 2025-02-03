@@ -11,6 +11,8 @@ export class GroupModel extends AbstractGroupModel {
     members: UserModel[] = [],
     purposes: number[] = [],
     joinCode: string,
+    mindate: Date,
+    maxdate: Date,
   ) {
     super();
     this.id = id;
@@ -19,6 +21,8 @@ export class GroupModel extends AbstractGroupModel {
     this.members = members;
     this.joinCode = joinCode;
     this.purposes = purposes;
+    this.mindate = mindate;
+    this.maxdate = maxdate;
   }
 
   getId(): number {
@@ -70,6 +74,22 @@ export class GroupModel extends AbstractGroupModel {
   }
 
 
+  getMindate(): Date {
+    return this.mindate;
+  }
+
+  setMindate(mindate: Date): void {
+    this.mindate = mindate;
+  }
+
+  getMaxdate(): Date {
+    return this.maxdate;
+  }
+
+  setMaxdate(maxdate: Date): void {
+    this.maxdate = maxdate;
+  }
+
   getPurposes(): number[] {
     return this.purposes;
   }
@@ -93,6 +113,8 @@ export class GroupModel extends AbstractGroupModel {
       entity.members?.map(user => UserModel.fromEntity(user)) || [],
       entity.purposes?.map(purpose => purpose.id) || [],
       entity.joinCode,
+      entity.mindate,
+      entity.maxdate,
     );
   }
 
@@ -103,6 +125,8 @@ export class GroupModel extends AbstractGroupModel {
     entity.owner = UserModel.toEntity(model.getOwner());
     entity.members = model.getMembers().map(user => UserModel.toEntity(user));
     entity.joinCode = model.getJoinCode();
+    entity.mindate = model.mindate;
+    entity.maxdate = model.maxdate;
     entity.purposes = model.getPurposes().map(purpose => {
       const purposeEntity = new PurposeEntity();
       purposeEntity.id = purpose;

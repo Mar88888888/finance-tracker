@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { Between, In, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { TransactionEntity } from './transaction.entity';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
@@ -31,21 +31,34 @@ export class TransactionsService {
     })).map(TransactionModel.fromEntity);
   }
 
-  async getGroupTransactions(memberIds: Number[], purposeIds: Number[]): Promise<TransactionModel[]> {
+  async getGroupTransactions(
+    memberIds: number[],
+    purposeIds: number[],
+    minDate?: Date | null,
+    maxDate?: Date | null
+  ): Promise<TransactionModel[]> {
+    const whereCondition: any = {
+      member: { id: In(memberIds) },
+      purpose: { id: In(purposeIds) },
+    };
+
+    if (minDate && maxDate) {
+      whereCondition.date = Between(minDate, maxDate);
+    } else if (minDate) {
+      whereCondition.date = MoreThanOrEqual(minDate);
+    } else if (maxDate) {
+      whereCondition.date = LessThanOrEqual(maxDate);
+    }
+
     const transactions = await this.transactionRepository.find({
-      where: {
-        member: {
-          id: In(memberIds),
-        },
-        purpose: {
-          id: In(purposeIds),
-        },
-      },
+      where: whereCondition,
       relations: ['member', 'purpose'],
     });
 
     return transactions.map(TransactionModel.fromEntity);
   }
+
+
   async find(userId: number, queryParams: {
     startdate?: string,
     enddate?: string,
