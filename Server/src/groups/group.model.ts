@@ -105,6 +105,11 @@ export class GroupModel extends AbstractGroupModel {
     this.purposes.push(...purposes);
   }
 
+  removePurposes(purposeIds: number[]): void {
+    this.purposes = this.purposes.filter((purpose) => !purposeIds.includes(purpose));
+  }
+
+
   static fromEntity(entity: GroupEntity): GroupModel {
     return new GroupModel(
       entity.id,

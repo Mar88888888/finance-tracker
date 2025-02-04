@@ -61,12 +61,12 @@ export class GroupsController {
   }
 
   @Patch(':id')
-  async update(@Param('id', ParseIntPipe) id: string, @Body() updatePurposeDto: UpdateGroupDto): Promise<GroupModel> {
+  async update(@Param('id', ParseIntPipe) id: string, @Body() updateGroupDto: UpdateGroupDto): Promise<GroupModel> {
     const group = await this.groupsService.findById(parseInt(id));
     if (!group) {
       throw new NotFoundException('Group not found');
     }
-    return this.groupsService.update(parseInt(id), updatePurposeDto);
+    return this.groupsService.update(parseInt(id), updateGroupDto);
   }
 
   @UseGuards(AuthGuard)
@@ -109,6 +109,24 @@ export class GroupsController {
     }
 
     await this.groupsService.removeUserFromGroup(group, parseInt(memberId));
+
+    res.status(HttpStatus.NO_CONTENT);
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete('/:groupId/purposes')
+  async removePurposesFromGroup(@Param('groupId', ParseIntPipe) groupId: string, @Body() purposes: AddPurposeDto, @Req() request, @Res({ passthrough: true }) res: Response): Promise<void> {
+    const group = await this.groupsService.findById(parseInt(groupId));
+
+    if (!group) {
+      throw new NotFoundException('Group not found');
+    }
+
+    if (group.getOwner().getId() !== request.userId) {
+      throw new ForbiddenException('You are not the owner of this group');
+    }
+
+    await this.groupsService.removePurposesFromGroup(group, purposes.purposeIds);
 
     res.status(HttpStatus.NO_CONTENT);
   }

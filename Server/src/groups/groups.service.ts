@@ -155,4 +155,13 @@ export class GroupsService {
 
     return group;
   }
+
+  async removePurposesFromGroup(group: GroupModel, purposeIds: number[]): Promise<GroupModel> {
+
+    group.removePurposes(purposeIds);
+
+    await this.groupRepo.save(GroupModel.toEntity(group));
+
+    return group;
+  }
 }
