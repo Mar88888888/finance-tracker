@@ -141,4 +141,18 @@ export class GroupsService {
 
     return groupEntity;
   }
+
+  async removeUserFromGroup(group: GroupModel, memberId: number): Promise<GroupModel> {
+
+    const member = await this.userService.findOne(memberId);
+    if (!member) {
+      throw new NotFoundException('User not found');
+    }
+
+    group.removeMember(member);
+
+    await this.groupRepo.save(GroupModel.toEntity(group));
+
+    return group;
+  }
 }

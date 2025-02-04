@@ -94,4 +94,22 @@ export class GroupsController {
     await this.groupsService.remove(parseInt(id));
     res.status(HttpStatus.NO_CONTENT);
   }
+
+  @UseGuards(AuthGuard)
+  @Delete('/:groupId/members/:memberId')
+  async removeUserFromGroup(@Param('groupId', ParseIntPipe) groupId: string, @Param('memberId', ParseIntPipe) memberId: string, @Req() request, @Res({ passthrough: true }) res: Response): Promise<void> {
+    const group = await this.groupsService.findById(parseInt(groupId));
+
+    if (!group) {
+      throw new NotFoundException('Group not found');
+    }
+
+    if (group.getOwner().getId() !== request.userId) {
+      throw new ForbiddenException('You are not the owner of this group');
+    }
+
+    await this.groupsService.removeUserFromGroup(group, parseInt(memberId));
+
+    res.status(HttpStatus.NO_CONTENT);
+  }
 }
