@@ -98,11 +98,9 @@ export class GroupModel extends AbstractGroupModel {
     this.purposes = purposes;
   }
 
-  addPurpose(purpose: number): void {
-    this.purposes.push(purpose);
-  }
   addPurposes(purposes: number[]): void {
     this.purposes.push(...purposes);
+    this.purposes = [...new Set(this.purposes)];
   }
 
   removePurposes(purposeIds: number[]): void {

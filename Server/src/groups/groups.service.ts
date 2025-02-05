@@ -107,11 +107,8 @@ export class GroupsService {
     const { purposeIds } = purposes;
     group.addPurposes(purposeIds);
 
-    await this.groupRepo
-      .createQueryBuilder()
-      .relation(GroupEntity, 'purposes')
-      .of(group.getId())
-      .add(purposeIds);
+    await this.groupRepo.save(GroupModel.toEntity(group));
+
 
     return group;
   }
@@ -132,12 +129,7 @@ export class GroupsService {
   async remove(id: number): Promise<GroupModel> {
     const groupEntity = await this.findById(id);
 
-    await this.groupRepo
-      .createQueryBuilder()
-      .delete()
-      .from(GroupEntity)
-      .where('id = :id', { id })
-      .execute();
+    await this.groupRepo.delete(groupEntity.getId());
 
     return groupEntity;
   }

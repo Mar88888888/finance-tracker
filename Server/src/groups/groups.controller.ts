@@ -12,8 +12,9 @@ import { AuthGuard } from '../guards/auth.guard';
 import { JoinGroupDto } from './dto/join-group.dto';
 import { GroupModel } from './group.model';
 import { Response } from 'express';
-import { SerializeTransactionDto } from 'src/transactions/dto/serialize.transaction.dto';
+import { SerializeTransactionDto } from '../transactions/dto/serialize.transaction.dto';
 import { AddPurposeDto } from './dto/add-purpose.dto';
+import { OwnerGuard } from '../guards/group-owner.guard';
 
 @Controller('groups')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -23,20 +24,20 @@ export class GroupsController {
     private groupsService: GroupsService,
   ) { }
 
-  @Get('/:id/code')
-  async getJoinCode(@Param('id', ParseIntPipe) id: number) {
+  @Get('/:groupId/code')
+  async getJoinCode(@Param('groupId', ParseIntPipe) id: number) {
     return await this.groupsService.getGroupCode(id);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @SerializeOptions({ type: SerializeTransactionDto })
-  @Get('/:id/transactions')
-  async getTransactions(@Param('id', ParseIntPipe) id: number) {
+  @Get('/:groupId/transactions')
+  async getTransactions(@Param('groupId', ParseIntPipe) id: number) {
     return await this.groupsService.getTransactions(id);
   }
 
-  @Get('/:id')
-  async getById(@Param('id', ParseIntPipe) id: number) {
+  @Get('/:groupId')
+  async getById(@Param('groupId', ParseIntPipe) id: number) {
     return await this.groupsService.findById(id);
   }
 
@@ -54,14 +55,15 @@ export class GroupsController {
     return this.groupsService.create(request.userId, createGroupDto);
   }
 
-  @UseGuards(AuthGuard)
-  @Post('/:id/purposes')
-  async addPurposes(@Param('id', ParseIntPipe) groupId: string, @Body() purposes: AddPurposeDto): Promise<GroupModel> {
+  @UseGuards(AuthGuard, OwnerGuard)
+  @Post('/:groupId/purposes')
+  async addPurposes(@Param('groupId', ParseIntPipe) groupId: string, @Body() purposes: AddPurposeDto): Promise<GroupModel> {
     return this.groupsService.addPurposes(groupId, purposes);
   }
 
-  @Patch(':id')
-  async update(@Param('id', ParseIntPipe) id: string, @Body() updateGroupDto: UpdateGroupDto): Promise<GroupModel> {
+  @UseGuards(AuthGuard, OwnerGuard)
+  @Patch(':groupId')
+  async update(@Param('groupId', ParseIntPipe) id: string, @Body() updateGroupDto: UpdateGroupDto): Promise<GroupModel> {
     const group = await this.groupsService.findById(parseInt(id));
     if (!group) {
       throw new NotFoundException('Group not found');
@@ -78,9 +80,9 @@ export class GroupsController {
     return this.groupsService.joinGroup(joinGroupDto.joinCode, request.userId);
   }
 
-  @UseGuards(AuthGuard)
-  @Delete('/:id')
-  async remove(@Param('id', ParseIntPipe) id: string, @Req() request, @Res({ passthrough: true }) res: Response): Promise<void> {
+  @UseGuards(AuthGuard, OwnerGuard)
+  @Delete('/:groupId')
+  async remove(@Param('groupId', ParseIntPipe) id: string, @Req() request, @Res({ passthrough: true }) res: Response): Promise<void> {
     const group = await this.groupsService.findById(parseInt(id));
 
     if (!group) {
@@ -95,7 +97,7 @@ export class GroupsController {
     res.status(HttpStatus.NO_CONTENT);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, OwnerGuard)
   @Delete('/:groupId/members/:memberId')
   async removeUserFromGroup(@Param('groupId', ParseIntPipe) groupId: string, @Param('memberId', ParseIntPipe) memberId: string, @Req() request, @Res({ passthrough: true }) res: Response): Promise<void> {
     const group = await this.groupsService.findById(parseInt(groupId));
@@ -113,7 +115,7 @@ export class GroupsController {
     res.status(HttpStatus.NO_CONTENT);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, OwnerGuard)
   @Delete('/:groupId/purposes')
   async removePurposesFromGroup(@Param('groupId', ParseIntPipe) groupId: string, @Body() purposes: AddPurposeDto, @Req() request, @Res({ passthrough: true }) res: Response): Promise<void> {
     const group = await this.groupsService.findById(parseInt(groupId));
