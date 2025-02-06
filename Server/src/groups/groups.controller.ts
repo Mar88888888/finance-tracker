@@ -116,8 +116,8 @@ export class GroupsController {
   }
 
   @UseGuards(AuthGuard, OwnerGuard)
-  @Delete('/:groupId/purposes')
-  async removePurposesFromGroup(@Param('groupId', ParseIntPipe) groupId: string, @Body() purposes: AddPurposeDto, @Req() request, @Res({ passthrough: true }) res: Response): Promise<void> {
+  @Delete('/:groupId/purposes/:purposeId')
+  async removePurposesFromGroup(@Param('groupId', ParseIntPipe) groupId: string, @Param('purposeId', ParseIntPipe) purposeId: string, @Req() request, @Res({ passthrough: true }) res: Response): Promise<void> {
     const group = await this.groupsService.findById(parseInt(groupId));
 
     if (!group) {
@@ -128,7 +128,7 @@ export class GroupsController {
       throw new ForbiddenException('You are not the owner of this group');
     }
 
-    await this.groupsService.removePurposesFromGroup(group, purposes.purposeIds);
+    await this.groupsService.removePurposeFromGroup(group, parseInt(purposeId));
 
     res.status(HttpStatus.NO_CONTENT);
   }

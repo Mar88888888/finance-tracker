@@ -4,7 +4,7 @@ export abstract class AbstractPurpose {
   protected id: number;
   protected category: string;
   protected type: boolean;
-  protected user: UserModel;
+  protected userId: number;
 
   getId(): number {
     return this.id;
@@ -30,11 +30,11 @@ export abstract class AbstractPurpose {
     this.type = type;
   }
 
-  getUser(): UserModel {
-    return this.user;
+  getUserId(): number {
+    return this.userId;
   }
 
-  setUser(user: UserModel): void {
-    this.user = user;
+  setUserId(userId: number): void {
+    this.userId = userId;
   }
 }

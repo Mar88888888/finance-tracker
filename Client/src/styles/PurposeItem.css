@@ -3,10 +3,14 @@
   padding: 20px;
   border-bottom: 1px solid #ddd;
   text-align: center;
+  vertical-align: middle;
+
 }
 
 .purpose-item div {
   flex: 1;
+  font-size: 26px;
+  margin-top: 25px;
 }
 
 .purpose-item:nth-child(odd) {

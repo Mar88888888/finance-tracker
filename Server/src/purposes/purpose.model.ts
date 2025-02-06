@@ -1,18 +1,18 @@
 import { TransactionEntity } from '../transactions/transaction.entity';
 import { PurposeEntity } from './purpose.entity';
 import { AbstractPurpose } from './abstracts/purpose.model.abstract';
-import { UserModel } from 'src/users/user.model';
+import { UserEntity } from '../users/user.entity';
 
 export class PurposeModel extends AbstractPurpose {
   private transactions: TransactionEntity[] = [];
 
 
-  constructor(id: number, category: string, type: boolean, user: UserModel) {
+  constructor(id: number, category: string, type: boolean, userId: number) {
     super();
     this.id = id;
     this.category = category;
     this.type = type;
-    this.user = user;
+    this.userId = userId;
   }
 
   getTransactions(): TransactionEntity[] {
@@ -28,7 +28,7 @@ export class PurposeModel extends AbstractPurpose {
       entity.id,
       entity.category,
       entity.type,
-      UserModel.fromEntity(entity.user)
+      entity.user.id
     );
     model.setTransactions(entity.transactions || []);
     return model;
@@ -40,7 +40,7 @@ export class PurposeModel extends AbstractPurpose {
     entity.category = model.getCategory();
     entity.type = model.getType();
     entity.transactions = model.getTransactions();
-    entity.user = UserModel.toEntity(model.getUser());
+    entity.user = { id: model.userId } as UserEntity;
     return entity;
   }
 }

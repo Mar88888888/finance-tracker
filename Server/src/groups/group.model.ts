@@ -103,8 +103,8 @@ export class GroupModel extends AbstractGroupModel {
     this.purposes = [...new Set(this.purposes)];
   }
 
-  removePurposes(purposeIds: number[]): void {
-    this.purposes = this.purposes.filter((purpose) => !purposeIds.includes(purpose));
+  removePurpose(purposeId: number): void {
+    this.purposes = this.purposes.filter((purpose) => purposeId != purpose);
   }
 
 
