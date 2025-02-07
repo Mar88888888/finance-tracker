@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import PurposeItem from './PurposeItem';
 import '../styles/PurposesList.css';
 
-const PurposesList = ({ purposesData, groupId, setPurposes }) => {
+const PurposesList = ({ purposesData, groupId, setPurposes, isOwner }) => {
   if (!purposesData.length) {
     return <p>No purposes available.</p>;
   }
@@ -12,7 +12,7 @@ const PurposesList = ({ purposesData, groupId, setPurposes }) => {
 
     <div className="purposes-list">
       {purposesData.map((purpose) => (
-        <PurposeItem key={purpose.id} purpose={purpose} groupId={groupId} setPurposes={setPurposes} purposes={purposesData} />
+        <PurposeItem key={purpose.id} isOwner={isOwner} purpose={purpose} groupId={groupId} setPurposes={setPurposes} purposes={purposesData} />
       ))}
     </div>
   );

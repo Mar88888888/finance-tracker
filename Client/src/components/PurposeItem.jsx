@@ -4,7 +4,7 @@ import '../styles/PurposeItem.css';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 
-const PurposeItem = ({ purpose, groupId, setPurposes, purposes }) => {
+const PurposeItem = ({ purpose, groupId, setPurposes, purposes, isOwner }) => {
   const { authToken } = useContext(AuthContext);
 
   const handleDeletePurpose = async () => {
@@ -22,8 +22,12 @@ const PurposeItem = ({ purpose, groupId, setPurposes, purposes }) => {
 
   return (
     <div className="purpose-item">
-      <div>{purpose.category}</div>
-      <button onClick={handleDeletePurpose} className='create-btn'>Delete</button>
+      <div className='category-container'>{purpose.category}</div>
+      {isOwner && (
+        <div className='btn-container'>
+          <button onClick={handleDeletePurpose} className='create-btn'>Delete</button>
+        </div>
+      )}
     </div>
   );
 };

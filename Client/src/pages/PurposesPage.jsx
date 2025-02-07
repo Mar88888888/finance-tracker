@@ -54,7 +54,7 @@ const PurposesPage = () => {
       >
         Add Purpose
       </button>
-      <PurposesList purposesData={purposes} />
+      <PurposesList purposesData={purposes} isOwner={true} setPurposes={setPurposes} />
     </div>
   );
 };

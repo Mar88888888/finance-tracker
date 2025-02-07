@@ -55,7 +55,7 @@ export class GroupsController {
     return this.groupsService.create(request.userId, createGroupDto);
   }
 
-  @UseGuards(AuthGuard, OwnerGuard)
+  @UseGuards(AuthGuard)
   @Post('/:groupId/purposes')
   async addPurposes(@Param('groupId', ParseIntPipe) groupId: string, @Body() purposes: AddPurposeDto): Promise<GroupModel> {
     return this.groupsService.addPurposes(groupId, purposes);

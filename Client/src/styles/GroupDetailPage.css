@@ -49,6 +49,7 @@
 }
 
 .member-item {
+  position: relative;
   background-color: #222;
   padding: 15px;
   border-radius: 8px;
@@ -330,4 +331,29 @@
   margin-left: 10px;
   color: red;
   font-weight: bold;
+}
+
+.kick-btn {
+  position: absolute;
+  bottom: 20px;
+  right: 15px;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.kick-btn:hover {
+  background-color: #e60000;
+  transform: scale(1.05);
+}
+
+.kick-btn:active {
+  background-color: #cc0000;
+  transform: scale(0.95);
 }

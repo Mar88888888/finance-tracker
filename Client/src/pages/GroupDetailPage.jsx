@@ -112,6 +112,22 @@ const GroupDetailPage = () => {
     }
   };
 
+  const handleKickMember = async (memberId, memberName) => {
+    if (!window.confirm(`Are you sure you want to remove ${memberName}?`)) return;
+
+    try {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/groups/${groupId}/members/${memberId}`, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+
+      setGroup((prevGroup) => ({
+        ...prevGroup,
+        members: prevGroup.members.filter((member) => member.id !== memberId),
+      }));
+    } catch (err) {
+      console.error('Failed to remove member:', err);
+    }
+  };
 
 
   useEffect(() => {
@@ -168,11 +184,9 @@ const GroupDetailPage = () => {
             <button className={viewMode === 'transactions' ? 'active' : ''} onClick={() => setViewMode('transactions')}>
               View Transactions
             </button>
-            {group.owner.id === user.id && (
-              <button className={viewMode === 'settings' ? 'active' : ''} onClick={() => setViewMode('settings')}>
-                View Settings
-              </button>
-            )}
+            <button className={viewMode === 'settings' ? 'active' : ''} onClick={() => setViewMode('settings')}>
+              View Purposes
+            </button>
           </div>
           {viewMode === 'members' && (
             <div>
@@ -187,6 +201,12 @@ const GroupDetailPage = () => {
                       <p>Email: {member.email}</p>
                       <p>Age: {member.age}</p>
                       <p>Gender: {member.gender ? 'Male' : 'Female'}</p>
+                      {group.owner.id === user.id && member.id !== group.owner.id && (
+                        <button className="kick-btn" onClick={() => handleKickMember(member.id, member.name)}>
+                          Kick
+                        </button>
+                      )
+                      }
                     </div>
                   ))}
                 </div>
@@ -201,12 +221,11 @@ const GroupDetailPage = () => {
               )}
             </div>
           )}
-          {viewMode === 'settings' && group.owner.id === user.id && (
+          {viewMode === 'settings' && (
             <div>
-              <h2>Group Settings</h2>
-              <h3>Group Purposes</h3>
+              <h2>Group Purposes</h2>
               {groupPurposes.length === 0 ? <p>No purposes assigned to this group.</p> : (
-                <PurposesList purposesData={groupPurposes} groupId={group.id} setPurposes={setGroupPurposes} />
+                <PurposesList purposesData={groupPurposes} isOwner={group.owner.id === user.id} groupId={group.id} setPurposes={setGroupPurposes} />
               )}
               <button
                 className="add-purpose-btn"
