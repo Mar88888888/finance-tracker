@@ -15,6 +15,7 @@ import { Response } from 'express';
 import { SerializeTransactionDto } from '../transactions/dto/serialize.transaction.dto';
 import { AddPurposeDto } from './dto/add-purpose.dto';
 import { OwnerGuard } from '../guards/group-owner.guard';
+import { MemberGuard } from '../guards/group-member.guard';
 
 @Controller('groups')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -24,6 +25,7 @@ export class GroupsController {
     private groupsService: GroupsService,
   ) { }
 
+  @UseGuards(AuthGuard, MemberGuard)
   @Get('/:groupId/code')
   async getJoinCode(@Param('groupId', ParseIntPipe) id: number) {
     return await this.groupsService.getGroupCode(id);
@@ -31,11 +33,13 @@ export class GroupsController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @SerializeOptions({ type: SerializeTransactionDto })
+  @UseGuards(AuthGuard, MemberGuard)
   @Get('/:groupId/transactions')
   async getTransactions(@Param('groupId', ParseIntPipe) id: number) {
     return await this.groupsService.getTransactions(id);
   }
 
+  @UseGuards(AuthGuard, MemberGuard)
   @Get('/:groupId')
   async getById(@Param('groupId', ParseIntPipe) id: number) {
     return await this.groupsService.findById(id);
@@ -55,14 +59,14 @@ export class GroupsController {
     return this.groupsService.create(request.userId, createGroupDto);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, MemberGuard)
   @Post('/:groupId/purposes')
   async addPurposes(@Param('groupId', ParseIntPipe) groupId: string, @Body() purposes: AddPurposeDto): Promise<GroupModel> {
     return this.groupsService.addPurposes(groupId, purposes);
   }
 
   @UseGuards(AuthGuard, OwnerGuard)
-  @Patch(':groupId')
+  @Patch('/:groupId')
   async update(@Param('groupId', ParseIntPipe) id: string, @Body() updateGroupDto: UpdateGroupDto): Promise<GroupModel> {
     const group = await this.groupsService.findById(parseInt(id));
     if (!group) {
@@ -71,7 +75,7 @@ export class GroupsController {
     return this.groupsService.update(parseInt(id), updateGroupDto);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, MemberGuard)
   @Post('/members')
   async joinGroup(
     @Body() joinGroupDto: JoinGroupDto,
