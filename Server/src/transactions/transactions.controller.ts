@@ -3,7 +3,8 @@ import {
   Param, NotFoundException, Query, UseGuards, Req,
   UseInterceptors, SerializeOptions, ClassSerializerInterceptor,
   Res, HttpStatus,
-  ParseIntPipe
+  ParseIntPipe,
+  ForbiddenException
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
@@ -15,6 +16,7 @@ import { UserSerializeDto } from 'src/users/dto/serialize.user.dto';
 import { TransactionModel } from './transaction.model';
 import { UserModel } from 'src/users/user.model';
 import { UsersService } from 'src/users/users.service';
+import { TransactionOwnerGuard } from 'src/guards/transaction-owner.guard';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: SerializeTransactionDto })
@@ -69,24 +71,34 @@ export class TransactionsController {
     }
   }
 
-  @Get('/:id')
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<TransactionModel> {
+  @UseGuards(AuthGuard, TransactionOwnerGuard)
+  @Get('/:transactionId')
+  async findOne(@Param('transactionId', ParseIntPipe) transactionId: number, @Req() request): Promise<TransactionModel> {
+    let transaction: TransactionModel;
     try {
-      return await this.transactionsService.findOne(id);
+      transaction = await this.transactionsService.findOne(transactionId);
     } catch (error) {
       throw new NotFoundException('Transaction not found');
     }
+
+    if (transaction.getMemberId() !== request.userId) {
+      throw new ForbiddenException('You are not allowed to access this transaction');
+    }
+
+    return transaction
   }
 
-  @Patch('/:id')
-  async update(@Param('id', ParseIntPipe) id: number, @Body() updateTransactionDto: UpdateTransactionDto): Promise<TransactionModel> {
-    return await this.transactionsService.update(id, updateTransactionDto);
+  @UseGuards(AuthGuard, TransactionOwnerGuard)
+  @Patch('/:transactionId')
+  async update(@Param('transactionId', ParseIntPipe) transactionId: number, @Body() updateTransactionDto: UpdateTransactionDto): Promise<TransactionModel> {
+    return await this.transactionsService.update(transactionId, updateTransactionDto);
   }
 
-  @Delete('/:id')
-  async remove(@Param('id', ParseIntPipe) id: number): Promise<TransactionModel> {
+  @UseGuards(AuthGuard, TransactionOwnerGuard)
+  @Delete('/:transactionId')
+  async remove(@Param('transactionId', ParseIntPipe) transactionId: number): Promise<TransactionModel> {
     try {
-      return await this.transactionsService.remove(id);
+      return await this.transactionsService.remove(transactionId);
     } catch (error) {
       throw new NotFoundException('Transaction not found');
     }

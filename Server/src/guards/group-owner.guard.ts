@@ -2,7 +2,7 @@ import { CanActivate, ExecutionContext, ForbiddenException, Injectable, NotFound
 import { GroupsService } from '../groups/groups.service';
 
 @Injectable()
-export class OwnerGuard implements CanActivate {
+export class GroupOwnerGuard implements CanActivate {
   constructor(
     private readonly groupsService: GroupsService
   ) { }
