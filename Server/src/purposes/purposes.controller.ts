@@ -4,6 +4,7 @@ import { CreatePurposeDto } from './dto/create-purpose.dto';
 import { UpdatePurposeDto } from './dto/update-purpose.dto';
 import { PurposeModel } from './purpose.model';
 import { AuthGuard } from '../guards/auth.guard';
+import { PurposeOwnerGuard } from '../guards/purpose-owner.guard';
 
 @Controller('purposes')
 export class PurposesController {
@@ -35,21 +36,23 @@ export class PurposesController {
     return this.purposeService.create(req.userId, createPurposeDto);
   }
 
-  @Patch(':id')
-  async update(@Param('id', ParseIntPipe) id: string, @Body() updatePurposeDto: UpdatePurposeDto): Promise<PurposeModel> {
-    const purpose = await this.purposeService.findOne(parseInt(id));
+  @UseGuards(AuthGuard, PurposeOwnerGuard)
+  @Patch(':purposeId')
+  async update(@Param('purposeId', ParseIntPipe) purposeId: string, @Body() updatePurposeDto: UpdatePurposeDto): Promise<PurposeModel> {
+    const purpose = await this.purposeService.findOne(parseInt(purposeId));
     if (!purpose) {
       throw new NotFoundException('Purpose not found');
     }
-    return this.purposeService.update(parseInt(id), updatePurposeDto);
+    return this.purposeService.update(parseInt(purposeId), updatePurposeDto);
   }
 
-  @Delete(':id')
-  async remove(@Param('id', ParseIntPipe) id: string): Promise<void> {
-    const purpose = await this.purposeService.findOne(parseInt(id));
+  @UseGuards(AuthGuard, PurposeOwnerGuard)
+  @Delete(':purposeId')
+  async remove(@Param('purposeId', ParseIntPipe) purposeId: string): Promise<void> {
+    const purpose = await this.purposeService.findOne(parseInt(purposeId));
     if (!purpose) {
       throw new NotFoundException('Purpose not found');
     }
-    await this.purposeService.remove(parseInt(id));
+    await this.purposeService.remove(parseInt(purposeId));
   }
 }
