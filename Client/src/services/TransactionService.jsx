@@ -1,8 +1,8 @@
-import axios from 'axios';
+import API from "./AxiosInstance";
 
 export const fetchUserById = async (userId, authToken) => {
   try {
-    const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/users/${userId}`, {
+    const userResponse = await API.get(`/users/${userId}`, {
       headers: {
         Authorization: `Bearer ${authToken}`,
       },
@@ -15,7 +15,7 @@ export const fetchUserById = async (userId, authToken) => {
 
 export const fetchPurposeById = async (purposeId, authToken) => {
   try {
-    const purposeResponse = await axios.get(`${process.env.REACT_APP_API_URL}/purposes/${purposeId}`, {
+    const purposeResponse = await API.get(`/purposes/${purposeId}`, {
       headers: {
         Authorization: `Bearer ${authToken}`,
       },

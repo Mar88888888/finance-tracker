@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect, useMemo } from 'react';
-import axios from 'axios';
+import API from "../services/AxiosInstance";
 
-export const AuthContext = createContext(); 
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(() => {
@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
             }
 
             try {
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/users/auth/bytoken`, {
+                const response = await API.get(`/users/auth/bytoken`, {
                     headers: {
                         'Authorization': `Bearer ${authToken}`,
                     },

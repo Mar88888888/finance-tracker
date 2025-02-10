@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import axios from 'axios';
+import API from "../services/AxiosInstance";
 import '../styles/CreateGroupPage.css';
 
 const CreateGroupPage = () => {
@@ -13,8 +13,7 @@ const CreateGroupPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/groups`,
+      const response = await API.post('/groups',
         { title: groupTitle },
         {
           headers: {

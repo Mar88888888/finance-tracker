@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
+import API from "../services/AxiosInstance";
 import { AuthContext } from '../context/AuthContext';
 import '../styles/GroupDetailPage.css';
 import TransactionsList from '../components/TransactionsList';
@@ -23,7 +23,7 @@ const GroupDetailPage = () => {
 
   const fetchAvailablePurposes = useCallback(async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/purposes/`, {
+      const response = await API.get('/purposes/', {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       setAvailablePurposes(response.data);
@@ -40,7 +40,7 @@ const GroupDetailPage = () => {
 
   const fetchGroupDetails = useCallback(async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/groups/${groupId}`, {
+      const response = await API.get(`/groups/${groupId}`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -63,7 +63,7 @@ const GroupDetailPage = () => {
 
   const fetchGroupTransactions = useCallback(async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/groups/${groupId}/transactions`, {
+      const response = await API.get(`/groups/${groupId}/transactions`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -79,7 +79,7 @@ const GroupDetailPage = () => {
 
     try {
       const purposeRequests = group.purposes.map((id) =>
-        axios.get(`${process.env.REACT_APP_API_URL}/purposes/${id}`, {
+        API.get(`/purposes/${id}`, {
           headers: { Authorization: `Bearer ${authToken}` },
         })
       );
@@ -95,8 +95,7 @@ const GroupDetailPage = () => {
     if (selectedPurposeIds.length === 0) return;
 
     try {
-      await axios.post(
-        `${process.env.REACT_APP_API_URL}/groups/${groupId}/purposes`,
+      await API.post(`/groups/${groupId}/purposes`,
         { purposeIds: selectedPurposeIds.map((p) => p.id) },
         {
           headers: { Authorization: `Bearer ${authToken}` },
@@ -116,7 +115,7 @@ const GroupDetailPage = () => {
     if (!window.confirm(`Are you sure you want to remove ${memberName}?`)) return;
 
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/groups/${groupId}/members/${memberId}`, {
+      await API.delete(`/groups/${groupId}/members/${memberId}`, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
 

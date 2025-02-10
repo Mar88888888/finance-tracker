@@ -1,5 +1,5 @@
-import React, { useContext  } from 'react';
-import axios from 'axios';
+import React, { useContext } from 'react';
+import API from "../services/AxiosInstance";
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
@@ -10,11 +10,11 @@ const EmailVerificationRequired = () => {
 
     const handleLogout = async () => {
         try {
-          await axios.post(`${process.env.REACT_APP_API_URL}/user/auth/signout`, {}, { withCredentials: true });
-          setUser(null);
-          navigate('/login');
+            await API.post('/user/auth/signout', {}, { withCredentials: true });
+            setUser(null);
+            navigate('/login');
         } catch (error) {
-        console.error('Error during logout:', error);
+            console.error('Error during logout:', error);
         }
     };
 
@@ -22,7 +22,7 @@ const EmailVerificationRequired = () => {
         <div className="verification-required-container container">
             <div className="logout-container">
                 <button onClick={handleLogout} className="logout-button">
-                Logout
+                    Logout
                 </button>
             </div>
 

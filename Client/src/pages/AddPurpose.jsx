@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import API from "../services/AxiosInstance";
 import { AuthContext } from '../context/AuthContext';
 import '../styles/AddTransaction.css';
 
@@ -18,8 +18,7 @@ const AddPurpose = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/purposes`,
+      const response = await API.post('/purposes',
         form,
         {
           headers: { Authorization: `Bearer ${authToken}` },

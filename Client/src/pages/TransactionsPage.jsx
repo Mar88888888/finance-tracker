@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import TransactionsList from '../components/TransactionsList';
+import API from "../services/AxiosInstance";
 
 import '../styles/TransactionsPage.css';
 
@@ -16,7 +16,7 @@ const TransactionsPage = () => {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/transactions`, {
+        const response = await API.get(`/transactions`, {
           headers: {
             Authorization: `Bearer ${authToken}`,
           },

@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import API from "../services/AxiosInstance";
 import { AuthContext } from '../context/AuthContext';
 import '../styles/AddTransaction.css';
+
 
 const AddTransaction = () => {
   const { authToken } = useContext(AuthContext);
@@ -14,8 +15,7 @@ const AddTransaction = () => {
   useEffect(() => {
     const fetchPurposes = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/purposes`,
+        const response = await API.get('/purposes',
           {
             headers: { Authorization: `Bearer ${authToken}` },
           }
@@ -41,8 +41,7 @@ const AddTransaction = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/transactions`,
+      const response = await API.post('/transactions',
         form,
         {
           headers: { Authorization: `Bearer ${authToken}` },

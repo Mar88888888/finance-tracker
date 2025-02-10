@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import axios from 'axios';
+import API from "../services/AxiosInstance";
 import { AuthContext } from '../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/GroupsPage.css';
@@ -17,7 +17,7 @@ const GroupsPage = () => {
   useEffect(() => {
     const fetchGroups = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/groups`, {
+        const response = await API.get('/groups', {
           headers: {
             Authorization: `Bearer ${authToken}`,
           },
@@ -45,8 +45,7 @@ const GroupsPage = () => {
 
   const handleJoinGroup = async () => {
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/groups/members`,
+      const response = await API.post('/groups/members',
         { joinCode },
         {
           headers: {

@@ -1,21 +1,26 @@
 import React, { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import '../styles/PurposeItem.css';
-import axios from 'axios';
+import API from "../services/AxiosInstance";
 import { AuthContext } from '../context/AuthContext';
 
 const PurposeItem = ({ purpose, groupId, setPurposes, purposes, isOwner }) => {
   const { authToken } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleDeletePurpose = async () => {
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/groups/${groupId}/purposes/${purpose.id}`, {
+      await API.delete(`/groups/${groupId}/purposes/${purpose.id}`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
       });
       setPurposes(purposes.filter((p) => p.id !== purpose.id));
     } catch (err) {
+      if (err.status === 401) {
+        navigate('/login');
+      }
       console.error(err);
     }
   }

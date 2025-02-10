@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import API from "../services/AxiosInstance";
 import { AuthContext } from '../context/AuthContext';
 import '../styles/Login.css'
 
@@ -15,8 +15,8 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const url = `${process.env.REACT_APP_API_URL}/users/auth/signin`;
-            const response = await axios.post(url, { email, password }, { withCredentials: true });
+            const url = `/users/auth/signin`;
+            const response = await API.post(url, { email, password }, { withCredentials: true });
 
             if (response.status === 200 || response.status === 201) {
                 setUser(response.data.user);

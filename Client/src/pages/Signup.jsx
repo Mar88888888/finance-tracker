@@ -1,6 +1,5 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
 
 const SignUp = () => {
     const [username, setUsername] = useState('');
@@ -11,7 +10,6 @@ const SignUp = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
-    const { setUser } = useContext(AuthContext);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -29,14 +27,14 @@ const SignUp = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                  name: username,
-                  email,
-                  password,
-                  age, 
-                  gender: gender === 'male' ? true : false,
+                    name: username,
+                    email,
+                    password,
+                    age,
+                    gender: gender === 'male' ? true : false,
                 }),
             });
-            if(response.status === 400){
+            if (response.status === 400) {
                 throw new Error('Email already in use!')
             }
             alert('Check your email to verify it and use the app without limits!');
@@ -58,7 +56,7 @@ const SignUp = () => {
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             required
-                            />
+                        />
                     </div>
                     <div>
                         <label>Email</label>
@@ -67,7 +65,7 @@ const SignUp = () => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            />
+                        />
                     </div>
                     <div>
                         <label>Password</label>
@@ -76,7 +74,7 @@ const SignUp = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
-                            />
+                        />
                     </div>
                     <div>
                         <label>Confirm Password</label>
@@ -85,7 +83,7 @@ const SignUp = () => {
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             required
-                            />
+                        />
                     </div>
                     <div>
                         <label>Age</label>
@@ -94,21 +92,21 @@ const SignUp = () => {
                             value={age}
                             onChange={(e) => setAge(e.target.value)}
                             required
-                            />
+                        />
                     </div>
                     <div>
                         <label>Gender</label>
                         <div className="radio-group">
                             <div className="radio-option">
-                            <input type="radio" id="male" name="gender" value="male"  onChange={(e) => setGender(e.target.value)} />
-                            <label htmlFor="male">Male</label>
+                                <input type="radio" id="male" name="gender" value="male" onChange={(e) => setGender(e.target.value)} />
+                                <label htmlFor="male">Male</label>
                             </div>
                             <div className="radio-option">
-                            <input type="radio" id="female" name="gender" value="female"  onChange={(e) => setGender(e.target.value)} />
-                            <label htmlFor="female">Female</label>
+                                <input type="radio" id="female" name="gender" value="female" onChange={(e) => setGender(e.target.value)} />
+                                <label htmlFor="female">Female</label>
                             </div>
                         </div>
-                    </div>     
+                    </div>
                     {error && <p style={{ color: 'red' }}>{error}</p>}
                     <button type="submit">Sign Up</button>
                 </form>

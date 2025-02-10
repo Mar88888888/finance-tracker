@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import API from "../services/AxiosInstance";
 import { AuthContext } from '../context/AuthContext';
 import PurposesList from '../components/PurposesList';
 
@@ -16,7 +16,7 @@ const PurposesPage = () => {
   useEffect(() => {
     const fetchPurposes = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/purposes`, {
+        const response = await API.get(`/purposes`, {
           headers: {
             Authorization: `Bearer ${authToken}`,
           },
