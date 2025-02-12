@@ -20,13 +20,13 @@
   gap: 10px;
 }
 
-.btn-container .create-btn {
+/* .btn-container .create-btn {
   display: flex;
   flex-direction: row-reverse;
   gap: 10px;
   margin-left: auto;
   margin-right: 10px;
-}
+} */
 
 .purpose-item:nth-child(odd) {
   background-color: #1a1a1a;

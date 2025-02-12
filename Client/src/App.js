@@ -16,6 +16,7 @@ import TransactionsPage from './pages/TransactionsPage';
 import AddTransaction from './pages/AddTransaction';
 import PurposesPage from './pages/PurposesPage';
 import AddPurpose from './pages/AddPurpose';
+import EditPurpose from './pages/EditPurpose';
 
 const App = () => {
     return (
@@ -31,6 +32,7 @@ const App = () => {
                     <Route path="/transactions/add" element={<PrivateRoute><AddTransaction /></PrivateRoute>} />
                     <Route path="/purposes" element={<PrivateRoute><PurposesPage /></PrivateRoute>} />
                     <Route path="/purposes/add" element={<PrivateRoute><AddPurpose /></PrivateRoute>} />
+                    <Route path="/purposes/edit/:purposeId" element={<PrivateRoute><EditPurpose /></PrivateRoute>} />
                     <Route path="/groups" element={<PrivateRoute><GroupsPage /></PrivateRoute>} />
                     <Route path="/new-group" element={<PrivateRoute><CreateGroupPage /></PrivateRoute>} />
                     <Route path="/groups/:groupId" element={<PrivateRoute><GroupDetailPage /></PrivateRoute>} />

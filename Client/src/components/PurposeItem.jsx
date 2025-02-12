@@ -25,11 +25,16 @@ const PurposeItem = ({ purpose, groupId, setPurposes, purposes, isOwner }) => {
     }
   }
 
+  const handleEditPurpose = async () => {
+    navigate(`/purposes/edit/${purpose.id}`);
+  }
+
   return (
     <div className="purpose-item">
       <div className='category-container'>{purpose.category}</div>
       {isOwner && (
         <div className='btn-container'>
+          <button onClick={handleEditPurpose} className='create-btn'>Edit</button>
           <button onClick={handleDeletePurpose} className='create-btn'>Delete</button>
         </div>
       )}
