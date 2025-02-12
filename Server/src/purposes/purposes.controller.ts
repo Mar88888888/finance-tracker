@@ -37,7 +37,7 @@ export class PurposesController {
   }
 
   @UseGuards(AuthGuard, PurposeOwnerGuard)
-  @Patch(':purposeId')
+  @Patch('/:purposeId')
   async update(@Param('purposeId', ParseIntPipe) purposeId: string, @Body() updatePurposeDto: UpdatePurposeDto): Promise<PurposeModel> {
     const purpose = await this.purposeService.findOne(parseInt(purposeId));
     if (!purpose) {
@@ -47,7 +47,7 @@ export class PurposesController {
   }
 
   @UseGuards(AuthGuard, PurposeOwnerGuard)
-  @Delete(':purposeId')
+  @Delete('/:purposeId')
   async remove(@Param('purposeId', ParseIntPipe) purposeId: string): Promise<void> {
     const purpose = await this.purposeService.findOne(parseInt(purposeId));
     if (!purpose) {

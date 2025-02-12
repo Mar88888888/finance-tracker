@@ -1,14 +1,48 @@
-import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useContext, useCallback, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import API from "../services/AxiosInstance";
 import { AuthContext } from '../context/AuthContext';
 import '../styles/AddTransaction.css';
 
-const AddPurpose = () => {
+const EditPurpose = () => {
+  const { purposeId } = useParams();
   const { authToken } = useContext(AuthContext);
   const [form, setForm] = useState({ category: "", type: false });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const [purpose, setPurpose] = useState(null);
+
+
+
+  const fetchPurposeDetails = useCallback(async () => {
+    try {
+      const response = await API.get(`/purposes/${purposeId}`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+
+      const purposeData = response.data;
+
+      setPurpose(purposeData);
+    } catch (err) {
+      setError('Failed to load group details.');
+    }
+  }, [purposeId, authToken]);
+
+
+  useEffect(() => {
+    if (authToken) {
+      fetchPurposeDetails();
+    }
+  }, [authToken, fetchPurposeDetails]);
+
+  useEffect(() => {
+    if (purpose) {
+      setForm((prev) => ({ ...prev, category: purpose.category || "" }));
+    }
+  }, [purpose]);
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -18,7 +52,7 @@ const AddPurpose = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await API.patch('/purposes',
+      const response = await API.patch(`/purposes/${purpose.id}`,
         form,
         {
           headers: { Authorization: `Bearer ${authToken}` },
@@ -48,11 +82,11 @@ const AddPurpose = () => {
           />
         </label>
         {error && <p className="error-message">{error}</p>}
-        <button type="submit">Add Purpose</button>
+        <button type="submit">Save Purpose</button>
       </form>
     </div>
   );
 };
 
-export default AddPurpose;
+export default EditPurpose;
 
