@@ -13,6 +13,21 @@ const TransactionsPage = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  const handleDeleteTransaction = async (transactionId) => {
+    try {
+      await API.delete(`/transactions/${transactionId}`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      setTransactions((prevTransactions) =>
+        prevTransactions.filter((t) => t.id !== transactionId)
+      );
+    } catch (err) {
+      setError('Failed to delete transaction.');
+    }
+  };
+
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
@@ -54,7 +69,7 @@ const TransactionsPage = () => {
       >
         Add Transaction
       </button>
-      <TransactionsList transactionsData={transactions} authToken={authToken} />
+      <TransactionsList transactionsData={transactions} authToken={authToken} onDeleteTransaction={handleDeleteTransaction} />
     </div>
   );
 };

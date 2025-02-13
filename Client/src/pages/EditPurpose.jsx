@@ -58,7 +58,7 @@ const EditPurpose = () => {
           headers: { Authorization: `Bearer ${authToken}` },
         }
       );
-      if (response.status === 201) {
+      if (response.status === 201 || response.status === 200) {
         navigate('/purposes');
       }
     } catch (err) {

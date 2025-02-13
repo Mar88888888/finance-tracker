@@ -34,7 +34,9 @@ const PurposeItem = ({ purpose, groupId, setPurposes, purposes, isOwner }) => {
       <div className='category-container'>{purpose.category}</div>
       {isOwner && (
         <div className='btn-container'>
-          <button onClick={handleEditPurpose} className='create-btn'>Edit</button>
+          {!groupId &&
+            <button onClick={handleEditPurpose} className='create-btn'>Edit</button>
+          }
           <button onClick={handleDeletePurpose} className='create-btn'>Delete</button>
         </div>
       )}

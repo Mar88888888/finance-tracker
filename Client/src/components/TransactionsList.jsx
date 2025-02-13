@@ -4,15 +4,15 @@ import '../styles/TransactionsList.css';
 import TransactionItem from './TransactionItem';
 import { fetchTransactionsWithRelations } from '../services/TransactionService';
 
-const TransactionsList = ({ transactionsData, authToken }) => {
+const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction }) => {
   const [transactions, setEnrichedTransactions] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
   useEffect(() => {
+
     const enrichTransactions = async () => {
-      console.log(transactionsData);
       if (transactionsData.length > 0) {
         const enriched = await fetchTransactionsWithRelations(transactionsData, authToken);
         console.log(enriched);
@@ -90,10 +90,15 @@ const TransactionsList = ({ transactionsData, authToken }) => {
             <div onClick={() => handleSort('date')}>
               Date {renderSortIndicator('date')}
             </div>
+            {onDeleteTransaction &&
+              <div>
+                Action
+              </div>
+            }
           </div>
 
           {paginatedTransactions.map((transaction) => (
-            <TransactionItem key={transaction.id} transaction={transaction} />
+            <TransactionItem key={transaction.id} transaction={transaction} onDeleteTransaction={onDeleteTransaction} />
           ))}
 
           <div className="pagination">
