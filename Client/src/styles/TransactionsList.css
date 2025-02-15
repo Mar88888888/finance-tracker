@@ -95,7 +95,8 @@
   border-color: #007bff;
 }
 
-.delete-btn {
+.delete-btn,
+.edit-btn {
   display: block;
   padding: 5px 8px;
   background-color: #e03e3e;
@@ -113,4 +114,8 @@
 
 .delete-btn:hover {
   background-color: #5750d0;
+}
+
+.edit-btn {
+  background-color: #007bff;
 }

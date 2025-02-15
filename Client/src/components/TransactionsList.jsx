@@ -91,9 +91,14 @@ const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction }) 
               Date {renderSortIndicator('date')}
             </div>
             {onDeleteTransaction &&
-              <div>
-                Action
-              </div>
+              <>
+                <div>
+                  Actions
+                </div>
+                <div>
+
+                </div>
+              </>
             }
           </div>
 

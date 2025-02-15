@@ -17,6 +17,7 @@ import AddTransaction from './pages/AddTransaction';
 import PurposesPage from './pages/PurposesPage';
 import AddPurpose from './pages/AddPurpose';
 import EditPurpose from './pages/EditPurpose';
+import EditTransaction from './pages/EditTransaction';
 
 const App = () => {
     return (
@@ -30,6 +31,7 @@ const App = () => {
                     <Route path="/" element={<HomePage />} />
                     <Route path="/transactions" element={<PrivateRoute><TransactionsPage /></PrivateRoute>} />
                     <Route path="/transactions/add" element={<PrivateRoute><AddTransaction /></PrivateRoute>} />
+                    <Route path="/transactions/edit/:transactionId" element={<PrivateRoute><EditTransaction /></PrivateRoute>} />
                     <Route path="/purposes" element={<PrivateRoute><PurposesPage /></PrivateRoute>} />
                     <Route path="/purposes/add" element={<PrivateRoute><AddPurpose /></PrivateRoute>} />
                     <Route path="/purposes/edit/:purposeId" element={<PrivateRoute><EditPurpose /></PrivateRoute>} />

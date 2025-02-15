@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import { IsNumber, IsDate, IsOptional } from 'class-validator';
 
 export class UpdateTransactionDto {
@@ -7,6 +8,8 @@ export class UpdateTransactionDto {
 
   @IsOptional()
   @IsDate()
+  @Type(() => Date)
+
   date?: Date;
 
   @IsOptional()
