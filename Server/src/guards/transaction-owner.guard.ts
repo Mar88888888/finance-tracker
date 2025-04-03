@@ -1,4 +1,5 @@
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, ForbiddenException,
+   Injectable, NotFoundException } from '@nestjs/common';
 import { TransactionsService } from '../transactions/transactions.service';
 
 @Injectable()

@@ -1,4 +1,5 @@
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, ForbiddenException,
+   Injectable, NotFoundException } from '@nestjs/common';
 import { GroupsService } from '../groups/groups.service';
 
 @Injectable()
@@ -16,7 +17,7 @@ export class MemberGuard implements CanActivate {
       throw new NotFoundException('Group ID is required');
     }
 
-    const group = await this.groupsService.findById(parseInt(groupId));
+    const group = await this.groupsService.findOne(parseInt(groupId));
 
     if (!group) {
       throw new NotFoundException('Group not found');

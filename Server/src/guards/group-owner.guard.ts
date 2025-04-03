@@ -16,7 +16,7 @@ export class GroupOwnerGuard implements CanActivate {
       throw new NotFoundException('Group ID is required');
     }
 
-    const group = await this.groupsService.findById(parseInt(groupId));
+    const group = await this.groupsService.findOne(parseInt(groupId));
 
     if (!group) {
       throw new NotFoundException('Group not found');

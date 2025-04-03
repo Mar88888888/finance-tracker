@@ -8,8 +8,6 @@ export class UserDtoConverter {
       email: model.getEmail(),
       age: model.getAge(),
       gender: model.getGender(),
-      isEmailVerified: model.getIsEmailVerified(),
-      verificationToken: model.getVerificationToken(),
     };
   }
 }

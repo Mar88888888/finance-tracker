@@ -1,5 +1,5 @@
-import { PurposeEntity } from "src/purposes/purpose.entity";
-import { UserEntity } from "src/users/user.entity";
+import { PurposeEntity } from "../purposes/purpose.entity";
+import { UserEntity } from "../users/user.entity";
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'group' })

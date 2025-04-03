@@ -11,7 +11,7 @@ import { UserDtoConverter } from './dto/user-dto.converter';
 export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
-    private usersRepository: Repository<UserEntity>,
+    private readonly usersRepository: Repository<UserEntity>,
   ) {}
 
   async findAll(): Promise<UserModel[]> {

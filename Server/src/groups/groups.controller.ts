@@ -1,7 +1,7 @@
 import {
   Body, ClassSerializerInterceptor, Controller,
-  Delete, ForbiddenException, Get, HttpStatus,
-  NotFoundException, Param, Patch, Post, Req, Res,
+  Delete, Get, HttpStatus,
+  Param, Patch, Post, Req, Res,
   SerializeOptions, UseGuards, UseInterceptors,
   ParseIntPipe
 } from '@nestjs/common';
@@ -16,18 +16,20 @@ import { SerializeTransactionDto } from '../transactions/dto/serialize.transacti
 import { AddPurposeDto } from './dto/add-purpose.dto';
 import { GroupOwnerGuard } from '../guards/group-owner.guard';
 import { MemberGuard } from '../guards/group-member.guard';
+import { TransactionModel } from '../transactions/transaction.model';
+import { IAuthorizedRequest } from '../abstracts/authorized-request.interface';
 
 @Controller('groups')
 @UseInterceptors(ClassSerializerInterceptor)
-@SerializeOptions({ type: GroupModel, })
+@SerializeOptions({ type: GroupModel })
 export class GroupsController {
   constructor(
-    private groupsService: GroupsService,
+    private readonly groupsService: GroupsService,
   ) { }
 
   @UseGuards(AuthGuard, MemberGuard)
   @Get('/:groupId/code')
-  async getJoinCode(@Param('groupId', ParseIntPipe) id: number) {
+  async getJoinCode(@Param('groupId', ParseIntPipe) id: number): Promise<string> {
     return await this.groupsService.getGroupCode(id);
   }
 
@@ -35,105 +37,89 @@ export class GroupsController {
   @SerializeOptions({ type: SerializeTransactionDto })
   @UseGuards(AuthGuard, MemberGuard)
   @Get('/:groupId/transactions')
-  async getTransactions(@Param('groupId', ParseIntPipe) id: number) {
+  async getTransactions(@Param('groupId', ParseIntPipe) id: number): Promise<TransactionModel[]> {
     return await this.groupsService.getTransactions(id);
   }
 
   @UseGuards(AuthGuard, MemberGuard)
   @Get('/:groupId')
-  async getById(@Param('groupId', ParseIntPipe) id: number) {
-    return await this.groupsService.findById(id);
+  async getById(@Param('groupId', ParseIntPipe) id: number): Promise<GroupModel> {
+    return await this.groupsService.findOne(id);
   }
-
 
   @UseGuards(AuthGuard)
   @Get()
-  async getUserGroups(@Req() request: Request) {
-    const userId = request['userId'];
-    return await this.groupsService.getUserGroups(userId);
+  async getUserGroups(
+    @Req() request: IAuthorizedRequest
+  ): Promise<GroupModel[]> {
+    return await this.groupsService.getUserGroups(request.userId);
   }
 
   @UseGuards(AuthGuard)
   @Post()
-  async create(@Body() createGroupDto: CreateGroupDto, @Req() request): Promise<GroupModel> {
+  async create(
+    @Body() createGroupDto: CreateGroupDto, 
+    @Req() request: IAuthorizedRequest
+  ): Promise<GroupModel> {
     return this.groupsService.create(request.userId, createGroupDto);
   }
 
   @UseGuards(AuthGuard, MemberGuard)
   @Post('/:groupId/purposes')
-  async addPurposes(@Param('groupId', ParseIntPipe) groupId: string, @Body() purposes: AddPurposeDto): Promise<GroupModel> {
+  async addPurposes(
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @Body() purposes: AddPurposeDto
+  ): Promise<GroupModel> {
     return this.groupsService.addPurposes(groupId, purposes);
   }
 
   @UseGuards(AuthGuard, GroupOwnerGuard)
   @Patch('/:groupId')
-  async update(@Param('groupId', ParseIntPipe) id: string, @Body() updateGroupDto: UpdateGroupDto): Promise<GroupModel> {
-    const group = await this.groupsService.findById(parseInt(id));
-    if (!group) {
-      throw new NotFoundException('Group not found');
-    }
-    return this.groupsService.update(parseInt(id), updateGroupDto);
+  async update(
+    @Param('groupId', ParseIntPipe) id: number,
+    @Body() updateGroupDto: UpdateGroupDto
+  ): Promise<GroupModel> {
+    return this.groupsService.update(id, updateGroupDto);
   }
 
-  @UseGuards(AuthGuard, MemberGuard)
+  @UseGuards(AuthGuard)
   @Post('/members')
   async joinGroup(
     @Body() joinGroupDto: JoinGroupDto,
-    @Req() request
-  ) {
+    @Req() request: IAuthorizedRequest
+  ): Promise<GroupModel> {
     return this.groupsService.joinGroup(joinGroupDto.joinCode, request.userId);
   }
 
   @UseGuards(AuthGuard, GroupOwnerGuard)
   @Delete('/:groupId')
-  async remove(@Param('groupId', ParseIntPipe) id: string, @Req() request, @Res({ passthrough: true }) res: Response): Promise<void> {
-    const group = await this.groupsService.findById(parseInt(id));
-
-    if (!group) {
-      throw new NotFoundException('Group not found');
-    }
-
-    if (group.getOwner().getId() !== request.userId) {
-      throw new ForbiddenException('You are not the owner of this group');
-    }
-
-    await this.groupsService.remove(parseInt(id));
+  async remove(
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @Res({ passthrough: true }) res: Response
+  ): Promise<void> {
+    await this.groupsService.remove(groupId);
     res.status(HttpStatus.NO_CONTENT);
   }
 
   @UseGuards(AuthGuard, GroupOwnerGuard)
   @Delete('/:groupId/members/:memberId')
-  async removeUserFromGroup(@Param('groupId', ParseIntPipe) groupId: string, @Param('memberId', ParseIntPipe) memberId: string, @Req() request, @Res({ passthrough: true }) res: Response): Promise<void> {
-    const group = await this.groupsService.findById(parseInt(groupId));
-
-    if (!group) {
-      throw new NotFoundException('Group not found');
-    }
-
-    if (group.getOwner().getId() !== request.userId) {
-      throw new ForbiddenException('You are not the owner of this group');
-    }
-
-    await this.groupsService.removeUserFromGroup(group, parseInt(memberId));
-
+  async removeUserFromGroup(
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @Param('memberId', ParseIntPipe) memberId: number,
+    @Res({ passthrough: true }) res: Response
+  ): Promise<void> {
+    await this.groupsService.removeUserFromGroup(groupId, memberId);
     res.status(HttpStatus.NO_CONTENT);
   }
 
   @UseGuards(AuthGuard, GroupOwnerGuard)
   @Delete('/:groupId/purposes/:purposeId')
-  async removePurposesFromGroup(@Param('groupId', ParseIntPipe) groupId: string, @Param('purposeId', ParseIntPipe) purposeId: string, @Req() request, @Res({ passthrough: true }) res: Response): Promise<void> {
-    const group = await this.groupsService.findById(parseInt(groupId));
-
-    if (!group) {
-      throw new NotFoundException('Group not found');
-    }
-
-    if (group.getOwner().getId() !== request.userId) {
-      throw new ForbiddenException('You are not the owner of this group');
-    }
-
-    await this.groupsService.removePurposeFromGroup(group, parseInt(purposeId));
-
+  async removePurposesFromGroup(
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @Param('purposeId', ParseIntPipe) purposeId: number,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<void> {
+    await this.groupsService.removePurposeFromGroup(groupId, purposeId);
     res.status(HttpStatus.NO_CONTENT);
   }
 }

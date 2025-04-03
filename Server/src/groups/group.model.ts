@@ -1,30 +1,31 @@
 import { UserModel } from '../users/user.model';
 import { AbstractGroupModel } from './abstracts/group.model.abstract';
 import { GroupEntity } from './group.entity';
-import { PurposeEntity } from 'src/purposes/purpose.entity';
+import { PurposeEntity } from '../purposes/purpose.entity';
+
+export interface GroupModelParams {
+  id: number;
+  title: string;
+  owner: UserModel;
+  joinCode: string;
+  mindate: Date;
+  maxdate: Date;
+  purposes?: number[];
+  members?: UserModel[];
+}
 
 export class GroupModel extends AbstractGroupModel {
-  constructor(
-    id: number,
-    title: string,
-    owner: UserModel,
-    members: UserModel[] = [],
-    purposes: number[] = [],
-    joinCode: string,
-    mindate: Date,
-    maxdate: Date,
-  ) {
+  constructor(params: GroupModelParams) {
     super();
-    this.id = id;
-    this.title = title;
-    this.owner = owner;
-    this.members = members;
-    this.joinCode = joinCode;
-    this.purposes = purposes;
-    this.mindate = mindate;
-    this.maxdate = maxdate;
+    this.id = params.id;
+    this.title = params.title;
+    this.owner = params.owner;
+    this.joinCode = params.joinCode;
+    this.mindate = params.mindate;
+    this.maxdate = params.maxdate;
+    this.purposes = params.purposes || [];
+    this.members = params.members || [];
   }
-
   getId(): number {
     return this.id;
   }
@@ -109,18 +110,18 @@ export class GroupModel extends AbstractGroupModel {
 
 
   static fromEntity(entity: GroupEntity): GroupModel {
-    return new GroupModel(
-      entity.id,
-      entity.title,
-      UserModel.fromEntity(entity.owner),
-      entity.members?.map(user => UserModel.fromEntity(user)) || [],
-      entity.purposes?.map(purpose => purpose.id) || [],
-      entity.joinCode,
-      entity.mindate,
-      entity.maxdate,
-    );
+    const params: GroupModelParams = {
+      id: entity.id,
+      title: entity.title,
+      owner: UserModel.fromEntity(entity.owner),
+      joinCode: entity.joinCode,
+      mindate: entity.mindate,
+      maxdate: entity.maxdate,
+      purposes: entity.purposes?.map(purpose => purpose.id) || [],
+      members: entity.members?.map(user => UserModel.fromEntity(user)) || [],
+    };
+    return new GroupModel(params);
   }
-
   static toEntity(model: GroupModel): GroupEntity {
     const entity = new GroupEntity();
     entity.id = model.getId();

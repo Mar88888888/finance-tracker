@@ -1,11 +1,13 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException,
+   ConflictException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, In, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { Between, In, LessThanOrEqual, MoreThanOrEqual,
+   QueryFailedError, Repository } from 'typeorm';
 import { TransactionEntity } from './transaction.entity';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { PurposesService } from '../purposes/purposes.service';
-import { PurposeModel } from 'src/purposes/purpose.model';
+import { PurposeModel } from '../purposes/purpose.model';
 import { TransactionModel } from './transaction.model';
 
 @Injectable()
@@ -112,7 +114,10 @@ export class TransactionsService {
   }
 
 
-  async create(userId: number, createTransactionDto: CreateTransactionDto): Promise<TransactionModel> {
+  async create(
+    userId: number,
+    createTransactionDto: CreateTransactionDto
+  ): Promise<TransactionModel> {
     try {
       const newTransaction = this.transactionRepository.create(createTransactionDto);
       const { purposeId } = createTransactionDto;
@@ -123,15 +128,20 @@ export class TransactionsService {
 
       return TransactionModel.fromEntity(await this.transactionRepository.save(newTransaction));
     } catch (error) {
-      if (error.code === '23505') {
+      if (error instanceof QueryFailedError && error.driverError?.code === '23505') {
         throw new ConflictException('Transaction with these values already exists.');
+      } else if (error instanceof Error) {
+        console.error(error.message);
+        throw new InternalServerErrorException();
+      } else {
+        console.error('Unexpected error:', error);
       }
-      throw error;
     }
   }
 
   async findOne(id: number): Promise<TransactionModel> {
-    const transaction = await this.transactionRepository.findOne({ where: { id }, relations: ['member', 'purpose'] });
+    const transaction = 
+    await this.transactionRepository.findOne({ where: { id }, relations: ['member', 'purpose'] });
 
     if (!transaction) {
       throw new NotFoundException('Transaction not found');
@@ -150,16 +160,7 @@ export class TransactionsService {
     return TransactionModel.fromEntity(await this.transactionRepository.save(transaction));
   }
 
-  async remove(id: number): Promise<TransactionModel> {
-    const transactionToRemove = await this.findOne(id);
-
-    await this.transactionRepository
-      .createQueryBuilder()
-      .delete()
-      .from(TransactionEntity)
-      .where('id = :id', { id })
-      .execute();
-
-    return transactionToRemove;
+  async remove(id: number): Promise<void> {
+    await this.transactionRepository.delete(id);
   }
 }

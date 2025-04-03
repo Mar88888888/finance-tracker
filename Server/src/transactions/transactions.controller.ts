@@ -12,11 +12,11 @@ import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { AuthGuard } from '../guards/auth.guard';
 import { SerializeTransactionDto } from './dto/serialize.transaction.dto';
 import { Response } from 'express';
-import { UserSerializeDto } from 'src/users/dto/serialize.user.dto';
+import { UserSerializeDto } from '../users/dto/serialize.user.dto';
 import { TransactionModel } from './transaction.model';
-import { UserModel } from 'src/users/user.model';
-import { UsersService } from 'src/users/users.service';
-import { TransactionOwnerGuard } from 'src/guards/transaction-owner.guard';
+import { UserModel } from '../users/user.model';
+import { UsersService } from '../users/users.service';
+import { TransactionOwnerGuard } from '../guards/transaction-owner.guard';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: SerializeTransactionDto })
@@ -95,9 +95,9 @@ export class TransactionsController {
 
   @UseGuards(AuthGuard, TransactionOwnerGuard)
   @Delete('/:transactionId')
-  async remove(@Param('transactionId', ParseIntPipe) transactionId: number): Promise<TransactionModel> {
+  async remove(@Param('transactionId', ParseIntPipe) transactionId: number): Promise<void> {
     try {
-      return await this.transactionsService.remove(transactionId);
+      await this.transactionsService.remove(transactionId);
     } catch (error) {
       throw new NotFoundException('Transaction not found');
     }

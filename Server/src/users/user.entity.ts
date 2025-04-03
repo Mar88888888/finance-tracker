@@ -25,9 +25,6 @@ export class UserEntity {
   @Column({ nullable: false })
   gender: boolean;
 
-  @Column({ nullable: false, default: false })
-  isEmailVerified: boolean;
-
   @Column({ nullable: true })
   @Exclude()
   verificationToken?: string;

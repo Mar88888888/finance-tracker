@@ -1,6 +1,6 @@
 import { Type } from "class-transformer";
-import { UserSerializeDto } from "src/users/dto/serialize.user.dto";
-import { UserModel } from "src/users/user.model";
+import { UserSerializeDto } from "../../users/dto/serialize.user.dto";
+import { UserModel } from "../../users/user.model";
 
 export abstract class AbstractGroupModel {
   protected id: number;

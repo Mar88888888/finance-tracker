@@ -1,60 +1,67 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException,
+  BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindManyOptions, QueryFailedError, Repository } from 'typeorm';
 import { PurposeEntity } from './purpose.entity';
 import { CreatePurposeDto } from './dto/create-purpose.dto';
 import { UpdatePurposeDto } from './dto/update-purpose.dto';
 import { PurposeModel } from './purpose.model';
+import { UsersService } from '../users/users.service';
+import { UserModel } from '../users/user.model';
 
 @Injectable()
 export class PurposesService {
   constructor(
     @InjectRepository(PurposeEntity)
     private readonly purposeRepository: Repository<PurposeEntity>,
+    private readonly usersService: UsersService
   ) { }
 
   async findAll(): Promise<PurposeModel[]> {
-    return (await this.purposeRepository.createQueryBuilder()
-      .select('*').orderBy('category').getRawMany()).map(PurposeModel.fromEntity);
+    const options: FindManyOptions<PurposeEntity> = {
+      order: {
+        category: "ASC"
+      },
+    }
+    return (await this.purposeRepository.find(options)).map(PurposeModel.fromEntity);
   }
 
   async findUserPurposes(userId: number): Promise<PurposeModel[]> {
-    return (await this.purposeRepository.find(
-      {
-        where: { user: { id: userId } },
-        relations: ['user']
-      }
-    )).map(PurposeModel.fromEntity);
+    const options: FindManyOptions<PurposeEntity> = {
+      where: { 
+        user: { 
+          id: userId
+        } 
+      },
+      relations: ['user']
+    }
+    return (await this.purposeRepository.find(options)).map(PurposeModel.fromEntity);
   }
 
 
   async create(userId: number, createPurposeDto: CreatePurposeDto): Promise<PurposeModel> {
     try {
-      const { category, type } = createPurposeDto;
-      const newPurpose = await this.purposeRepository
-        .createQueryBuilder()
-        .insert()
-        .into(PurposeEntity)
-        .values({ category, type, user: { id: userId } })
-        .execute();
+      const newPurposeEntity = this.purposeRepository.create(createPurposeDto);
+      newPurposeEntity.user = UserModel.toEntity(await this.usersService.findOne(userId));
+      return PurposeModel.fromEntity(newPurposeEntity);
 
-      return this.findOne(newPurpose.raw[0].id);
     } catch (error) {
-      if (error.code === '23505') {
-        throw new BadRequestException('Ця категорія вже існує.');
+
+      if (error instanceof QueryFailedError && error.driverError?.code === '23505') {
+        throw new BadRequestException("Purpose with these values already exists.");
+      } else if (error instanceof Error) {
+        console.error(error.message);
+        throw new InternalServerErrorException();
       } else {
-        throw error;
+        console.error('Unexpected error:', error);
       }
     }
   }
 
 
   async findOne(id: number): Promise<PurposeModel> {
-    const purpose = await this.purposeRepository
-      .createQueryBuilder('trans_category')
-      .leftJoinAndSelect('trans_category.user', 'user')
-      .where('trans_category.id = :id', { id })
-      .getOne();
+    const purpose =
+    await this.purposeRepository.findOne({ where: { id }, relations: ['user', 'transactions'] });
 
     if (!purpose) {
       throw new NotFoundException(`Purpose with id ${id} not found`);
@@ -65,36 +72,25 @@ export class PurposesService {
 
   async update(id: number, updatePurposeDto: UpdatePurposeDto): Promise<PurposeModel> {
     try {
-      const purpose = await this.findOne(id);
-      const { category, type } = updatePurposeDto;
 
-      await this.purposeRepository
-        .createQueryBuilder()
-        .update(PurposeEntity)
-        .set({ category, type })
-        .where('id = :id', { id })
-        .execute();
+      const purpose = PurposeModel.toEntity(await this.findOne(id));
+      Object.assign(purpose, updatePurposeDto);
+      return PurposeModel.fromEntity(await this.purposeRepository.save(purpose));
 
-      return await this.findOne(id);
     } catch (error) {
-      if (error.code === '23505') {
-        throw new BadRequestException('Ця категорія вже існує.');
+      if (error instanceof QueryFailedError && error.driverError?.code === '23505') {
+        throw new BadRequestException("Purpose with these values already exists.");
+      } else if (error instanceof Error) {
+        console.error(error.message);
+        throw new InternalServerErrorException();
       } else {
-        throw error;
+        console.error('Unexpected error:', error);
       }
     }
   }
 
-  async remove(id: number): Promise<PurposeModel> {
-    const purposeToDelete = await this.findOne(id);
-
-    await this.purposeRepository
-      .createQueryBuilder()
-      .delete()
-      .from(PurposeEntity)
-      .where('id = :id', { id })
-      .execute();
-
-    return purposeToDelete;
+  async remove(id: number): Promise<void> {
+    await this.purposeRepository.delete(id);
   }
+
 }

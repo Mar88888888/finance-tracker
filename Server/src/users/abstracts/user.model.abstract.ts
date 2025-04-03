@@ -9,8 +9,6 @@ export abstract class AbstractUserModel {
   protected password: string;
   protected age: number;
   protected gender: boolean;
-  protected isEmailVerified: boolean;
-  protected verificationToken?: string;
   protected transactions: TransactionEntity[] = [];
   protected myGroups: GroupEntity[] = [];
   protected groups: GroupEntity[] = [];
@@ -28,17 +26,12 @@ export abstract class AbstractUserModel {
   abstract setAge(age: number): void;
   abstract getGender(): boolean;
   abstract setGender(gender: boolean): void;
-  abstract getIsEmailVerified(): boolean;
-  abstract setIsEmailVerified(isEmailVerified: boolean): void;
-  abstract getVerificationToken(): string | undefined;
-  abstract setVerificationToken(verificationToken: string | undefined): void;
   abstract getTransactions(): TransactionEntity[];
   abstract setTransactions(transactions: TransactionEntity[]): void;
   abstract getMyGroups(): GroupEntity[];
   abstract setMyGroups(myGroups: GroupEntity[]): void;
   abstract getGroups(): GroupEntity[];
   abstract setGroups(groups: GroupEntity[]): void;
-  abstract isVerified(): boolean;
   abstract getPurposes(): PurposeEntity[];
   abstract setPurposes(purposes: PurposeEntity[]): void;
 }

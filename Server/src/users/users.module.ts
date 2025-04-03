@@ -4,8 +4,8 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { UserEntity } from './user.entity';
 import { AuthService } from './auth.service';
-import { MailModule } from 'src/mail/mail.module';
 import { JwtModule } from '@nestjs/jwt';
+require('dotenv').config();
 
 @Module({
   imports: [
@@ -14,7 +14,6 @@ import { JwtModule } from '@nestjs/jwt';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '2h' }
     }),
-    MailModule
   ],
   controllers: [UsersController],
   providers: [UsersService, AuthService],

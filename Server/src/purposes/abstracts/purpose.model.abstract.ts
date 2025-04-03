@@ -1,5 +1,3 @@
-import { UserModel } from "src/users/user.model";
-
 export abstract class AbstractPurpose {
   protected id: number;
   protected category: string;

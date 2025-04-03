@@ -1,5 +1,5 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { PurposesService } from 'src/purposes/purposes.service';
+import { PurposesService } from '../purposes/purposes.service';
 
 @Injectable()
 export class PurposeOwnerGuard implements CanActivate {

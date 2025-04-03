@@ -1,4 +1,3 @@
-
 import {
   Column,
   Entity,
@@ -8,7 +7,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { TransactionEntity } from '../transactions/transaction.entity';
-import { UserEntity } from 'src/users/user.entity';
+import { UserEntity } from '../users/user.entity';
 
 @Entity({ name: 'trans_category' })
 @Unique(['category', 'type'])

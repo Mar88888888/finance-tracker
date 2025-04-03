@@ -11,6 +11,7 @@ import { TransactionEntity } from './transactions/transaction.entity';
 import { JwtService } from '@nestjs/jwt';
 import { GroupsModule } from './groups/groups.module';
 import { GroupEntity } from './groups/group.entity';
+require('dotenv').config();
 
 @Module({
   imports: [
@@ -18,9 +19,9 @@ import { GroupEntity } from './groups/group.entity';
       type: 'postgres',
       host: "localhost",
       port: 5432,
-      username: "postgres",
-      password: "password",
-      database: "finance",
+      username: process.env.POSTGRES_USER,
+      password: process.env.POSTGRES_PASSWORD,
+      database: process.env.POSTGRES_DB,
       entities: [UserEntity, PurposeEntity, TransactionEntity, GroupEntity],
       synchronize: true,
     }),

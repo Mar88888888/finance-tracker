@@ -1,7 +1,7 @@
-import { UserEntity } from 'src/users/user.entity';
+import { UserEntity } from '../users/user.entity';
 import { AbstractTransaction } from './abstractions/transaction.model.abstract';
 import { TransactionEntity } from './transaction.entity';
-import { PurposeEntity } from 'src/purposes/purpose.entity';
+import { PurposeEntity } from '../purposes/purpose.entity';
 
 export class TransactionModel extends AbstractTransaction {
 

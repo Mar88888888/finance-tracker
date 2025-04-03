@@ -4,24 +4,30 @@ import { Repository } from 'typeorm';
 import { GroupEntity } from './group.entity';
 import { UpdateGroupDto } from './dto/update.group.dto';
 import { CreateGroupDto } from './dto/create.group.dto';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 import { TransactionsService } from '../transactions/transactions.service';
 import { GroupModel } from './group.model';
 import { UserModel } from '../users/user.model';
 import { TransactionModel } from '../transactions/transaction.model';
 import { AddPurposeDto } from './dto/add-purpose.dto';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class GroupsService {
   constructor(
     @InjectRepository(GroupEntity)
-    private groupRepo: Repository<GroupEntity>,
-    private userService: UsersService,
-    private transactionService: TransactionsService,
+    private readonly groupRepo: Repository<GroupEntity>,
+    private readonly userService: UsersService,
+    private readonly transactionService: TransactionsService,
   ) { }
 
-  async findById(id: number): Promise<GroupModel> {
-    const groupEntity = await this.groupRepo.findOne({ where: { id }, relations: ['members', 'owner', 'purposes'] });
+  private generateJoinCode(): string {
+    return crypto.randomBytes(4).toString('hex');
+  }
+
+  async findOne(id: number): Promise<GroupModel> {
+    const groupEntity = 
+    await this.groupRepo.findOne({ where: { id }, relations: ['members', 'owner', 'purposes'] });
     if (!groupEntity) {
       throw new NotFoundException('Group not found');
     }
@@ -29,7 +35,7 @@ export class GroupsService {
   }
 
   async getGroupCode(id: number): Promise<string> {
-    return (await this.findById(id)).getJoinCode();
+    return (await this.findOne(id)).getJoinCode();
   }
 
   async getUserGroups(userId: number): Promise<GroupModel[]> {
@@ -42,9 +48,6 @@ export class GroupsService {
 
     return groupEntities.map(GroupModel.fromEntity);
   }
-
-
-
 
   async create(ownerId: number, createGroupDto: CreateGroupDto): Promise<GroupModel> {
     const newGroupEntity = this.groupRepo.create(createGroupDto);
@@ -60,7 +63,8 @@ export class GroupsService {
   }
 
   async joinGroup(joinCode: string, userId: number): Promise<GroupModel> {
-    const groupEntity = await this.groupRepo.findOne({ where: { joinCode }, relations: ['members', 'owner'] });
+    const groupEntity = 
+    await this.groupRepo.findOne({ where: { joinCode }, relations: ['members', 'owner'] });
 
     if (!groupEntity) {
       throw new NotFoundException('Group with this code not found');
@@ -81,28 +85,13 @@ export class GroupsService {
   }
 
   async update(id: number, updateGroupDto: UpdateGroupDto): Promise<GroupModel> {
-    const groupEntity = await this.findById(id);
-    const { title } = updateGroupDto;
-
-    await this.groupRepo
-      .createQueryBuilder()
-      .update(GroupEntity)
-      .set({ title })
-      .where('id = :id', { id })
-      .execute();
-
-    return this.findById(id);
+    const group = GroupModel.toEntity(await this.findOne(id));
+    Object.assign(group, updateGroupDto);
+    return GroupModel.fromEntity(await this.groupRepo.save(group));
   }
 
-  private generateJoinCode(): string {
-    return Math.random().toString(36).slice(2, 10);
-  }
-
-  async addPurposes(groupId: string, purposes: AddPurposeDto): Promise<GroupModel> {
-    const group = await this.findById(parseInt(groupId));
-    if (!group) {
-      throw new NotFoundException('Group not found');
-    }
+  async addPurposes(groupId: number, purposes: AddPurposeDto): Promise<GroupModel> {
+    const group = await this.findOne(groupId);
 
     const { purposeIds } = purposes;
     group.addPurposes(purposeIds);
@@ -114,7 +103,7 @@ export class GroupsService {
   }
 
   async getTransactions(id: number): Promise<TransactionModel[]> {
-    const group = await this.findById(id);
+    const group = await this.findOne(id);
 
     const memberIds = group.getMembers().map(member => member.getId());
     const purposeIds = group.getPurposes();
@@ -125,35 +114,26 @@ export class GroupsService {
     return this.transactionService.getGroupTransactions(memberIds, purposeIds, group.getMindate(), group.getMaxdate());
   }
 
-
-  async remove(id: number): Promise<GroupModel> {
-    const groupEntity = await this.findById(id);
-
-    await this.groupRepo.delete(groupEntity.getId());
-
-    return groupEntity;
+  async remove(id: number): Promise<void> {
+    await this.groupRepo.delete(id);
   }
 
-  async removeUserFromGroup(group: GroupModel, memberId: number): Promise<GroupModel> {
-
+  async removeUserFromGroup(groupId: number, memberId: number): Promise<GroupModel> {
+    let group = await this.findOne(groupId);
     const member = await this.userService.findOne(memberId);
-    if (!member) {
-      throw new NotFoundException('User not found');
-    }
 
     group.removeMember(member);
-
     await this.groupRepo.save(GroupModel.toEntity(group));
 
     return group;
   }
 
-  async removePurposeFromGroup(group: GroupModel, purposeId: number): Promise<GroupModel> {
+  async removePurposeFromGroup(groupId: number, purposeId: number): Promise<GroupModel> {
+    const group = await this.findOne(groupId);
 
     group.removePurpose(purposeId);
-
     await this.groupRepo.save(GroupModel.toEntity(group));
-
+    
     return group;
   }
 }

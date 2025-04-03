@@ -7,10 +7,4 @@ export class InnerUserUpdateDto extends UpdateUserDto {
 
   @IsOptional()
   email?: string;
-
-  @IsOptional()
-  verificationToken?: string;
-
-  @IsOptional()
-  isEmailVerified?: boolean;
 }

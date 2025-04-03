@@ -1,39 +1,37 @@
-import { TransactionEntity } from "src/transactions/transaction.entity";
+import { TransactionEntity } from "../transactions/transaction.entity";
 import { AbstractUserModel } from "./abstracts/user.model.abstract";
-import { GroupEntity } from "src/groups/group.entity";
-import { UserEntity } from "src/users/user.entity";
+import { GroupEntity } from "../groups/group.entity";
+import { UserEntity } from "../users/user.entity";
 import { PurposeEntity } from "../purposes/purpose.entity";
 
-export class UserModel extends AbstractUserModel {
-  constructor(
-    id: number,
-    name: string,
-    email: string,
-    password: string,
-    age: number,
-    gender: boolean,
-    isEmailVerified: boolean,
-    verificationToken?: string,
-    transactions: TransactionEntity[] = [],
-    myGroups: GroupEntity[] = [],
-    groups: GroupEntity[] = [],
-    purposes: PurposeEntity[] = []
-  ) {
-    super();
-    this.id = id;
-    this.name = name;
-    this.email = email;
-    this.password = password;
-    this.age = age;
-    this.gender = gender;
-    this.isEmailVerified = isEmailVerified;
-    this.verificationToken = verificationToken;
-    this.transactions = transactions;
-    this.myGroups = myGroups;
-    this.groups = groups;
-    this.purposes = purposes;
-  }
+export interface UserModelParams {
+  id: number;
+  name: string;
+  email: string;
+  password: string;
+  age: number;
+  gender: boolean;
+  verificationToken?: string;
+  transactions?: TransactionEntity[];
+  myGroups?: GroupEntity[];
+  groups?: GroupEntity[];
+  purposes?: PurposeEntity[];
+}
 
+export class UserModel extends AbstractUserModel {
+  constructor(params: UserModelParams) {
+    super();
+    this.id = params.id;
+    this.name = params.name;
+    this.email = params.email;
+    this.password = params.password;
+    this.age = params.age;
+    this.gender = params.gender;
+    this.transactions = params.transactions || [];
+    this.myGroups = params.myGroups || [];
+    this.groups = params.groups || [];
+    this.purposes = params.purposes || [];
+  }
   getId(): number {
     return this.id;
   }
@@ -82,22 +80,6 @@ export class UserModel extends AbstractUserModel {
     this.gender = gender;
   }
 
-  getIsEmailVerified(): boolean {
-    return this.isEmailVerified;
-  }
-
-  setIsEmailVerified(isEmailVerified: boolean): void {
-    this.isEmailVerified = isEmailVerified;
-  }
-
-  getVerificationToken(): string | undefined {
-    return this.verificationToken;
-  }
-
-  setVerificationToken(verificationToken: string | undefined): void {
-    this.verificationToken = verificationToken;
-  }
-
   getTransactions(): TransactionEntity[] {
     return this.transactions;
   }
@@ -122,10 +104,6 @@ export class UserModel extends AbstractUserModel {
     this.groups = groups;
   }
 
-  isVerified(): boolean {
-    return this.isEmailVerified;
-  }
-
   getPurposes(): PurposeEntity[] {
     return this.purposes;
   }
@@ -135,22 +113,23 @@ export class UserModel extends AbstractUserModel {
   }
 
   static fromEntity(entity: UserEntity): UserModel {
-    return new UserModel(
-      entity.id,
-      entity.name,
-      entity.email,
-      entity.password,
-      entity.age,
-      entity.gender,
-      entity.isEmailVerified,
-      entity.verificationToken,
-      entity.transactions || [],
-      entity.myGroups || [],
-      entity.groups || [],
-      entity.purposes || []
-    );
+    const params: UserModelParams = {
+      id: entity.id,
+      name: entity.name,
+      email: entity.email,
+      password: entity.password,
+      age: entity.age,
+      gender: entity.gender,
+      verificationToken: entity.verificationToken,
+      transactions: entity.transactions || [],
+      myGroups: entity.myGroups || [],
+      groups: entity.groups || [],
+      purposes: entity.purposes || [],
+    };
+    return new UserModel(params);
   }
 
+  
   static toEntity(model: UserModel): UserEntity {
     const entity = new UserEntity();
     entity.id = model.getId();
@@ -159,8 +138,6 @@ export class UserModel extends AbstractUserModel {
     entity.password = model.getPassword();
     entity.age = model.getAge();
     entity.gender = model.getGender();
-    entity.isEmailVerified = model.getIsEmailVerified();
-    entity.verificationToken = model.getVerificationToken();
     entity.transactions = model.getTransactions();
     entity.myGroups = model.getMyGroups();
     entity.groups = model.getGroups();
