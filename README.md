@@ -2,61 +2,96 @@
 
 ## Overview
 
-This application is designed to help households manage and analyze their finances. It allows users to track income from multiple sources and expenses across various categories. The application provides detailed insights into monthly spending patterns and trends.
+This application helps households manage and analyze their finances, allowing users to track expenses, create budgets, manage groups for shared expenses, and gain insights into their spending habits.
 
 ## Features
 
-- **Income and Expense Tracking**: Record and categorize all income sources and expenses.
-- **Detailed Analysis**: Analyze monthly expenses by categories such as Food, Housing, Clothing, Sports, Leisure, and Others.
-- **CRUD Operations**: Add, edit, and delete transactions, family members, and expense categories.
-- **Data Visualization**: View detailed transaction tables and filter data to show specific records.
+* **Expense Tracking:** Record and categorize expenses with detailed descriptions, amounts, and dates.
+* **Budgeting:** Set budgets for different categories and track progress towards goals.
+* **Group Management:** Create and manage groups with other users to track shared expenses and settle balances.
+* **Customizable Categories:** Create and customize expense categories to match your specific needs.
+* **User Authentication:** Secure user accounts with password protection and optional two-factor authentication.
 
+## Planned Features
+
+* **Recurring Transactions:** Schedule recurring transactions for regular income or expenses like rent, subscriptions, or salaries.
+* **Data Export:** Export your financial data in various formats (CSV, PDF) for further analysis or record-keeping.
+* **Data Visualization:** Analyze spending patterns with charts and graphs that illustrate expense breakdowns and trends over time.
+  
 ## Technology Stack
 
-- **Client-side**: HTML, CSS, JavaScript
-- **Server-side**: Nest.js framework
-- **Database Interaction**: TypeORM
-- **Database**: PostgreSQL
+* **Frontend:** ReactJS
+* **Backend:** NestJS
+* **Database:** PostgreSQL
+* **ORM:** TypeORM
 
-## Modules
+## Getting Started
 
-Each entity in the application has its own module that includes a controller, a service, and a repository. The controller handles requests and forwards them to the service, where the main logic and database interactions are performed.
-
-## Directory Structure
-
+1. **Clone the repository:** `git clone https://github.com/Mar88888888/finance-tracker.git`
+2. **Install dependencies:**
+    * Frontend: `cd Client && npm install`
+    * Backend: `cd Server && npm install`
+3. **Set up environment variables:**
+    * Create `.env` files in both `Client` and `Server` directories based on the provided `.env.example` files.
+    * Update the environment variables with your database credentials and other relevant settings.
+4. **Run the application:**
+    * Frontend: `cd Client && npm start`
+    * Backend: `cd Server && npm run start:dev`
+  
+## Server-side Project Structure
 ```plaintext
-├── src
-│   ├── modules
-│   │   ├── transaction
-│   │   ├── family-member
-│   │   └── expense-category
-│   ├── main.ts
-│   └── app.module.ts
-├── .env.example
-├── .gitignore
-└── README.md
+├── Client
+├── Server
+│   ├── dist
+│   ├── node_modules
+│   └── src
+│       ├── groups
+│       │   ├── abstracts
+│       │   ├── dto
+│       │   ├── group.entity.ts
+│       │   ├── group.model.ts
+│       │   ├── groups.controller.spec.ts
+│       │   ├── groups.controller.ts
+│       │   ├── groups.module.ts
+│       │   ├── groups.service.spec.ts
+│       │   └── groups.service.ts
+│       ├── guards
+│       │   ├── auth.guard.ts
+│       │   ├── group-member.guard.ts
+│       │   ├── group-owner.guard.ts
+│       │   ├── purpose-owner.guard.ts
+│       │   └── transaction-owner.guard.ts
+│       ├── mail
+│       │   └── templates
+│       │   ├── mail.module.ts
+│       │   ├── mail.service.spec.ts
+│       │   └── mail.service.ts
+│       ├── purposes
+│       │   ├── abstracts
+│       │   ├── dto
+│       │   ├── purpose.entity.ts
+│       │   ├── purpose.model.ts
+│       │   ├── purposes.controller.spec.ts
+│       │   ├── purposes.controller.ts
+│       │   ├── purposes.module.ts
+│       │   ├── purposes.service.spec.ts
+│       │   └── purposes.service.ts
+│       ├── transactions
+│       |   ├── abstractions
+│       │   ├── dto
+│       │   ├── transaction.entity.ts
+│       │   ├── transaction.model.ts
+│       │   ├── transactions.controller.spec.ts
+│       │   ├── transactions.controller.ts
+│       |   ├── transactions.module.ts
+│       |   ├── transactions.service.spec.ts
+│       |   └── transactions.service.ts
+│       ├── users
+│       ├── app.controller.spec.ts
+│       ├── app.controller.ts
+│       ├── app.module.ts
+│       ├── app.service.ts
+│       └── main.ts
+│   └── test
+└── node_modules
 ```
-
-## Usage
-
-### Adding a Transaction
-
-1. Navigate to the transactions page.
-2. Click on "Add Transaction".
-3. Fill in the details and save.
-
-### Editing a Transaction
-
-1. Find the transaction you want to edit.
-2. Click the "Edit" button.
-3. Update the information and save.
-
-### Deleting a Transaction
-
-1. Find the transaction you want to delete.
-2. Click the "Delete" button.
-
-### Filtering Transactions
-
-1. Use the filter options available on the transactions page.
-2. Apply filters to view specific records.
