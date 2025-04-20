@@ -17,6 +17,6 @@ require('dotenv').config();
   ],
   controllers: [UsersController],
   providers: [UsersService, AuthService],
-  exports: [UsersService]
+  exports: [UsersService, JwtModule],
 })
 export class UsersModule { }

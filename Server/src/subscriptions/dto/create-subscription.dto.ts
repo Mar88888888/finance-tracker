@@ -4,9 +4,6 @@ import { Type } from "class-transformer";
 
 export class CreateSubscriptionDto {
   @IsInt()
-  transactionId: number;
-
-  @IsInt()
   @Min(1)
   interval: number;
 

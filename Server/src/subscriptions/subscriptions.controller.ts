@@ -1,9 +1,9 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Delete, Get, Param, ParseIntPipe, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../guards/auth.guard';
-import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import { SubscriptionsService } from './subscriptions.service';
 import { IAuthorizedRequest } from '../abstracts/authorized-request.interface';
 import { SubscriptionModel } from './subscription.model';
+import { SubscriptionOwnerGuard } from '../guards/subscription-owner.guard';
 
 @Controller('subscriptions')
 export class SubscriptionsController {
@@ -11,10 +11,16 @@ export class SubscriptionsController {
     private readonly subscriptionService: SubscriptionsService,
   ) {}
   
-  @Post()
+  @Get()
   @UseGuards(AuthGuard)
-  async create(@Req() req: IAuthorizedRequest, @Body() dto: CreateSubscriptionDto): Promise<SubscriptionModel> {
-    return await this.subscriptionService.createsubscription(req.userId, dto);
+  async getUserSubscriptions(@Req() req: IAuthorizedRequest): Promise<SubscriptionModel[]> {
+    return await this.subscriptionService.getUserSubscriptions(req.userId);
   }
 
+  @Delete('/:subscriptionId')
+  @UseGuards(AuthGuard, SubscriptionOwnerGuard)
+  async deleteSubscription(
+    @Param('subscriptionId', ParseIntPipe) subscriptionId: number): Promise<void> {
+    return await this.subscriptionService.deleteSubscription(subscriptionId);
+  }
 }

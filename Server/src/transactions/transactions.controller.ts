@@ -17,6 +17,11 @@ import { TransactionModel } from './transaction.model';
 import { UserModel } from '../users/user.model';
 import { UsersService } from '../users/users.service';
 import { TransactionOwnerGuard } from '../guards/transaction-owner.guard';
+import { IAuthorizedRequest } from '../abstracts/authorized-request.interface';
+import { CreateSubscriptionDto } from '../subscriptions/dto/create-subscription.dto';
+import { SubscriptionModel } from '../subscriptions/subscription.model';
+import { SubscriptionsService } from '../subscriptions/subscriptions.service';
+import { SubscriptionProcessorService } from './subscription-processor.service';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: SerializeTransactionDto })
@@ -25,6 +30,8 @@ export class TransactionsController {
   constructor(
     private readonly transactionsService: TransactionsService,
     private readonly userService: UsersService,
+    private readonly subscriptionService: SubscriptionsService,
+    private readonly subscriptionProcessorService: SubscriptionProcessorService,
   ) { }
 
   @UseGuards(AuthGuard)
@@ -102,4 +109,19 @@ export class TransactionsController {
       throw new NotFoundException('Transaction not found');
     }
   }
+
+  @Post('/:transactionId/subscriptions')
+  @UseGuards(AuthGuard, TransactionOwnerGuard)
+  async createSubscription(
+    @Req() req: IAuthorizedRequest,
+    @Body() dto: CreateSubscriptionDto,
+    @Param('transactionId', ParseIntPipe) transactionId: number): Promise<SubscriptionModel> {
+    return await this.subscriptionService.createSubscription(req.userId, transactionId, dto);
+  }
+
+  @Post('process-subscriptions')
+  async processSubscriptionsNow() {
+    return this.subscriptionProcessorService.processRecurringTransactions();
+  }
+
 }

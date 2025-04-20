@@ -3,6 +3,7 @@ import { TransactionEntity } from '../transactions/transaction.entity';
 import { Exclude } from 'class-transformer';
 import { GroupEntity } from '../groups/group.entity';
 import { PurposeEntity } from '../purposes/purpose.entity';
+import { SubscriptionEntity } from '../subscriptions/subscription.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity {
@@ -43,4 +44,7 @@ export class UserEntity {
 
   @OneToMany(() => PurposeEntity, purpose => purpose.user)
   purposes: PurposeEntity[];
+
+  @OneToMany(() => SubscriptionEntity, subscription => subscription.user)
+  subscriptions: SubscriptionEntity[];
 }

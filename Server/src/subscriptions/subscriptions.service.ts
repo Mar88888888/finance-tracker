@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SubscriptionEntity } from './subscription.entity';
@@ -18,10 +18,16 @@ export class SubscriptionsService {
     private readonly usersService: UsersService,
   ) {}
 
-  async createsubscription(userId: number,dto: CreateSubscriptionDto) {
+  async createSubscription(userId: number, transactionId: number, dto: CreateSubscriptionDto) {
     const user = UserModel.toEntity(await this.usersService.findOne(userId));
-    const transaction = TransactionModel.toEntity(await this.transactionService.findOne(dto.transactionId));
+    const transaction = TransactionModel.toEntity(await this.transactionService.findOne(transactionId));
     
+    const existing = await this.findOneByTransactionId(transactionId);    
+    if (existing) {
+      throw new BadRequestException('This transaction is already subscribed to.');
+    }
+    
+
     const subscription = this.subscriptionRepository.create({
       interval: dto.interval,
       unit: dto.unit,
@@ -34,5 +40,39 @@ export class SubscriptionsService {
   
     return SubscriptionModel.fromEntity(await this.subscriptionRepository.save(subscription));
   }
+
+  async getUserSubscriptions(userId: number): Promise<SubscriptionModel[]> {
+    return await this.subscriptionRepository.find({
+      where: { user: { id: userId } },
+      relations: ['transactionTemplate', 'user'],
+    }).then(subscriptions => subscriptions.map(SubscriptionModel.fromEntity));
+  }
   
+
+  async findOneByTransactionId(transactionId: number): Promise<SubscriptionModel> {
+    const subscription = await this.subscriptionRepository.findOne({
+      where: { transactionTemplate: { id: transactionId } },
+      relations: ['transactionTemplate', 'user'],
+    });
+    if (subscription) {
+      return SubscriptionModel.fromEntity(subscription);
+    }
+  }
+
+  async findOne(id: number): Promise<SubscriptionModel> {
+    const subscription = await this.subscriptionRepository.findOne({
+      where: { id },
+      relations: ['transactionTemplate', 'user'],
+    });
+    if (!subscription) {
+      throw new NotFoundException('Subscription not found');
+    }
+    return SubscriptionModel.fromEntity(subscription);
+  }
+
+  async deleteSubscription(subscriptionId: number): Promise<void> {
+    const subscription = await this.findOne(subscriptionId);
+    await this.subscriptionRepository.delete(subscriptionId);
+    return;
+  }
 }
