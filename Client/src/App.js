@@ -17,6 +17,8 @@ import PurposesPage from './pages/PurposesPage';
 import AddPurpose from './pages/AddPurpose';
 import EditPurpose from './pages/EditPurpose';
 import EditTransaction from './pages/EditTransaction';
+import SubscriptionsPage from './pages/SubscriptionsPage';
+import AddSubscription from './pages/AddSubscription';
 
 const App = () => {
     return (
@@ -30,6 +32,8 @@ const App = () => {
                     <Route path="/transactions" element={<PrivateRoute><TransactionsPage /></PrivateRoute>} />
                     <Route path="/transactions/add" element={<PrivateRoute><AddTransaction /></PrivateRoute>} />
                     <Route path="/transactions/edit/:transactionId" element={<PrivateRoute><EditTransaction /></PrivateRoute>} />
+                    <Route path="/subscriptions" element={<PrivateRoute><SubscriptionsPage /></PrivateRoute>} />
+                    <Route path="/transactions/:transactionId/subscriptions/add" element={<PrivateRoute><AddSubscription /></PrivateRoute>} />
                     <Route path="/purposes" element={<PrivateRoute><PurposesPage /></PrivateRoute>} />
                     <Route path="/purposes/add" element={<PrivateRoute><AddPurpose /></PrivateRoute>} />
                     <Route path="/purposes/edit/:purposeId" element={<PrivateRoute><EditPurpose /></PrivateRoute>} />

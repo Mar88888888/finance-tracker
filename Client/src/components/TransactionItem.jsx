@@ -15,6 +15,7 @@ const TransactionItem = ({ transaction, onDeleteTransaction }) => {
         <>
           <div><button className='edit-btn' onClick={() => navigate(`edit/${transaction.id}`)}>Edit</button></div>
           <div><button className='delete-btn' onClick={() => onDeleteTransaction(transaction.id)}>Delete</button></div>
+          <div><button className='edit-btn' onClick={() => navigate(`${transaction.id}/subscriptions/add`)}>Add Sub</button></div>
         </>
       }
 

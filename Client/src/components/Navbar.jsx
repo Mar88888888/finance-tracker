@@ -24,6 +24,7 @@ const Navbar = () => {
             <Link to="/">Home</Link>
             <Link to="/groups">Groups</Link>
             <Link to="/transactions">Transactions</Link>
+            <Link to="/subscriptions">Subscriptions</Link>
             <Link to="/purposes">Purposes</Link>
             <span
               className="navbar-username"
