@@ -3,20 +3,51 @@ import PropTypes from 'prop-types';
 import '../styles/TransactionsList.css';
 import TransactionItem from './TransactionItem';
 import { fetchTransactionsWithRelations } from '../services/TransactionService';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction }) => {
   const [transactions, setEnrichedTransactions] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
   const [currentPage, setCurrentPage] = useState(1);
+  const [showFilters, setShowFilters] = useState(false);
+
   const itemsPerPage = 10;
 
+  const [filters, setFilters] = useState({
+    member: '',
+    purpose: '',
+    minAmount: '',
+    maxAmount: '',
+    startDate: '',
+    endDate: ''
+  });
+  
+  const filteredTransactions = transactions.filter((tx) => {
+    const memberMatch = tx.member.name.toLowerCase().includes(filters.member.toLowerCase());
+    const purposeMatch = tx.purpose.category.toLowerCase().includes(filters.purpose.toLowerCase());
+    const minAmountMatch = filters.minAmount === '' || tx.sum >= parseFloat(filters.minAmount);
+    const maxAmountMatch = filters.maxAmount === '' || tx.sum <= parseFloat(filters.maxAmount);
+    const txDate = new Date(tx.date);
+  
+    const startDateMatch = filters.startDate === '' || txDate >= new Date(filters.startDate);
+    const endDateMatch = filters.endDate === '' || txDate <= new Date(filters.endDate);
+  
+    return (
+      memberMatch &&
+      purposeMatch &&
+      minAmountMatch &&
+      maxAmountMatch &&
+      startDateMatch &&
+      endDateMatch
+    );
+  });
+  
+  
   useEffect(() => {
 
     const enrichTransactions = async () => {
       if (transactionsData.length > 0) {
         const enriched = await fetchTransactionsWithRelations(transactionsData, authToken);
-        console.log(enriched);
-        console.log(transactionsData);
         setEnrichedTransactions(enriched);
       }
     };
@@ -30,9 +61,8 @@ const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction }) 
   };
 
   const sortedTransactions = React.useMemo(() => {
-    if (!sortConfig.key) return transactions;
-
-    const sorted = [...transactions].sort((a, b) => {
+    if (!sortConfig.key) return filteredTransactions;
+    const sorted = [...filteredTransactions].sort((a, b) => {
       const aValue = getNestedValue(a, sortConfig.key);
       const bValue = getNestedValue(b, sortConfig.key);
 
@@ -42,9 +72,9 @@ const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction }) 
     });
 
     return sortConfig.key === 'date' && sortConfig.direction === 'default'
-      ? transactions
+      ? filteredTransactions
       : sorted;
-  }, [transactions, sortConfig]);
+  }, [sortConfig, filteredTransactions]);
 
   const handleSort = (key) => {
     setSortConfig((prev) => {
@@ -72,6 +102,96 @@ const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction }) 
   );
 
   return (
+    <>
+      <button onClick={() => setShowFilters(!showFilters)} className="filter-toggle-btn">
+        <i className={`fa ${showFilters ? 'fa-chevron-up' : 'fa-chevron-down'} fa-lg white-icon ${showFilters ? 'rotated' : ''}`}></i>
+      </button>
+
+      <div className={`filters-wrapper ${showFilters ? 'show' : ''}`}>
+
+        <div className="filters">
+          <div className="filter-group">
+            <label htmlFor="member">Member</label>
+            <input
+              id="member"
+              type="text"
+              placeholder="Filter by Member"
+              value={filters.member}
+              onChange={(e) => setFilters({ ...filters, member: e.target.value })}
+            />
+          </div>
+
+          <div className="filter-group">
+            <label htmlFor="purpose">Purpose</label>
+            <input
+              id="purpose"
+              type="text"
+              placeholder="Filter by Purpose"
+              value={filters.purpose}
+              onChange={(e) => setFilters({ ...filters, purpose: e.target.value })}
+            />
+          </div>
+
+          <div className="filter-group">
+            <label htmlFor="minAmount">Min Amount</label>
+            <input
+              id="minAmount"
+              type="number"
+              placeholder="Min Amount"
+              value={filters.minAmount}
+              onChange={(e) => setFilters({ ...filters, minAmount: e.target.value })}
+            />
+          </div>
+
+          <div className="filter-group">
+            <label htmlFor="maxAmount">Max Amount</label>
+            <input
+              id="maxAmount"
+              type="number"
+              placeholder="Max Amount"
+              value={filters.maxAmount}
+              onChange={(e) => setFilters({ ...filters, maxAmount: e.target.value })}
+            />
+          </div>
+
+          <div className="filter-group">
+            <label htmlFor="startDate">Start Date</label>
+            <input
+              id="startDate"
+              type="date"
+              value={filters.startDate}
+              onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
+            />
+          </div>
+
+          <div className="filter-group">
+            <label htmlFor="endDate">End Date</label>
+            <input
+              id="endDate"
+              type="date"
+              value={filters.endDate}
+              onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
+            />
+          </div>
+        </div>
+        <button 
+          onClick={() => {
+            setFilters({
+              member: '',
+              purpose: '',
+              minAmount: '',
+              maxAmount: '',
+              startDate: '',
+              endDate: '',
+            });
+          }} 
+          className="reset-filters-btn"
+        >
+          Reset Filters
+        </button>
+
+      </div>
+
     <div className="transactions-list">
       {transactions.length === 0 ? (
         <p>No transactions available.</p>
@@ -93,10 +213,12 @@ const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction }) 
             {onDeleteTransaction &&
               <>
                 <div>
-                  Actions
                 </div>
                 <div>
+                  Actions
+                </div>
 
+                <div>
                 </div>
               </>
             }
@@ -109,9 +231,9 @@ const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction }) 
           <div className="pagination">
             {Array.from({ length: totalPages }, (_, index) => (
               <button
-                key={index + 1}
-                className={currentPage === index + 1 ? 'active' : ''}
-                onClick={() => handlePageChange(index + 1)}
+              key={index + 1}
+              className={currentPage === index + 1 ? 'active' : ''}
+              onClick={() => handlePageChange(index + 1)}
               >
                 {index + 1}
               </button>
@@ -120,6 +242,7 @@ const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction }) 
         </>
       )}
     </div>
+    </>
   );
 };
 

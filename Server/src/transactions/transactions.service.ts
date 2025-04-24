@@ -9,6 +9,7 @@ import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { PurposesService } from '../purposes/purposes.service';
 import { PurposeModel } from '../purposes/purpose.model';
 import { TransactionModel } from './transaction.model';
+import { OrderBy, TransactionFilterDto } from './dto/transaction-filter.dto';
 
 @Injectable()
 export class TransactionsService {
@@ -61,58 +62,48 @@ export class TransactionsService {
   }
 
 
-  async find(userId: number, queryParams: {
-    startdate?: string,
-    enddate?: string,
-    type?: boolean,
-    purposes?: string[],
-    orderBy?: string,
-    sortOrder?: "ASC" | "DESC",
-  }): Promise<TransactionModel[]> {
-    let { startdate, enddate, type, purposes, orderBy, sortOrder } = queryParams;
-
-    const queryBuilder = this.transactionRepository.createQueryBuilder('transaction');
-
-    queryBuilder.innerJoinAndSelect('transaction.purpose', 'purpose');
-
-    queryBuilder.innerJoinAndSelect('purpose.user', 'user');
-
-    queryBuilder.innerJoinAndSelect('transaction.member', 'member')
-      .andWhere('member.id = :userId', { userId });
-
+  async find(userId: number, queryParams: TransactionFilterDto): Promise<TransactionModel[]> {
+    const {
+      startdate,
+      enddate,
+      purposes,
+      orderBy,
+      sortOrder = 'ASC',
+    } = queryParams;
+  
+    const qb = this.transactionRepository
+      .createQueryBuilder('transaction')
+      .innerJoinAndSelect('transaction.purpose', 'purpose')
+      .innerJoinAndSelect('purpose.user', 'user')
+      .innerJoinAndSelect('transaction.member', 'member')
+      .where('member.id = :userId', { userId });
+  
     if (startdate) {
-      queryBuilder.andWhere('transaction.t_date >= :startdate', { startdate });
+      qb.andWhere('transaction.t_date >= :startdate', { startdate });
     }
-
+  
     if (enddate) {
-      queryBuilder.andWhere('transaction.t_date <= :enddate', { enddate });
+      qb.andWhere('transaction.t_date <= :enddate', { enddate });
     }
-
-    if (purposes && purposes.length > 0) {
-      queryBuilder.andWhere('purpose.id IN (:...purposes)', { purposes });
+  
+    if (purposes?.length) {
+      qb.andWhere('purpose.id IN (:...purposes)', { purposes });
     }
-
-    if (type !== undefined) {
-      queryBuilder.andWhere('purpose.type = :type', { type });
+  
+  
+    const orderMap: Record<OrderBy, string> = {
+      [OrderBy.DATE]: 'transaction.t_date',
+      [OrderBy.SUM]: 'transaction.sum',
+      [OrderBy.PURPOSE_ID]: 'purpose.category',
+    };
+  
+    if (orderBy) {
+      qb.orderBy(orderMap[orderBy], sortOrder);
     }
-
-    switch (orderBy) {
-      case 'purpose':
-        queryBuilder.orderBy('purpose.category', sortOrder || 'ASC');
-        break;
-      case 'sum':
-        queryBuilder.orderBy('transaction.sum', sortOrder || 'ASC');
-        break;
-      case 'date':
-        queryBuilder.orderBy('transaction.t_date', sortOrder || 'ASC');
-        break;
-      default:
-        break;
-    }
-
-    return (await queryBuilder.getMany()).map(TransactionModel.fromEntity);
+  
+    const transactions = await qb.getMany();
+    return transactions.map(TransactionModel.fromEntity);
   }
-
 
   async create(
     userId: number,

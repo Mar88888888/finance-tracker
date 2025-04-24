@@ -22,6 +22,7 @@ import { CreateSubscriptionDto } from '../subscriptions/dto/create-subscription.
 import { SubscriptionModel } from '../subscriptions/subscription.model';
 import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 import { SubscriptionProcessorService } from './subscription-processor.service';
+import { TransactionFilterDto } from './dto/transaction-filter.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: SerializeTransactionDto })
@@ -37,18 +38,12 @@ export class TransactionsController {
   @UseGuards(AuthGuard)
   @Get()
   async find(
-    @Req() req,
-    @Query('startdate') startdate?: string,
-    @Query('enddate') enddate?: string,
-    @Query('type') type?: boolean,
-    @Query('purposes') purposes?: string,
-    @Query('orderBy') orderBy?: string,
-    @Query('sortOrder') sortOrder?: "ASC" | "DESC",
+    @Req() req: IAuthorizedRequest,
+    @Query() filterDto: TransactionFilterDto,
   ): Promise<TransactionModel[]> {
-    const purposesArray = purposes ? purposes.split(',') : undefined;
-    let res = await this.transactionsService.find(req.userId, { startdate, enddate, type, purposes: purposesArray, orderBy, sortOrder });
-    return res;
+    return this.transactionsService.find(req.userId, filterDto);
   }
+  
 
 
   @UseGuards(AuthGuard)

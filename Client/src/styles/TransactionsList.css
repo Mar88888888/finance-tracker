@@ -119,3 +119,108 @@
 .edit-btn {
   background-color: #007bff;
 }
+
+
+.filters input {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #888;
+  background-color: #1f1f1f;
+  color: #f0f0f0;
+  min-width: 150px;
+}
+
+.filters button {
+  padding: 8px 16px;
+  background-color: #555;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.filters button:hover {
+  background-color: #777;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-group label {
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+}
+
+.filters-wrapper {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+}
+
+.filters-wrapper.show {
+  max-height: 500px;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  opacity: 1;
+}
+
+
+.filter-toggle-btn {
+  background: none;
+  border: none;
+  font-size: 24px; 
+  cursor: pointer;
+  padding: 10px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.filters-wrapper {
+  width: 800px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+  padding-bottom: 20px;
+}
+
+
+.filters-wrapper.show {
+  max-height: 500px;
+  opacity: 1;
+}
+
+.filter-toggle-btn i {
+  transition: transform 0.3s ease;
+}
+
+.white-icon {
+  color: white;
+}
+
+
+.reset-filters-btn {
+  background-color: #d67676; 
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  margin-left: 670px;
+}
+
+.reset-filters-btn:hover {
+  background-color: #ff3333; 
+}

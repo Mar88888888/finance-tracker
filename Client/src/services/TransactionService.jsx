@@ -36,8 +36,6 @@ export const fetchTransactionsWithRelations = async (transactions, authToken) =>
 
         const purpose = await fetchPurposeById(transaction.purposeId, authToken);
         transaction.purpose = purpose;
-
-        console.log(transaction);
         return transaction;
       })
     );
