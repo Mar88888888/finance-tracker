@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import TransactionsList from '../components/TransactionsList';
 import API from "../services/AxiosInstance";
+import TransactionsCharts from '../components/TransactionsCharts';
 
 import '../styles/TransactionsPage.css';
 
@@ -61,16 +62,22 @@ const TransactionsPage = () => {
   if (error) return <div>{error}</div>;
 
   return (
+  <>
     <div className="transactions-page-container">
+
       <h1>My Transactions</h1>
+
       <button
         className="create-btn"
         onClick={() => navigate('/transactions/add')}
-      >
+        >
         Add Transaction
       </button>
+
       <TransactionsList transactionsData={transactions} authToken={authToken} onDeleteTransaction={handleDeleteTransaction} />
+      {transactions.length > 0 && <TransactionsCharts transactions={transactions}  authToken={authToken} />}
     </div>
+  </>
   );
 };
 

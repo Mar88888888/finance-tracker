@@ -1,0 +1,25 @@
+.transactions-charts {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+  gap: 40px;
+}
+
+.pie-chart {
+  width: 100%;
+  max-width: 800px;
+  height: 300px;
+}
+
+.pie-chart canvas {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.line-chart {
+  width: 100%;
+  max-width: 800px; 
+  height: 500px;
+}
