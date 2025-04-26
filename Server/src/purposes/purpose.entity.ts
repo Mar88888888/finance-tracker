@@ -10,16 +10,13 @@ import { TransactionEntity } from '../transactions/transaction.entity';
 import { UserEntity } from '../users/user.entity';
 
 @Entity({ name: 'trans_category' })
-@Unique(['category', 'type'])
+@Unique(['category', 'user'])
 export class PurposeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ length: 100, nullable: false })
   category: string;
-
-  @Column({ nullable: false })
-  type: boolean;
 
   @OneToMany(() => TransactionEntity, transaction => transaction.purpose)
   transactions: TransactionEntity[];

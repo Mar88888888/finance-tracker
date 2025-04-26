@@ -41,13 +41,29 @@ export class PurposesService {
 
   async create(userId: number, createPurposeDto: CreatePurposeDto): Promise<PurposeModel> {
     try {
+      const existingPurpose = await this.purposeRepository.findOne({
+        where: {
+          category: createPurposeDto.category,
+          user: { id: userId }
+        }
+      });
+
+      if (existingPurpose) {
+        throw new BadRequestException("Purpose with these values already exists.");
+      }
+
+      const user = await this.usersService.findOne(userId);
+
       const newPurposeEntity = this.purposeRepository.create(createPurposeDto);
       newPurposeEntity.user = UserModel.toEntity(await this.usersService.findOne(userId));
+      this.purposeRepository.save(newPurposeEntity);
       return PurposeModel.fromEntity(newPurposeEntity);
 
     } catch (error) {
 
       if (error instanceof QueryFailedError && error.driverError?.code === '23505') {
+        throw new BadRequestException("Purpose with these values already exists.");
+      } else if (error instanceof BadRequestException) {
         throw new BadRequestException("Purpose with these values already exists.");
       } else if (error instanceof Error) {
         console.error(error.message);

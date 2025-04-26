@@ -4,8 +4,4 @@ export class CreatePurposeDto {
   @IsNotEmpty()
   @IsString()
   category: string;
-
-  @IsNotEmpty()
-  @IsBoolean()
-  type: boolean;
 }

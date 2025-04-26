@@ -6,7 +6,7 @@ import '../styles/AddTransaction.css';
 
 const AddPurpose = () => {
   const { authToken } = useContext(AuthContext);
-  const [form, setForm] = useState({ category: "", type: false });
+  const [form, setForm] = useState({ category: ""});
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 

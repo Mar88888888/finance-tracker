@@ -7,11 +7,10 @@ export class PurposeModel extends AbstractPurpose {
   private transactions: TransactionEntity[] = [];
 
 
-  constructor(id: number, category: string, type: boolean, userId: number) {
+  constructor(id: number, category: string, userId: number) {
     super();
     this.id = id;
     this.category = category;
-    this.type = type;
     this.userId = userId;
   }
 
@@ -27,7 +26,6 @@ export class PurposeModel extends AbstractPurpose {
     const model = new PurposeModel(
       entity.id,
       entity.category,
-      entity.type,
       entity.user.id
     );
     model.setTransactions(entity.transactions || []);
@@ -38,7 +36,6 @@ export class PurposeModel extends AbstractPurpose {
     const entity = new PurposeEntity();
     entity.id = model.getId();
     entity.category = model.getCategory();
-    entity.type = model.getType();
     entity.transactions = model.getTransactions();
     entity.user = { id: model.userId } as UserEntity;
     return entity;
