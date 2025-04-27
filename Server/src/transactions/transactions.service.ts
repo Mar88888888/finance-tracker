@@ -37,26 +37,18 @@ export class TransactionsService {
   async getGroupTransactions(
     memberIds: number[],
     purposeIds: number[],
-    minDate?: Date | null,
-    maxDate?: Date | null
   ): Promise<TransactionModel[]> {
+
     const whereCondition: any = {
       member: { id: In(memberIds) },
       purpose: { id: In(purposeIds) },
     };
 
-    if (minDate && maxDate) {
-      whereCondition.date = Between(minDate, maxDate);
-    } else if (minDate) {
-      whereCondition.date = MoreThanOrEqual(minDate);
-    } else if (maxDate) {
-      whereCondition.date = LessThanOrEqual(maxDate);
-    }
-
     const transactions = await this.transactionRepository.find({
       where: whereCondition,
       relations: ['member', 'purpose'],
     });
+
 
     return transactions.map(TransactionModel.fromEntity);
   }

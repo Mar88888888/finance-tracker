@@ -20,8 +20,6 @@ describe('GroupModel', () => {
       title: 'Test Group',
       owner: owner,
       joinCode: 'JOINCODE',
-      mindate: new Date('2023-01-01'),
-      maxdate: new Date('2023-12-31'),
       purposes: [1, 2],
       members: [member1, member2],
     };
@@ -75,17 +73,6 @@ describe('GroupModel', () => {
     expect(model.getMembers()).not.toContain(member1);
   });
 
-  it('should get and set mindate', () => {
-    const newMindate = new Date('2024-01-01');
-    model.setMindate(newMindate);
-    expect(model.getMindate()).toEqual(newMindate);
-  });
-
-  it('should get and set maxdate', () => {
-    const newMaxdate = new Date('2024-12-31');
-    model.setMaxdate(newMaxdate);
-    expect(model.getMaxdate()).toEqual(newMaxdate);
-  });
 
   it('should get and set purposes', () => {
     expect(model.getPurposes()).toEqual([1, 2]);
@@ -109,8 +96,6 @@ describe('GroupModel', () => {
     entity.title = 'Test Group';
     entity.owner = UserModel.toEntity(owner);
     entity.joinCode = 'JOINCODE';
-    entity.mindate = new Date('2023-01-01');
-    entity.maxdate = new Date('2023-12-31');
     entity.purposes = [1, 2].map(purposeId => {
       const purposeEntity = new PurposeEntity();
       purposeEntity.id = purposeId;
@@ -128,8 +113,6 @@ describe('GroupModel', () => {
     expect(entity.title).toBe('Test Group');
     expect(UserModel.fromEntity(entity.owner)).toEqual(owner);
     expect(entity.joinCode).toBe('JOINCODE');
-    expect(entity.mindate).toEqual(new Date('2023-01-01'));
-    expect(entity.maxdate).toEqual(new Date('2023-12-31'));
     expect(entity.purposes.map(p => p.id)).toEqual([1, 2]);
     expect(entity.members.map(m => UserModel.fromEntity(m))).toEqual([member1, member2]);
   });

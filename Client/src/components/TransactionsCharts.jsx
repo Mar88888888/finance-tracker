@@ -7,21 +7,29 @@ import '../styles/TransactionsCharts.css';
 
 ChartJS.register(CategoryScale, LinearScale, ArcElement, Tooltip, Legend, LineElement, PointElement);
 
-const TransactionsCharts = ({ transactions, authToken }) => {
+const TransactionsCharts = ({ transactions, authToken, purposes }) => {
   const [purposesMap, setPurposesMap] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPurposes = async () => {
       try {
-        const response = await API.get('/purposes', {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        });
+        let purposesArr;
+
+        if (!purposes || !purposes.length) {
+          const response = await API.get('/purposes', {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          });
+          purposesArr = response.data;
+        }else {
+          purposesArr = purposes;
+        }
+
 
         const map = {};
-        response.data.forEach(p => {
+        purposesArr.forEach(p => {
           map[p.id] = p.category;
         });
         setPurposesMap(map);
@@ -34,7 +42,7 @@ const TransactionsCharts = ({ transactions, authToken }) => {
     };
 
     fetchPurposes();
-  }, [authToken]);
+  }, [authToken, purposes]);
 
   if (loading) {
     return <div>Loading charts...</div>;
@@ -46,7 +54,6 @@ const TransactionsCharts = ({ transactions, authToken }) => {
 
   const purposeSums = {};
   transactions.forEach(tx => {
-    console.log(purposesMap, purposesMap[tx.purposeId], tx.purposeId);
     const purposeName = purposesMap[tx.purposeId] || 'Unknown';
     purposeSums[purposeName] = (purposeSums[purposeName] || 0) + tx.sum;
   });

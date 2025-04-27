@@ -10,12 +10,6 @@ export class GroupEntity {
   @Column({ nullable: false, length: 100 })
   title: string;
 
-  @Column({ type: 'date', nullable: true })
-  mindate: Date;
-
-  @Column({ type: 'date', nullable: true })
-  maxdate: Date;
-
   @ManyToOne(() => UserEntity, user => user.myGroups)
   owner: UserEntity;
 
