@@ -7,7 +7,7 @@ import '../styles/TransactionsCharts.css';
 
 ChartJS.register(CategoryScale, LinearScale, ArcElement, Tooltip, Legend, LineElement, PointElement);
 
-const TransactionsCharts = ({ transactions, authToken, purposes }) => {
+const TransactionsCharts = ({ transactions, authToken, purposes, members }) => {
   const [purposesMap, setPurposesMap] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -92,6 +92,29 @@ const TransactionsCharts = ({ transactions, authToken, purposes }) => {
     ],
   };
 
+  let membersData;
+  if (members && members.length) {
+    const memberSums = {};
+    
+    transactions.forEach(tx => {
+      const member = members.find(m => m.id === tx.memberId);
+      const memberName = member ? member.name : 'Unknown';
+      memberSums[memberName] = (memberSums[memberName] || 0) + tx.sum;
+    });
+
+    membersData = {
+      labels: Object.keys(memberSums),
+      datasets: [
+        {
+          label: 'Expenses by Member',
+          data: Object.values(memberSums),
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FFC107', '#E91E63', '#9C27B0', '#00BCD4'],
+        },
+      ],
+    };
+  }
+
+
   const lineOptions = {
     responsive: true,
     plugins: {
@@ -126,6 +149,14 @@ const TransactionsCharts = ({ transactions, authToken, purposes }) => {
         <h3>Expenses by Date</h3>
         <Line data={lineData} options={lineOptions} />
       </div>
+
+      {members && members.length > 0 && (
+        <div className="pie-chart">
+          <h3>Expenses by Member</h3>
+          <Pie data={membersData} />
+        </div>
+      )}
+
     </div>
   );
 };
