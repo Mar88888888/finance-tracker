@@ -52,6 +52,22 @@ const TransactionsCharts = ({ transactions, authToken, purposes, members }) => {
     return <div>No transactions yet.</div>;
   }
 
+  const generateColors = (count) => {
+    const colors = [];
+    const step = 360 / count;
+  
+    for (let i = 0; i < count; i++) {
+      const baseHue = i * step;
+      const randomOffset = Math.random() * 10 - step / 2; 
+      const hue = Math.floor((baseHue + randomOffset + 360) % 360);
+      const color = `hsl(${hue}, 80%, 55%)`;
+      colors.push(color);
+    }
+  
+    return colors;
+  };
+  
+
   const purposeSums = {};
   transactions.forEach(tx => {
     const purposeName = purposesMap[tx.purposeId] || 'Unknown';
@@ -64,7 +80,7 @@ const TransactionsCharts = ({ transactions, authToken, purposes, members }) => {
       {
         label: 'Expenses by Purpose',
         data: Object.values(purposeSums),
-        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FFC107', '#E91E63'],
+        backgroundColor: generateColors(Object.keys(purposeSums).length),
       },
     ],
   };
@@ -108,7 +124,7 @@ const TransactionsCharts = ({ transactions, authToken, purposes, members }) => {
         {
           label: 'Expenses by Member',
           data: Object.values(memberSums),
-          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FFC107', '#E91E63', '#9C27B0', '#00BCD4'],
+          backgroundColor: generateColors(Object.keys(memberSums).length),
         },
       ],
     };
