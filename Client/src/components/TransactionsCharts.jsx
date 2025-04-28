@@ -81,6 +81,8 @@ const TransactionsCharts = ({ transactions, authToken, purposes, members }) => {
         label: 'Expenses by Purpose',
         data: Object.values(purposeSums),
         backgroundColor: generateColors(Object.keys(purposeSums).length),
+        borderColor: '#333',
+        borderWidth: 1, 
       },
     ],
   };
@@ -125,11 +127,28 @@ const TransactionsCharts = ({ transactions, authToken, purposes, members }) => {
           label: 'Expenses by Member',
           data: Object.values(memberSums),
           backgroundColor: generateColors(Object.keys(memberSums).length),
+          borderColor: '#333',
+          borderWidth: 1, 
         },
       ],
     };
   }
 
+  const pieOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom',
+      },
+    },
+    animation: {
+      animateRotate: true,
+      animateScale: true,
+      duration: 1000, 
+      easing: 'easeOutQuart',
+    },
+  };
+  
 
   const lineOptions = {
     responsive: true,
@@ -158,7 +177,7 @@ const TransactionsCharts = ({ transactions, authToken, purposes, members }) => {
     <div className="transactions-charts">
       <div className="pie-chart">
         <h3>Expenses by Purpose</h3>
-        <Pie data={pieData} />
+        <Pie data={pieData} options={pieOptions} />
       </div>
 
       <div className="line-chart">
@@ -169,7 +188,7 @@ const TransactionsCharts = ({ transactions, authToken, purposes, members }) => {
       {members && members.length > 0 && (
         <div className="pie-chart">
           <h3>Expenses by Member</h3>
-          <Pie data={membersData} />
+          <Pie data={membersData}  options={pieOptions} />
         </div>
       )}
 
