@@ -13,6 +13,7 @@ import * as csv from 'fast-csv';
 import { Response } from 'express';
 import { UsersService } from '../users/users.service';
 import { UserModel } from '../users/user.model';
+import { max, min } from 'class-validator';
 
 @Injectable()
 export class TransactionsService {
@@ -88,6 +89,8 @@ export class TransactionsService {
       startDate,
       endDate,
       purposes,
+      minAmount,
+      maxAmount,
       orderBy,
       sortOrder = 'ASC',
     } = queryParams;
@@ -105,6 +108,14 @@ export class TransactionsService {
   
     if (endDate) {
       qb.andWhere('transaction.date <= :endDate', { endDate });
+    }
+  
+    if (minAmount) {
+      qb.andWhere('transaction.sum >= :minAmount', { minAmount });
+    }
+  
+    if (maxAmount) {
+      qb.andWhere('transaction.sum <= :maxAmount', { maxAmount });
     }
   
     if (purposes?.length) {

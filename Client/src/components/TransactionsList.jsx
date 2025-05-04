@@ -107,6 +107,8 @@ const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction }) 
   
     if (filters.startDate) params.append('startDate', filters.startDate);
     if (filters.endDate) params.append('endDate', filters.endDate);
+    if (filters.minAmount) params.append('minAmount', filters.minAmount);
+    if (filters.maxAmount) params.append('maxAmount', filters.maxAmount);
     if (sortConfig.key) {
       params.append('orderBy', sortConfig.key);
       params.append('sortOrder', sortConfig.direction?.toUpperCase() || 'ASC');

@@ -1,5 +1,5 @@
-import { IsOptional, IsDateString, IsBoolean, IsIn, IsEnum } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { IsOptional, IsDateString, IsBoolean, IsIn, IsEnum, IsNumber, min, Min } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
 
 export enum OrderBy {
   DATE = 'date',
@@ -15,6 +15,18 @@ export class TransactionFilterDto {
   @IsOptional()
   @IsDateString()
   endDate?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Type(() => Number)
+  minAmount?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Type(() => Number)
+  maxAmount?: number;
 
   @IsOptional()
   @Transform(({ value }) => {
