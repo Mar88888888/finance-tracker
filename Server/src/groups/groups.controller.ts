@@ -3,7 +3,8 @@ import {
   Delete, Get, HttpStatus,
   Param, Patch, Post, Req, Res,
   SerializeOptions, UseGuards, UseInterceptors,
-  ParseIntPipe
+  ParseIntPipe,
+  Query
 } from '@nestjs/common';
 import { GroupsService } from './groups.service';
 import { CreateGroupDto } from './dto/create.group.dto';
@@ -18,6 +19,8 @@ import { GroupOwnerGuard } from '../guards/group-owner.guard';
 import { MemberGuard } from '../guards/group-member.guard';
 import { TransactionModel } from '../transactions/transaction.model';
 import { IAuthorizedRequest } from '../abstracts/authorized-request.interface';
+import { TransactionFilterDto } from '../transactions/dto/transaction-filter.dto';
+import { TransactionsService } from '../transactions/transactions.service';
 
 @Controller('groups')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -25,6 +28,7 @@ import { IAuthorizedRequest } from '../abstracts/authorized-request.interface';
 export class GroupsController {
   constructor(
     private readonly groupsService: GroupsService,
+    private readonly transactionsService: TransactionsService,
   ) { }
 
   @UseGuards(AuthGuard, MemberGuard)
@@ -37,9 +41,27 @@ export class GroupsController {
   @SerializeOptions({ type: SerializeTransactionDto })
   @UseGuards(AuthGuard, MemberGuard)
   @Get('/:groupId/transactions')
-  async getTransactions(@Param('groupId', ParseIntPipe) id: number): Promise<TransactionModel[]> {
-    return await this.groupsService.getTransactions(id);
+  async getTransactions(
+    @Param('groupId', ParseIntPipe) id: number,
+    @Query() filterDto: TransactionFilterDto,
+    ): Promise<TransactionModel[]> {
+    return await this.groupsService.getTransactions(id, filterDto);
   }
+
+  @UseGuards(AuthGuard, MemberGuard)
+  @Get('/:groupId/transactions/export')
+  async exportGroupTransactions(
+    @Query() filterDto: TransactionFilterDto,
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @Res() res: Response,
+  ) {
+    const transactions = await this.groupsService.getTransactions(groupId, filterDto);
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=group_transactions.csv');
+
+    await this.transactionsService.exportToCsv(transactions, res);
+  }
+
 
   @UseGuards(AuthGuard, MemberGuard)
   @Get('/:groupId')

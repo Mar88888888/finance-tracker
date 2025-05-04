@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException,
    ConflictException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {  In, QueryFailedError, Repository } from 'typeorm';
+import {  Between, FindOperator, FindOptionsOrder, FindOptionsWhere, In, LessThan, MoreThan, QueryFailedError, Repository } from 'typeorm';
 import { TransactionEntity } from './transaction.entity';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
@@ -12,8 +12,6 @@ import { OrderBy, TransactionFilterDto } from './dto/transaction-filter.dto';
 import * as csv from 'fast-csv';
 import { Response } from 'express';
 import { UsersService } from '../users/users.service';
-import { UserModel } from '../users/user.model';
-import { max, min } from 'class-validator';
 
 @Injectable()
 export class TransactionsService {
@@ -42,18 +40,68 @@ export class TransactionsService {
   async getGroupTransactions(
     memberIds: number[],
     purposeIds: number[],
+    filterDto: TransactionFilterDto,
   ): Promise<TransactionModel[]> {
+    const {
+      startDate,
+      endDate,
+      minAmount,
+      maxAmount,
+      orderBy,
+      sortOrder = 'ASC',
+    } = filterDto;
 
-    const whereCondition: any = {
+    const purposes = filterDto
+      ?.purposes
+      ?.filter(
+        (purpose: number) => purposeIds.includes(purpose)
+      );
+    
+    let dateCondition: FindOperator<Date>;
+    if(startDate && endDate){
+      dateCondition = Between(new Date(startDate), new Date(endDate));
+    }else if(startDate){
+      dateCondition = MoreThan(new Date(startDate));
+    }
+    else if(endDate){
+      dateCondition = LessThan(new Date(endDate));
+    }
+    else{
+      dateCondition = undefined;
+    }
+
+    let amountCodition: FindOperator<number>;
+    if(minAmount && maxAmount){
+      amountCodition = Between(minAmount, maxAmount);
+    }else if(minAmount){
+      amountCodition = MoreThan(minAmount);
+    }
+    else if(maxAmount){
+      amountCodition = LessThan(maxAmount);
+    }
+    else{
+      amountCodition = undefined;
+    }
+
+    const whereCondition: FindOptionsWhere<TransactionEntity> = {
+      sum: amountCodition,
+      date: dateCondition,
       member: { id: In(memberIds) },
-      purpose: { id: In(purposeIds) },
+      purpose: { id: In( purposes?.length ? purposes : purposeIds) },
     };
 
+
+    const orderCondition: FindOptionsOrder<TransactionEntity> = {};
+
+    if (orderBy) {
+      orderCondition[orderBy] = sortOrder.toUpperCase() as 'ASC' | 'DESC';
+    }
+    
     const transactions = await this.transactionRepository.find({
       where: whereCondition,
+      order: orderCondition,
       relations: ['member', 'purpose'],
     });
-
 
     return transactions.map(TransactionModel.fromEntity);
   }

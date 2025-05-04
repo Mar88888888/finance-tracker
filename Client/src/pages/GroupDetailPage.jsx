@@ -218,7 +218,7 @@ const GroupDetailPage = () => {
               <h2>Transactions</h2>
               {transactions.length === 0 ? <p>No transactions available for this group.</p> : (
                 <>
-                  <TransactionsList transactionsData={transactions} authToken={authToken} />
+                  <TransactionsList transactionsData={transactions} authToken={authToken} groupId={groupId} />
                   {transactions.length > 0 && <TransactionsCharts transactions={transactions} purposes={groupPurposes} authToken={authToken} members={group.members} />}
                 </>
 

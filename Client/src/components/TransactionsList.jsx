@@ -6,7 +6,7 @@ import { fetchTransactionsWithRelations } from '../services/TransactionService';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import API from '../services/AxiosInstance';
 
-const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction }) => {
+const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction, groupId }) => {
   const [transactions, setEnrichedTransactions] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
   const [currentPage, setCurrentPage] = useState(1);
@@ -120,13 +120,15 @@ const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction }) 
     }
   
     try {
-      const response = await API.get(`/transactions/export`, {
-        params,
-        responseType: 'blob',
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      });
+      const response = await API.get(
+        groupId ? `/groups/${groupId}/transactions/export` : `/transactions/export`, 
+        {
+          params,
+          responseType: 'blob',
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
   
       const blob = new Blob([response.data], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);

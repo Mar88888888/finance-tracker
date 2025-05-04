@@ -11,6 +11,7 @@ import { UserModel } from '../users/user.model';
 import { TransactionModel } from '../transactions/transaction.model';
 import { AddPurposeDto } from './dto/add-purpose.dto';
 import * as crypto from 'crypto';
+import { TransactionFilterDto } from '../transactions/dto/transaction-filter.dto';
 
 @Injectable()
 export class GroupsService {
@@ -100,7 +101,7 @@ export class GroupsService {
     return group;
   }
 
-  async getTransactions(id: number): Promise<TransactionModel[]> {
+  async getTransactions(id: number, filterParams: TransactionFilterDto): Promise<TransactionModel[]> {
     const group = await this.findOne(id);
 
     const memberIds = group.getMembers().map(member => member.getId());
@@ -109,7 +110,7 @@ export class GroupsService {
       return [];
     }
 
-    return this.transactionService.getGroupTransactions(memberIds, purposeIds);
+    return this.transactionService.getGroupTransactions(memberIds, purposeIds, filterParams);
   }
 
   async remove(id: number): Promise<void> {
