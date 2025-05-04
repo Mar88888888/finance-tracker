@@ -4,7 +4,8 @@ import {
   UseInterceptors, SerializeOptions, ClassSerializerInterceptor,
   Res, HttpStatus,
   ParseIntPipe,
-  ForbiddenException
+  ForbiddenException,
+  Header
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
@@ -44,6 +45,20 @@ export class TransactionsController {
     return this.transactionsService.find(req.userId, filterDto);
   }
   
+
+  @UseGuards(AuthGuard)
+  @Get('export')
+  async exportTransactions(
+    @Req() req: IAuthorizedRequest,
+    @Query() filterDto: TransactionFilterDto,
+    @Res() res: Response,
+  ) {
+    const transactions = await this.transactionsService.find(req.userId, filterDto);
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=transactions.csv');
+
+    await this.transactionsService.exportToCsv(transactions, res);
+  }
 
 
   @UseGuards(AuthGuard)

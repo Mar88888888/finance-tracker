@@ -10,15 +10,24 @@ export enum OrderBy {
 export class TransactionFilterDto {
   @IsOptional()
   @IsDateString()
-  startdate?: string;
+  startDate?: string;
 
   @IsOptional()
   @IsDateString()
-  enddate?: string;
+  endDate?: string;
 
   @IsOptional()
-  @Transform(({ value }) => value.split(',').map((id: string) => parseInt(id, 10)))
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      return value.split(',').map((id) => parseInt(id, 10));
+    }
+    if (Array.isArray(value)) {
+      return value.map((id) => parseInt(id, 10));
+    }
+    return [];
+  })
   purposes?: number[];
+  
 
   @IsOptional()
   @IsEnum(OrderBy)

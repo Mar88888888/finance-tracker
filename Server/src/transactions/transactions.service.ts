@@ -1,8 +1,7 @@
 import { Injectable, NotFoundException,
    ConflictException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, In, LessThanOrEqual, MoreThanOrEqual,
-   QueryFailedError, Repository } from 'typeorm';
+import {  In, QueryFailedError, Repository } from 'typeorm';
 import { TransactionEntity } from './transaction.entity';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
@@ -10,6 +9,10 @@ import { PurposesService } from '../purposes/purposes.service';
 import { PurposeModel } from '../purposes/purpose.model';
 import { TransactionModel } from './transaction.model';
 import { OrderBy, TransactionFilterDto } from './dto/transaction-filter.dto';
+import * as csv from 'fast-csv';
+import { Response } from 'express';
+import { UsersService } from '../users/users.service';
+import { UserModel } from '../users/user.model';
 
 @Injectable()
 export class TransactionsService {
@@ -17,6 +20,7 @@ export class TransactionsService {
     @InjectRepository(TransactionEntity)
     private readonly transactionRepository: Repository<TransactionEntity>,
     private readonly purposeService: PurposesService,
+    private readonly userService: UsersService,
   ) { }
 
   async findAll(): Promise<TransactionModel[]> {
@@ -54,10 +58,35 @@ export class TransactionsService {
   }
 
 
+  async exportToCsv(transactions: TransactionModel[], res: Response) {
+    const csvStream = csv.format({ headers: true });
+
+    csvStream.pipe(res);
+
+    for (const transaction of transactions) {
+      const purpose = await this.purposeService
+        .findOne(transaction.getPurposeId());
+      const member = await this.userService
+        .findOne(transaction.getMemberId());
+    
+      csvStream.write({
+        ID: transaction.getId(),
+        Date: new Date(transaction.getDate()).toISOString().split('T')[0],
+        Sum: transaction.getSum(),
+        Purpose: purpose.getCategory(),
+        Member: member.getName(),
+      });
+    }
+    
+
+    csvStream.end();
+  }
+
+
   async find(userId: number, queryParams: TransactionFilterDto): Promise<TransactionModel[]> {
     const {
-      startdate,
-      enddate,
+      startDate,
+      endDate,
       purposes,
       orderBy,
       sortOrder = 'ASC',
@@ -70,12 +99,12 @@ export class TransactionsService {
       .innerJoinAndSelect('transaction.member', 'member')
       .where('member.id = :userId', { userId });
   
-    if (startdate) {
-      qb.andWhere('transaction.t_date >= :startdate', { startdate });
+    if (startDate) {
+      qb.andWhere('transaction.date >= :startDate', { startDate });
     }
   
-    if (enddate) {
-      qb.andWhere('transaction.t_date <= :enddate', { enddate });
+    if (endDate) {
+      qb.andWhere('transaction.date <= :endDate', { endDate });
     }
   
     if (purposes?.length) {
@@ -84,7 +113,7 @@ export class TransactionsService {
   
   
     const orderMap: Record<OrderBy, string> = {
-      [OrderBy.DATE]: 'transaction.t_date',
+      [OrderBy.DATE]: 'transaction.date',
       [OrderBy.SUM]: 'transaction.sum',
       [OrderBy.PURPOSE_ID]: 'purpose.category',
     };
