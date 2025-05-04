@@ -4,6 +4,7 @@ import '../styles/TransactionsList.css';
 import TransactionItem from './TransactionItem';
 import { fetchTransactionsWithRelations } from '../services/TransactionService';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import API from '../services/AxiosInstance';
 
 const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction }) => {
   const [transactions, setEnrichedTransactions] = useState([]);
@@ -101,6 +102,47 @@ const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction }) 
     currentPage * itemsPerPage
   );
 
+  const handleExportCSV = async () => {
+    const params = new URLSearchParams();
+  
+    if (filters.startDate) params.append('startDate', filters.startDate);
+    if (filters.endDate) params.append('endDate', filters.endDate);
+    if (sortConfig.key) {
+      params.append('orderBy', sortConfig.key);
+      params.append('sortOrder', sortConfig.direction?.toUpperCase() || 'ASC');
+    }
+  
+    const purposeIds = [...new Set(filteredTransactions.map(tx => tx.purpose?.id).filter(Boolean))];
+    if (purposeIds.length > 0) {
+      params.append('purposes', purposeIds.join(','));
+    }
+  
+    try {
+      const response = await API.get(`/transactions/export`, {
+        params,
+        responseType: 'blob',
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+  
+      const blob = new Blob([response.data], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+  
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'transactions_export.csv');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Export failed:', error);
+      alert('CSV export failed.');
+    }
+  };
+  
+
   return (
     <>
       <button onClick={() => setShowFilters(!showFilters)} className="filter-toggle-btn">
@@ -191,6 +233,10 @@ const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction }) 
         </button>
 
       </div>
+
+      <button onClick={handleExportCSV} className="export-btn">
+        <i className="fa fa-download" /> Export to CSV
+      </button>
 
     <div className="transactions-list">
       {transactions.length === 0 ? (

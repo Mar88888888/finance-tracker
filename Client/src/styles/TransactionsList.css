@@ -224,3 +224,17 @@
 .reset-filters-btn:hover {
   background-color: #ff3333; 
 }
+
+
+.export-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 5px;
+  margin: 10px 0;
+  cursor: pointer;
+}
+.export-btn:hover {
+  background-color: #0056b3;
+}
