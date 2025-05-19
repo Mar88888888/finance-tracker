@@ -7,7 +7,7 @@ import {
 import { UsersService } from './users.service';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'util';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create.user.dto';
 import { InnerUserUpdateDto } from './dto/inner-update.user.dto';
 import { LoginUserDto } from './dto/login.user.dto';
@@ -73,7 +73,10 @@ export class AuthService {
 
       return user;
     } catch (error) {
-      throw new UnauthorizedException('Invalid token');
+      if (!(error instanceof TokenExpiredError)) {
+        console.error(error);
+      }
+      throw new UnauthorizedException('Invalid or expired token');
     }
   }
 }

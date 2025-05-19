@@ -9,7 +9,7 @@ async function bootstrap() {
   app.setGlobalPrefix('finance');
 
   app.enableCors({
-      origin: 'http://localhost:3001',
+      origin: process.env.FRONTEND_URL,
       credentials: true,
   });
 
