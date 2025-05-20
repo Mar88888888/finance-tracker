@@ -1,8 +1,8 @@
-# Household Finance Management Application
+# Finance Management Application
 
 ## Overview
 
-This application helps households manage and analyze their finances, allowing users to track expenses, create budgets, manage groups for shared expenses, and gain insights into their spending habits.
+This application helps to manage and analyze finances, allowing users to track expenses, manage groups for shared expenses and gain insights into their spending habits.
 
 ## Features
 
@@ -12,18 +12,16 @@ This application helps households manage and analyze their finances, allowing us
 * **User Authentication:** Secure user accounts with password protection and optional two-factor authentication.
 * **Recurring Transactions:** Schedule recurring transactions for regular income or expenses like rent, subscriptions, or salaries.
 * **Data Visualization:** Analyze spending patterns with charts and graphs that illustrate expense breakdowns and trends over time.
-
-## Planned Features
 * **Data Export:** Export your financial data in various formats (CSV, PDF) for further analysis or record-keeping.
 
   
-## Technology Stack
+## Tech Stack
 
 * **Frontend:** ReactJS
 * **Backend:** NestJS
 * **Database:** PostgreSQL, TypeORM
 
-## Getting Started
+## How to run in local environment
 
 1. **Clone the repository:** `git clone https://github.com/Mar88888888/finance-tracker.git`
 2. **Install dependencies:**
