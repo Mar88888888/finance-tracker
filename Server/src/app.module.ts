@@ -14,6 +14,9 @@ import { GroupEntity } from './groups/group.entity';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { SubscriptionEntity } from './subscriptions/subscription.entity';
 import { ScheduleModule } from '@nestjs/schedule';
+import { CacheModule } from '@nestjs/cache-manager';
+
+import redisStore from 'cache-manager-ioredis';
 require('dotenv').config();
 
 @Module({
@@ -27,7 +30,16 @@ require('dotenv').config();
       synchronize: true,
       entities: [UserEntity, PurposeEntity, TransactionEntity, GroupEntity, SubscriptionEntity],
     }),
-
+    CacheModule.registerAsync({
+      isGlobal: true,
+      useFactory: () => ({
+        store: redisStore,
+        host: process.env.REDIS_HOST, 
+        port: process.env.REDIS_PORT,
+        password: process.env.REDIS_PASSWORD,
+        tls: {},
+      }),
+    }),
     UsersModule, TransactionsModule, PurposesModule, GroupsModule, SubscriptionsModule],
   controllers: [AppController],
   providers: [AppService, JwtService],

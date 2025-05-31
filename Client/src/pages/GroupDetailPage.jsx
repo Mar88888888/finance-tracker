@@ -169,7 +169,7 @@ const GroupDetailPage = () => {
 
   return (
     <div className="groupdetailpage-container">
-      {loading ? <div>Loading...(Please, be patient, it can take some time)</div> : error ? <div>{error}</div> : (
+      {loading ? <div>Loading...(Please, be patient, it can take a minute for the first time)</div> : error ? <div>{error}</div> : (
         <>
           <h1>{group.title}</h1>
           <div className="join-code-container" onClick={copyToClipboard}>

@@ -42,7 +42,7 @@ const PurposesPage = () => {
     }
   }, [authToken, navigate, setAuthToken, setUser]);
 
-  if (loading) return <div>Loading...(Please, be patient, it can take some time)</div>;
+  if (loading) return <div>Loading...(Please, be patient, it can take a minute for the first time)</div>;
   if (error) return <div>{error}</div>;
 
   return (

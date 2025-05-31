@@ -5,9 +5,10 @@ import { PurposeEntity } from './purpose.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from '../users/users.module';
 import { JwtService } from '@nestjs/jwt';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PurposeEntity]), UsersModule],
+  imports: [TypeOrmModule.forFeature([PurposeEntity]), CacheModule.register(), UsersModule],
   controllers: [PurposesController],
   providers: [PurposesService, JwtService]
 })
