@@ -19,7 +19,7 @@ This application helps to manage and analyze finances, allowing users to track e
 
 * **Frontend:** ReactJS
 * **Backend:** NestJS
-* **Database:** PostgreSQL, TypeORM
+* **Database:** PostgreSQL, TypeORM, Redis
 
 ## Link to hosted website
    https://finance-tracker-jfwr.onrender.com/
