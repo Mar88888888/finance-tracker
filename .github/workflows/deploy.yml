@@ -1,41 +1,43 @@
-name: Deploy Nest Backend to Google Cloud Run
+name: Deploy to Google Cloud Run
 on:
   push:
     branches:
       - main
-permissions:
-  id-token: write
-  contents: read
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: ${{ secrets.GCP_REGION }}
+  SERVICE_NAME: ${{ secrets.GCP_SERVICE_NAME }}
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./Server
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Authenticate with Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v1
         with:
-          workload_identity_provider: projects/778639310430/locations/global/workloadIdentityPools/github-pool-v2/providers/github-provider
-          service_account: github-actions-deployer@finance-tracker-0603.iam.gserviceaccount.com
-          token_format: access_token
-      - name: Set up gcloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-      - name: Configure Docker auth
-        run: gcloud auth configure-docker gcr.io
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker europe-central2-docker.pkg.dev --quiet
+
       - name: Build and push Docker image
         run: |
-          IMAGE=gcr.io/finance-tracker-0603/nest-backend:${{ github.sha }}
-          docker build -t $IMAGE .
-          docker push $IMAGE
-          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+          docker build -t europe-central2-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:$GITHUB_SHA ./Server
+          docker push europe-central2-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:$GITHUB_SHA
+
       - name: Deploy to Cloud Run
         run: |
-          gcloud run deploy nest-backend \
-            --image $IMAGE \
+          gcloud run deploy $SERVICE_NAME \
+            --image europe-central2-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:$GITHUB_SHA \
             --platform managed \
-            --region europe-central2 \
+            --region $REGION \
             --allow-unauthenticated \
-            --env-vars-file cloudrun.env.yaml
+            --env-vars-file ./Server/cloudrun.env.yaml
