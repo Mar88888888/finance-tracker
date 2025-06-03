@@ -1,44 +1,38 @@
 name: Deploy Nest Backend to Google Cloud Run
-
 on:
   push:
     branches:
       - main
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./Server
-
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v3
-
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v1
-      with:
-        credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-    - name: Set up gcloud SDK
-      uses: google-github-actions/setup-gcloud@v1
-
-    - name: Configure Docker auth
-      run: gcloud auth configure-docker
-
-    - name: Build and push Docker image
-      run: |
-        IMAGE=gcr.io/${{ secrets.GCP_PROJECT_ID }}/nest-backend:${{ github.sha }}
-        docker build -t $IMAGE .
-        docker push $IMAGE
-        echo "IMAGE=$IMAGE" >> $GITHUB_ENV
-
-    - name: Deploy to Cloud Run
-      run: |
-        gcloud run deploy nest-backend \
-          --image $IMAGE \
-          --platform managed \
-          --region europe-central2 \
-          --allow-unauthenticated \
-          --env-vars-file cloudrun.env.yaml
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/778639310430/locations/global/workloadIdentityPools/github-pool-v2/providers/github-provider
+          service_account: github-actions-deployer@finance-tracker-0603.iam.gserviceaccount.com
+          token_format: access_token
+      - name: Set up gcloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+      - name: Configure Docker auth
+        run: gcloud auth configure-docker gcr.io
+      - name: Build and push Docker image
+        run: |
+          IMAGE=gcr.io/finance-tracker-0603/nest-backend:${{ github.sha }}
+          docker build -t $IMAGE .
+          docker push $IMAGE
+          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy nest-backend \
+            --image $IMAGE \
+            --platform managed \
+            --region europe-central2 \
+            --allow-unauthenticated \
+            --env-vars-file cloudrun.env.yaml
