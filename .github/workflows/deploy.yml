@@ -40,4 +40,4 @@ jobs:
             --platform managed \
             --region $REGION \
             --allow-unauthenticated \
-            --env-vars-file ./Server/cloudrun.env.yaml
+            --set-env-vars ${{ secrets.GCP_ENV_VARS }}
