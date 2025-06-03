@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsNumber, IsDate } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsDate, IsEnum } from 'class-validator';
+import { CurrencyCode } from '../../currency/currency-code.enum';
 
 export class CreateTransactionDto {
   @IsNotEmpty()
@@ -10,6 +11,10 @@ export class CreateTransactionDto {
   @IsDate()
   @Type(() => Date)
   date: Date;
+
+  @IsNotEmpty()
+  @IsEnum(CurrencyCode)
+  currency:CurrencyCode;
 
   @IsNotEmpty()
   @IsNumber()

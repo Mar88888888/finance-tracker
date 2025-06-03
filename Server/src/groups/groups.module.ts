@@ -9,13 +9,14 @@ import { TransactionsService } from '../transactions/transactions.service';
 import { TransactionEntity } from '../transactions/transaction.entity';
 import { PurposesService } from '../purposes/purposes.service';
 import { PurposeEntity } from '../purposes/purpose.entity';
+import { CurrencyModule } from '../currency/currency.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([GroupEntity, TransactionEntity, PurposeEntity]),
   JwtModule.register({
     secret: process.env.JWT_SECRET,
     signOptions: { expiresIn: '1h' }
-  }), UsersModule
+  }), UsersModule, CurrencyModule
   ],
   providers: [GroupsService, TransactionsService, PurposesService],
   controllers: [GroupsController]

@@ -11,14 +11,17 @@ import { UsersService } from '../users/users.service';
 import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 import { SubscriptionEntity } from '../subscriptions/subscription.entity';
 import { SubscriptionProcessorService } from './subscription-processor.service';
+import { CurrencyService } from '../currency/currency.service';
+import { CurrencyEntity } from '../currency/currency.entity';
+import { CurrencyModule } from '../currency/currency.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature(
-    [TransactionEntity, UserEntity, PurposeEntity, SubscriptionEntity]
-  )],
+    [TransactionEntity, UserEntity, PurposeEntity, SubscriptionEntity, CurrencyEntity]
+  ), CurrencyModule],
   providers: [TransactionsService, JwtService,
     PurposesService, UsersService,
-    SubscriptionProcessorService, SubscriptionsService],
+    SubscriptionProcessorService, SubscriptionsService, CurrencyService],
   controllers: [TransactionsController],
   exports: [TransactionsService],
 })

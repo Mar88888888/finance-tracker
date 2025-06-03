@@ -17,6 +17,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { CacheModule } from '@nestjs/cache-manager';
 
 import redisStore from 'cache-manager-ioredis';
+import { CurrencyEntity } from './currency/currency.entity';
 require('dotenv').config();
 
 @Module({
@@ -27,8 +28,8 @@ require('dotenv').config();
       url: process.env.DATABASE_URL,
       ssl: { rejectUnauthorized: false },
       autoLoadEntities: true,
-      synchronize: true,
-      entities: [UserEntity, PurposeEntity, TransactionEntity, GroupEntity, SubscriptionEntity],
+      synchronize: false,
+      entities: [UserEntity, PurposeEntity, TransactionEntity, GroupEntity, SubscriptionEntity, CurrencyEntity],
     }),
     CacheModule.registerAsync({
       isGlobal: true,

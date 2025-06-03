@@ -12,6 +12,8 @@ import { OrderBy, TransactionFilterDto } from './dto/transaction-filter.dto';
 import * as csv from 'fast-csv';
 import { Response } from 'express';
 import { UsersService } from '../users/users.service';
+import { CurrencyService } from '../currency/currency.service';
+import { UserEntity } from '../users/user.entity';
 
 @Injectable()
 export class TransactionsService {
@@ -20,6 +22,7 @@ export class TransactionsService {
     private readonly transactionRepository: Repository<TransactionEntity>,
     private readonly purposeService: PurposesService,
     private readonly userService: UsersService,
+    private readonly currencyService: CurrencyService
   ) { }
 
   async findAll(): Promise<TransactionModel[]> {
@@ -190,14 +193,27 @@ export class TransactionsService {
     createTransactionDto: CreateTransactionDto
   ): Promise<TransactionModel> {
     try {
-      const newTransaction = this.transactionRepository.create(createTransactionDto);
-      const { purposeId } = createTransactionDto;
-      const member = { id: userId } as any;
-      const purpose = PurposeModel.toEntity(await this.purposeService.findOne(purposeId));
-      newTransaction.member = member;
-      newTransaction.purpose = purpose;
+      const { purposeId, currency, date, sum } = createTransactionDto;
 
-      return TransactionModel.fromEntity(await this.transactionRepository.save(newTransaction));
+      const purpose = PurposeModel.toEntity(await this.purposeService.findOne(purposeId));
+      const currencyEntity = await this.currencyService.getCurrencyEntity(currency);
+
+      const newTransactionPartial: Partial<TransactionEntity> = {
+        sum,
+        date,
+        currency: currencyEntity,
+        member: { id: userId } as UserEntity,
+        purpose,
+      };
+
+      const newTransaction = this.transactionRepository.create(newTransactionPartial);
+
+      const exchangeRate = await this.currencyService.getExchangeRateToUSD(currency, date.toISOString().slice(0, 10));
+      newTransaction.usdEquivalent = sum * exchangeRate;
+
+      const saved = await this.transactionRepository.save(newTransaction);
+
+      return TransactionModel.fromEntity(saved);
     } catch (error) {
       if (error instanceof QueryFailedError && error.driverError?.code === '23505') {
         throw new ConflictException('Transaction with these values already exists.');
@@ -209,6 +225,8 @@ export class TransactionsService {
       }
     }
   }
+
+
 
   async findOne(id: number): Promise<TransactionModel> {
     const transaction = 
