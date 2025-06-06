@@ -12,6 +12,9 @@ export class CurrencyService {
     private readonly currencyRepository: Repository<CurrencyEntity>,
   ) {}
 
+  async getAllCurrencies(): Promise<CurrencyEntity[]> {
+    return this.currencyRepository.find();
+  }
 
   async getExchangeRateToUSD(fromCurrency: CurrencyCode, date: string): Promise<number> {
     if (fromCurrency === 'USD') return 1;

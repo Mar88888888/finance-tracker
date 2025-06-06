@@ -4,6 +4,7 @@ export abstract class AbstractTransaction {
   protected date: Date;
   protected memberId: number;
   protected purposeId: number;
+  protected usdEquivalent: number;
 
   getId(): number {
     return this.id;
@@ -43,5 +44,12 @@ export abstract class AbstractTransaction {
 
   setPurposeId(purposeId: number): void {
     this.purposeId = purposeId;
+  }
+
+  getUsdEquivalent(): number {
+    return this.usdEquivalent;
+  }
+  setUsdEquivalent(usdEquivalent: number): void {
+    this.usdEquivalent = usdEquivalent;
   }
 }

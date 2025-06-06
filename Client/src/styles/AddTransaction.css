@@ -69,3 +69,17 @@
   text-align: center;
   margin-top: 10px;
 }
+
+.amount-currency-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.amount-currency-wrapper input {
+  flex: 2;
+}
+
+.amount-currency-wrapper select {
+  flex: 1;
+}

@@ -9,7 +9,7 @@ const TransactionItem = ({ transaction, onDeleteTransaction }) => {
     <div className="transaction-item">
       <div>{transaction.member.name}</div>
       <div>{transaction.purpose.category}</div>
-      <div>${transaction.sum.toFixed(2)}</div>
+      <div>${transaction.usdEquivalent.toFixed(2)}</div>
       <div>{new Date(transaction.date).toLocaleDateString()}</div>
       {onDeleteTransaction &&
         <>

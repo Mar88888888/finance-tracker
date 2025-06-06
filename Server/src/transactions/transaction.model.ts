@@ -6,13 +6,14 @@ import { PurposeEntity } from '../purposes/purpose.entity';
 export class TransactionModel extends AbstractTransaction {
 
 
-  constructor(id: number, sum: number, date: Date, memberId: number, purposeId: number) {
+  constructor(id: number, sum: number, date: Date, memberId: number, purposeId: number, usdEquivalent: number = 0) {
     super();
     this.id = id;
     this.sum = sum;
     this.date = date;
     this.memberId = memberId;
     this.purposeId = purposeId;
+    this.usdEquivalent = usdEquivalent;
   }
 
   static fromEntity(entity: TransactionEntity): TransactionModel {
@@ -21,7 +22,8 @@ export class TransactionModel extends AbstractTransaction {
       entity.sum,
       entity.date,
       entity.member.id,
-      entity.purpose.id
+      entity.purpose.id,
+      entity.usdEquivalent || 0,
     );
   }
 
@@ -30,6 +32,7 @@ export class TransactionModel extends AbstractTransaction {
     entity.id = model.getId();
     entity.sum = model.getSum();
     entity.date = model.getDate();
+    entity.usdEquivalent = model.getUsdEquivalent();
     entity.member = { id: model.memberId } as UserEntity;
     entity.purpose = { id: model.purposeId } as PurposeEntity;
     return entity;

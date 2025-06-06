@@ -71,7 +71,7 @@ const TransactionsCharts = ({ transactions, authToken, purposes, members }) => {
   const purposeSums = {};
   transactions.forEach(tx => {
     const purposeName = purposesMap[tx.purposeId] || 'Unknown';
-    purposeSums[purposeName] = (purposeSums[purposeName] || 0) + tx.sum;
+    purposeSums[purposeName] = (purposeSums[purposeName] || 0) + Number(tx.usdEquivalent.toFixed(2));
   });
 
   const pieData = {
@@ -90,7 +90,7 @@ const TransactionsCharts = ({ transactions, authToken, purposes, members }) => {
   const dateSums = {};
   transactions.forEach(tx => {
     const month = format(parseISO(tx.date), 'yyyy-MM');
-    dateSums[month] = (dateSums[month] || 0) + tx.sum;
+    dateSums[month] = (dateSums[month] || 0) + Number(tx.usdEquivalent.toFixed(2));
   });
 
   const sortedDates = Object.keys(dateSums).sort((a, b) => new Date(a) - new Date(b));
@@ -117,7 +117,7 @@ const TransactionsCharts = ({ transactions, authToken, purposes, members }) => {
     transactions.forEach(tx => {
       const member = members.find(m => m.id === tx.memberId);
       const memberName = member ? member.name : 'Unknown';
-      memberSums[memberName] = (memberSums[memberName] || 0) + tx.sum;
+      memberSums[memberName] = (memberSums[memberName] || 0) + Number(tx.usdEquivalent.toFixed(2));
     });
 
     membersData = {

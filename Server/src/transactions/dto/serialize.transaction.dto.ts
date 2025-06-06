@@ -27,6 +27,11 @@ export class SerializeTransactionDto {
   sum: number;
 
   @IsNotEmpty()
+  @IsNumber()
+  @Expose()
+  usdEquivalent: number;
+
+  @IsNotEmpty()
   @IsDate()
   @Expose()
   date: string;

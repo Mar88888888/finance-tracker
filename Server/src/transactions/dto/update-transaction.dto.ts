@@ -9,7 +9,6 @@ export class UpdateTransactionDto {
   @IsOptional()
   @IsDate()
   @Type(() => Date)
-
   date?: Date;
 
   @IsOptional()

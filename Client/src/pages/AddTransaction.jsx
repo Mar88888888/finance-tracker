@@ -7,7 +7,8 @@ import '../styles/AddTransaction.css';
 
 const AddTransaction = () => {
   const { authToken } = useContext(AuthContext);
-  const [form, setForm] = useState({ purposeId: "", sum: "", date: '' });
+  const [form, setForm] = useState({ purposeId: "", sum: "", currency: "", date: "" });
+  const [currencies, setCurrencies] = useState([]);
   const [purposes, setPurposes] = useState([]);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -26,17 +27,35 @@ const AddTransaction = () => {
       }
     };
 
+    const fetchCurrencies = async () => {
+      try {
+        const response = await API.get('/currencies', {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
+        setCurrencies(response.data);
+      } catch (err) {
+        setError('Failed to load currencies');
+      }
+    };
+
     fetchPurposes();
+    fetchCurrencies();
   }, [authToken]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (e.target.type !== 'date') {
-      setForm((prev) => ({ ...prev, [name]: parseInt(value) }));
-      return;
-    }
-    setForm((prev) => ({ ...prev, [name]: value }));
+
+    setForm((prev) => ({
+      ...prev,
+      [name]:
+        name === 'sum'
+          ? parseFloat(value)
+          : name === 'purposeId'
+          ? parseInt(value)
+          : value,
+    }));
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -85,13 +104,28 @@ const AddTransaction = () => {
         </label>
         <label>
           Price:
-          <input
-            type="number"
-            name="sum"
-            value={form.sum}
-            onChange={handleInputChange}
-            required
-          />
+          <div className="amount-currency-wrapper">
+            <input
+              type="number"
+              name="sum"
+              value={form.sum}
+              onChange={handleInputChange}
+              required
+            />
+            <select
+              name="currency"
+              value={form.currency}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="" disabled>Select</option>
+              {currencies.map((c) => (
+                <option key={c.code} value={c.code}>
+                  {c.code}
+                </option>
+              ))}
+            </select>
+          </div>
         </label>
         <label>
           Date:
