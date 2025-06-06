@@ -16,13 +16,14 @@ export class CurrencyService {
   async getExchangeRateToUSD(fromCurrency: CurrencyCode, date: string): Promise<number> {
     if (fromCurrency === 'USD') return 1;
 
-    const url = `https://api.frankfurter.dev/${date}?from=${fromCurrency}&to=USD`;
+    const url = `https://api.frankfurter.dev/v1/${date}?from=${fromCurrency}&to=USD`;
 
     try {
       const response = await axios.get(url);
       return response.data.rates['USD'];
     } catch (error) {
-      throw new Error(`Failed to fetch exchange rate for ${fromCurrency} on ${date}`);
+      console.log(url);
+      throw new Error(`Failed to fetch exchange rate for ${fromCurrency} on ${date}: ${(error as Error).message}`);
     }
   }
 
