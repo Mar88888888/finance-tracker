@@ -12,6 +12,9 @@ const Login = () => {
     const { setUser } = useContext(AuthContext);
     const { setAuthToken } = useContext(AuthContext);
 
+    const handleGoogleAuth = () => {
+        window.location.href = `${process.env.REACT_APP_API_URL}/users/auth/google`;
+    };
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -56,6 +59,10 @@ const Login = () => {
                 {error && <p style={{ color: 'red' }}>{error}</p>}
                 <button type="submit">Login</button>
             </form>
+            <button type="button" className="google-btn" onClick={handleGoogleAuth}>
+                Continue with Google
+            </button>
+
             <p>Don't have an account? <Link to="/signup"><strong>Sign Up</strong></Link></p>
         </div>
     );

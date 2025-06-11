@@ -21,6 +21,8 @@ export interface UserModelParams {
 export class UserModel extends AbstractUserModel {
   constructor(params: UserModelParams) {
     super();
+    if (!params) return;
+    
     this.id = params.id;
     this.name = params.name;
     this.email = params.email;

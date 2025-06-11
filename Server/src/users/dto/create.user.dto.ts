@@ -1,4 +1,4 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 import { BaseUserDto } from './abstracts/base.user.dto';
 
 export class CreateUserDto extends BaseUserDto {
@@ -11,9 +11,9 @@ export class CreateUserDto extends BaseUserDto {
   @IsNotEmpty()
   password: string;
 
-  @IsNotEmpty()
-  age: number;
-
-  @IsNotEmpty()
-  gender: boolean;
+  @IsOptional()
+  age?: number;
+  
+  @IsOptional()
+  gender?: boolean;
 }

@@ -209,7 +209,6 @@ export class TransactionsService {
       const newTransaction = this.transactionRepository.create(newTransactionPartial);
 
       const exchangeRate = await this.currencyService.getExchangeRateToUSD(currency, date.toISOString().slice(0, 10));
-      console.log(`Exchange rate for ${currency} on ${date.toISOString().slice(0, 10)}: ${exchangeRate}`);
       newTransaction.usdEquivalent = sum * exchangeRate;
 
       const saved = await this.transactionRepository.save(newTransaction);

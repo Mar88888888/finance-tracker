@@ -66,6 +66,22 @@ export class AuthService {
     return this.jwtService.sign(payload);
   }
 
+  async validateGoogleUser(googleData: { email: string; name: string }) {
+    let user = (await this.usersService.find({ email: googleData.email }))[0];
+
+    if (!user) {
+      user = await this.usersService.create({
+        email: googleData.email,
+        password: '',
+        name: googleData.name,
+      });
+    }
+
+    return user;
+  }
+
+
+
   async getUserFromToken(token: string): Promise<UserModel> {
     try {
       const payload = this.jwtService.verify(token);

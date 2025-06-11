@@ -1,7 +1,10 @@
 import { Controller, Get, Post, Patch, Body, Param,
   NotFoundException, Req, UnauthorizedException,
   UseInterceptors, ClassSerializerInterceptor, SerializeOptions,
-  ParseIntPipe } from '@nestjs/common';
+  ParseIntPipe, 
+  UseGuards,
+  Res} from '@nestjs/common';
+import { Response } from 'express';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create.user.dto';
 import { UpdateUserDto } from './dto/update.user.dto';
@@ -10,6 +13,8 @@ import { LoginUserDto } from './dto/login.user.dto';
 import { UserSerializeDto } from './dto/serialize.user.dto';
 import { UserModel } from './user.model';
 import { LoginResponseDto } from './dto/login-response.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { IGoogleAuthorizedRequest } from './abstracts/google-authorized-request.interface';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: UserSerializeDto })
@@ -82,6 +87,20 @@ export class UsersController {
       console.log('Invalid token')
       throw new UnauthorizedException('Invalid token');
     }
+  }
+
+  @Get('/auth/google')
+  @UseGuards(AuthGuard('google'))
+  async googleAuth() {
+  }
+
+  @Get('/auth/google/redirect')
+  @UseGuards(AuthGuard('google'))
+  async googleAuthRedirect(@Req() req: IGoogleAuthorizedRequest, @Res() res: Response) {
+    const user = req.user;
+    const token = this.authService.generateJwtToken({ sub: user.getId() });
+
+    return res.redirect(`${process.env.FRONTEND_URL}/oauth2-redirect?token=${token}`);
   }
 
 }

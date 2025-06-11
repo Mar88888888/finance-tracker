@@ -20,10 +20,10 @@ export class UserEntity {
   @Exclude()
   password: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true})
   age: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   gender: boolean;
 
   @Column({ nullable: true })

@@ -11,6 +11,11 @@ const SignUp = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
+    const handleGoogleAuth = () => {
+        window.location.href = `${process.env.REACT_APP_API_URL}/users/auth/google`;
+    };
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -110,6 +115,10 @@ const SignUp = () => {
                     {error && <p style={{ color: 'red' }}>{error}</p>}
                     <button type="submit">Sign Up</button>
                 </form>
+                <button type="button" className="google-btn" onClick={handleGoogleAuth}>
+                    Continue with Google
+                </button>
+
                 <p>Already have an account? <Link to="/login"><strong>Log In</strong></Link></p>
             </div>
         </div>

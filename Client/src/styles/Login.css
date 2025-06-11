@@ -96,3 +96,21 @@
   font-weight: bold;
   color: #E0E0E0;
 }
+
+.google-btn {
+  background-color: #fff;
+  color: #444;
+  border: 1px solid #ddd;
+  padding: 10px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.google-btn:hover {
+  background-color: #f7f7f7;
+}

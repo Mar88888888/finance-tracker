@@ -28,8 +28,9 @@ export const AuthProvider = ({ children }) => {
                     },
                     withCredentials: true,
                 });
-                setUser(response.data.user);
-                setAuthToken(response.data.authToken);
+                console.log('User token fetched:', authToken);
+                setUser(response.data);
+                setAuthToken(authToken);
             } catch (error) {
                 console.error('Failed to fetch user details:', error);
                 setUser(null);

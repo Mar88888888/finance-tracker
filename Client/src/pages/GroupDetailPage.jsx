@@ -199,8 +199,12 @@ const GroupDetailPage = () => {
                         {member.name} {member.isOwner && <span className="owner-badge">Owner</span>}
                       </h3>
                       <p>Email: {member.email}</p>
-                      <p>Age: {member.age}</p>
-                      <p>Gender: {member.gender ? 'Male' : 'Female'}</p>
+                      {member.age === undefined ? ('') : (
+                        <p>Age: {member.age}</p>
+                      )}
+                      {member.gender === undefined ? ('') : (
+                        <p>Gender: {member.gender ? 'Male' : 'Female'}</p>
+                      )}
                       {group.owner.id === user.id && member.id !== group.owner.id && (
                         <button className="kick-btn" onClick={() => handleKickMember(member.id, member.name)}>
                           Kick

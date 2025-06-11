@@ -19,6 +19,7 @@ import EditPurpose from './pages/EditPurpose';
 import EditTransaction from './pages/EditTransaction';
 import SubscriptionsPage from './pages/SubscriptionsPage';
 import AddSubscription from './pages/AddSubscription';
+import OAuth2RedirectHandler from './pages/OAuthRedirectHandler';
 
 const App = () => {
     return (
@@ -40,6 +41,7 @@ const App = () => {
                     <Route path="/groups" element={<PrivateRoute><GroupsPage /></PrivateRoute>} />
                     <Route path="/new-group" element={<PrivateRoute><CreateGroupPage /></PrivateRoute>} />
                     <Route path="/groups/:groupId" element={<PrivateRoute><GroupDetailPage /></PrivateRoute>} />
+                    <Route path="/oauth2-redirect" element={<OAuth2RedirectHandler />} />
                 </Routes>
             </Router>
         </AuthProvider>
