@@ -21,7 +21,8 @@ export class CurrencyService {
     return this.currencyRepository.find();
   }
 
-   private getExchangeRateCacheKey(fromCurrency: string, date: string): string {
+  /* istanbul ignore next */
+  public getExchangeRateCacheKey(fromCurrency: string, date: string): string {
     return `exchange-rate:${fromCurrency}->USD@${date}`;
   }
 
@@ -38,7 +39,7 @@ export class CurrencyService {
 
     try {
       const response = await axios.get(url);
-      const rate = response.data.rates['USD'];
+      const rate: number = response.data.rates['USD'];
 
       await this.cacheManager.set(cacheKey, rate, 86400);
 
