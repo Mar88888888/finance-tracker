@@ -24,11 +24,6 @@ const CahceManager = {
   set: jest.fn(),
 };
 
-interface GetUSDRateArgs{
-  cacheKey: string,
-  rate: number,
-  ttl: number
-}
 
 jest.mock('axios');
 

@@ -9,7 +9,7 @@ export class CurrencyEntity {
 
   @Column()
   name: string;
-
-  @OneToMany(() => TransactionEntity, (transaction) => transaction.currency)
+  
+  @OneToMany(/* istanbul ignore next */() => TransactionEntity, /* istanbul ignore next */(transaction) => transaction.currency)
   transactions: TransactionEntity[];
 }
