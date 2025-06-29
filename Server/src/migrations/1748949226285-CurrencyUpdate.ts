@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import { MigrationInterface, QueryRunner } from "typeorm";
 
 export class CurrencyUpdate1748949226285 implements MigrationInterface {

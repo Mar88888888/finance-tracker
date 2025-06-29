@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GroupEntity } from './group.entity';
@@ -22,7 +22,7 @@ export class GroupsService {
     private readonly transactionService: TransactionsService,
   ) { }
 
-  private generateJoinCode(): string {
+  public generateJoinCode(): string {
     return crypto.randomBytes(4).toString('hex');
   }
 
@@ -40,12 +40,14 @@ export class GroupsService {
   }
 
   async getUserGroups(userId: number): Promise<GroupModel[]> {
-    const groupEntities = await this.groupRepo
-      .createQueryBuilder('group')
-      .innerJoin('group.members', 'member', 'member.id = :userId', { userId })
-      .leftJoinAndSelect('group.members', 'allMembers')
-      .leftJoinAndSelect('group.owner', 'owner')
-      .getMany();
+    const groupEntities = await this.groupRepo.find({
+      where: {
+        members: {
+          id: userId,
+        },
+      },
+      relations: ['members', 'owner'],
+    });
 
     return groupEntities.map(GroupModel.fromEntity);
   }
@@ -69,16 +71,18 @@ export class GroupsService {
       throw new NotFoundException('Group with this code not found');
     }
 
+    const groupModel = GroupModel.fromEntity(groupEntity);
+
     const isMember = groupEntity.members.some(member => member.id === userId);
     if (isMember) {
-      throw new ConflictException('User is already a member of this group');
+      return groupModel;
     }
 
-    const user = UserModel.toEntity(await this.userService.findOne(userId));
+    const user = await this.userService.findOne(userId);
 
-    groupEntity.members.push(user);
+    groupModel.addMember(user);
 
-    const updatedGroupEntity = await this.groupRepo.save(groupEntity);
+    const updatedGroupEntity = await this.groupRepo.save(GroupModel.toEntity(groupModel));
 
     return GroupModel.fromEntity(updatedGroupEntity);
   }
@@ -96,7 +100,6 @@ export class GroupsService {
     group.addPurposes(purposeIds);
 
     await this.groupRepo.save(GroupModel.toEntity(group));
-
 
     return group;
   }
@@ -119,20 +122,15 @@ export class GroupsService {
 
   async removeUserFromGroup(groupId: number, memberId: number): Promise<GroupModel> {
     let group = await this.findOne(groupId);
-    const member = await this.userService.findOne(memberId);
 
-    group.removeMember(member);
-    await this.groupRepo.save(GroupModel.toEntity(group));
-
-    return group;
+    group.removeMember(memberId);
+    return GroupModel.fromEntity(await this.groupRepo.save(GroupModel.toEntity(group)));
   }
 
   async removePurposeFromGroup(groupId: number, purposeId: number): Promise<GroupModel> {
     const group = await this.findOne(groupId);
 
     group.removePurpose(purposeId);
-    await this.groupRepo.save(GroupModel.toEntity(group));
-    
-    return group;
+    return GroupModel.fromEntity(await this.groupRepo.save(GroupModel.toEntity(group)));
   }
 }

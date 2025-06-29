@@ -10,14 +10,14 @@ export class GroupEntity {
   @Column({ nullable: false, length: 100 })
   title: string;
 
-  @ManyToOne(() => UserEntity, user => user.myGroups)
+  @ManyToOne(/* istanbul ignore next */() => UserEntity,/* istanbul ignore next */ user => user.myGroups)
   owner: UserEntity;
 
-  @ManyToMany(() => UserEntity)
+  @ManyToMany(/* istanbul ignore next */() => UserEntity)
   @JoinTable()
   members: UserEntity[];
 
-  @ManyToMany(() => PurposeEntity)
+  @ManyToMany(/* istanbul ignore next */() => PurposeEntity)
   @JoinTable()
   purposes: PurposeEntity[];
 

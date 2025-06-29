@@ -6,10 +6,10 @@ export abstract class AbstractGroupModel {
   protected id: number;
   protected title: string;
 
-  @Type(() => UserSerializeDto)
+  @Type(/* istanbul ignore next */() => UserSerializeDto)
   protected owner: UserModel;
 
-  @Type(() => UserSerializeDto)
+  @Type(/* istanbul ignore next */() => UserSerializeDto)
   protected members: UserModel[] = [];
 
   protected purposes: number[] = [];
@@ -28,5 +28,5 @@ export abstract class AbstractGroupModel {
   abstract setJoinCode(joinCode: string): void;
 
   abstract addMember(user: UserModel): void;
-  abstract removeMember(user: UserModel): void;
+  abstract removeMember(memberId: number): void;
 }

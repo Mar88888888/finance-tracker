@@ -66,16 +66,12 @@ export class GroupModel extends AbstractGroupModel {
     this.members.push(user);
   }
 
-  removeMember(user: UserModel): void {
-    this.members = this.members.filter((member) => member.getId() !== user.getId());
+  removeMember(memberId: number): void {
+    this.members = this.members.filter((member) => member.getId() !== memberId);
   }
 
   getPurposes(): number[] {
     return this.purposes;
-  }
-
-  setPurposes(purposes: number[]): void {
-    this.purposes = purposes;
   }
 
   addPurposes(purposes: number[]): void {
