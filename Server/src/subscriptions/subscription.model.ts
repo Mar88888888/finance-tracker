@@ -5,17 +5,17 @@ import { UserEntity } from '../users/user.entity';
 
 export class SubscriptionModel extends AbstractSubscription {
   static fromEntity(entity: SubscriptionEntity): SubscriptionModel {
-    const model = new SubscriptionModel();
-    model.setId(entity.id);
-    model.setInterval(entity.interval);
-    model.setUnit(entity.unit);
-    model.setStartDate(entity.startDate);
-    model.setNextExecutionDate(entity.nextExecutionDate);
-    model.setEndDate(entity.endDate);
-    model.setIsActive(entity.isActive);
-    model.setTransactionId(entity.transactionTemplate.id);
-    model.setUserId(entity.user.id);
-    return model;
+    return new SubscriptionModel(
+      entity.id,
+      entity.interval,
+      entity.unit,
+      entity.startDate,
+      entity.nextExecutionDate,
+      entity.isActive,
+      entity.transactionTemplate.id,
+      entity.user.id,
+      entity.endDate,
+    );
   }
   static toEntity(model: SubscriptionModel): SubscriptionEntity {
     const entity = new SubscriptionEntity();

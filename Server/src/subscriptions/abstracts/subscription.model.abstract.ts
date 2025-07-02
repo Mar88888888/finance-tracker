@@ -1,15 +1,18 @@
 import { RecurrenceUnit } from "../subscription.entity";
 
 export abstract class AbstractSubscription {
-  protected id: number;
-  protected interval: number;
-  protected unit: RecurrenceUnit;
-  protected startDate: Date;
-  protected nextExecutionDate: Date;
-  protected endDate?: Date;
-  protected isActive: boolean;
-  protected transactionId: number;
-  protected userId: number;
+  constructor(
+    protected id: number,
+    protected interval: number,
+    protected unit: RecurrenceUnit,
+    protected startDate: Date,
+    protected nextExecutionDate: Date,
+    protected isActive: boolean,
+    protected transactionId: number,
+    protected userId: number,
+    protected endDate?: Date,
+  ){}
+
 
   getId(): number {
     return this.id;
