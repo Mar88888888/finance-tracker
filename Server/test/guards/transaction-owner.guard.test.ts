@@ -1,10 +1,10 @@
-import { ExecutionContext, ForbiddenException, NotFoundException, UnauthorizedException } from "@nestjs/common";
-import { groupModels } from "../fixtures/groups.fixtures";
+import { ExecutionContext, ForbiddenException, NotFoundException, } from "@nestjs/common";
 import { members } from "../fixtures/users.fixture";
-import { GroupOwnerGuard } from "../../src/guards/group-owner.guard";
+import { TransactionOwnerGuard } from "../../src/guards/transaction-owner.guard";
+import { testTransactions } from "../fixtures/transactions.fixtures";
 
-const groupsServiceMock = {
-  findOne: jest.fn().mockResolvedValue(groupModels[1])
+const transactionServiceMock = {
+  findOne: jest.fn().mockResolvedValue(testTransactions[0])
 };
 
 const executionContextMock: Partial<
@@ -17,7 +17,7 @@ const executionContextMock: Partial<
     getRequest: jest.fn().mockReturnValue({
       userId: members[0].getId(),
       params: {
-        groupId: groupModels[1].getId(),
+        transactionId: testTransactions[0].getId(),
       }
     }),
     getResponse: jest.fn(),
@@ -26,11 +26,11 @@ const executionContextMock: Partial<
 
 
 describe('Auth Guard', () => {
-  let sut: GroupOwnerGuard;
+  let sut: TransactionOwnerGuard;
 
   beforeEach(() => {
-    sut = new GroupOwnerGuard(
-      groupsServiceMock as any
+    sut = new TransactionOwnerGuard(
+      transactionServiceMock as any
     );
   });
 
@@ -42,40 +42,40 @@ describe('Auth Guard', () => {
     expect(sut).toBeDefined();
   });
 
-  it('should return true if user is an owner of given group', async () => {
+  it('should return true if user is an owner of given transaction', async () => {
     const result = await sut.canActivate(executionContextMock as any);
     expect(result).toBe(true);
   });
 
-  it('should throw NotFoundException if no groupId provided',  () => {
+  it('should throw NotFoundException if no transactionId provided',  () => {
     jest.spyOn(executionContextMock, 'switchToHttp').mockReturnValueOnce({
       getRequest: jest.fn().mockReturnValueOnce({
         userId: members[0].getId(),
         params: {
-          groupId: undefined,
+          transactionId: undefined,
         }
       }),
       getResponse: jest.fn(),
     })
     sut.canActivate(executionContextMock as any).catch(err => {
       expect(err).toBeInstanceOf(NotFoundException);
-      expect(err.message).toBe('Group ID is required');
+      expect(err.message).toBe('Transaction ID is required');
     });
   });
 
-  it('should throw NotFoundException if no group with provided Id found',  () => {
-    jest.spyOn(groupsServiceMock, 'findOne').mockResolvedValueOnce(undefined);
+  it('should throw NotFoundException if no transaction with provided Id found',  () => {
+    jest.spyOn(transactionServiceMock, 'findOne').mockResolvedValueOnce(undefined);
     sut.canActivate(executionContextMock as any).catch(err => {
       expect(err).toBeInstanceOf(NotFoundException);
-      expect(err.message).toBe('Group not found');
+      expect(err.message).toBe('Transaction not found');
     });
   });
 
-  it('should throw ForbiddenException if user is not a owner of provided group',  () => {
-    jest.spyOn(groupsServiceMock, 'findOne').mockResolvedValueOnce(groupModels[2]);
+  it('should throw ForbiddenException if user is not an owner of provided transaction',  () => {
+    jest.spyOn(transactionServiceMock, 'findOne').mockResolvedValueOnce(testTransactions[1]);
     sut.canActivate(executionContextMock as any).catch(err => {
       expect(err).toBeInstanceOf(ForbiddenException);
-      expect(err.message).toBe('You are not the owner of this group');
+      expect(err.message).toBe('You are not the owner of this transaction');
     });
   });
 })

@@ -17,7 +17,7 @@ const executionContextMock: Partial<
     getRequest: jest.fn().mockReturnValue({
       userId: members[0].getId(),
       params: {
-        groupId: groupModels[0].getId(),
+        groupId: groupModels[1].getId(),
       }
     }),
     getResponse: jest.fn(),

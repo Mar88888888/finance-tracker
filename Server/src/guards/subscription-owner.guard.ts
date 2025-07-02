@@ -20,11 +20,11 @@ export class SubscriptionOwnerGuard implements CanActivate {
     const subscription = await this.subscriptionService.findOne(parseInt(subscriptionId));
 
     if (!subscription) {
-      throw new NotFoundException('Transaction not found');
+      throw new NotFoundException('Subscription not found');
     }
 
     if (subscription.getUserId() !== userId) {
-      throw new ForbiddenException('You are not the owner of this transaction');
+      throw new ForbiddenException('You are not the owner of this subscription');
     }
 
     return true;
