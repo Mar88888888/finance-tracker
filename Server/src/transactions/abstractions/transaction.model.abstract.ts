@@ -2,7 +2,7 @@ export abstract class AbstractTransaction {
   protected id: number;
   protected sum: number;
   protected date: Date;
-  protected memberId: number;
+  protected userId: number;
   protected purposeId: number;
   protected usdEquivalent: number;
 
@@ -30,12 +30,12 @@ export abstract class AbstractTransaction {
     this.date = date;
   }
 
-  getMemberId(): number {
-    return this.memberId;
+  getUserId(): number {
+    return this.userId;
   }
 
-  setMemberId(memberId: number): void {
-    this.memberId = memberId;
+  setUserId(memberId: number): void {
+    this.userId = memberId;
   }
 
   getPurposeId(): number {

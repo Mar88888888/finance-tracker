@@ -81,7 +81,7 @@ export class TransactionsController {
   @Get('/:id/member')
   async getUser(@Param('id', ParseIntPipe) id: number): Promise<UserModel> {
     try {
-      return await this.userService.findOne((await this.transactionsService.findOne(id)).getMemberId());
+      return await this.userService.findOne((await this.transactionsService.findOne(id)).getUserId());
     } catch (error) {
       throw new NotFoundException('User not found');
     }
@@ -97,7 +97,7 @@ export class TransactionsController {
       throw new NotFoundException('Transaction not found');
     }
 
-    if (transaction.getMemberId() !== request.userId) {
+    if (transaction.getUserId() !== request.userId) {
       throw new ForbiddenException('You are not allowed to access this transaction');
     }
 

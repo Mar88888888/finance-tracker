@@ -1,5 +1,4 @@
 import { FindManyOptions } from "typeorm";
-import { GroupModel } from "../../src/groups/group.model";
 import { GroupsService } from "../../src/groups/groups.service";
 import { UserModel } from "../../src/users/user.model";
 import { GroupEntity } from "../../src/groups/group.entity";
@@ -8,72 +7,14 @@ import { TransactionModel } from "../../src/transactions/transaction.model";
 import { TransactionFilterDto } from "../../src/transactions/dto/transaction-filter.dto";
 import { NotFoundException } from "@nestjs/common";
 import * as crypto from 'crypto'
+import { members } from "../fixtures/users.fixture";
+import { groupEntities, groupModels } from "../fixtures/groups.fixtures";
+import { testTransactions } from "../fixtures/transactions.fixtures";
 
 jest.spyOn(crypto, 'randomBytes').mockImplementation((size: number) => Buffer.from('12345678', 'hex'));
 
 
-const members = [
-  new UserModel({
-    id: 10,
-    name: 'SomeName',
-    age:14,
-    email: 'email@em.com',
-    gender: false,
-    password: 'password1',
-  }),
-  new UserModel({
-    id: 5,
-    name: 'SomeName2',
-    age:19,
-    email: 'email2@em.com',
-    gender: true,
-    password: 'password2',
-  }),
-];
 
-export const groupModels = [
-  new GroupModel({
-    id: 1,
-    title: 'GroupTitle',
-    owner: members[0],
-    joinCode: 'jestTestCode11',
-    members,
-    purposes: [2],
-  }),
-  new GroupModel({
-    id: 2,
-    title: 'GroupTitl2',
-    owner: members[0],
-    joinCode: 'jestTestCode2',
-    members: [members[0]],
-  }),
-  new GroupModel({
-    id: 3,
-    title: 'GroupTitl3',
-    owner: members[1],
-    joinCode: 'jestTestCode3',
-    purposes: [2],
-  }),
-]
-
-const groupEntities = groupModels.map(model => GroupModel.toEntity(model));
-
-export const testTransactions = [
-  new TransactionModel(
-    12,
-    150,
-    new Date('01-02-2025'),
-    10,
-    2
-  ),
-  new TransactionModel(
-    11,
-    1500,
-    new Date('02-02-2025'),
-    5,
-    2
-  )
-]
 
 const groupRepoMock = {
   findOne: jest.fn().mockImplementation(async (params: {where: {id?: number, joinCode?: string}, relations?: string[]}): Promise<GroupEntity>=>{

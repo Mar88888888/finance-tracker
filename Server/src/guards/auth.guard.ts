@@ -22,7 +22,7 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
     try {
-      const payload = await this.jwtService.verifyAsync(
+      const payload = await this.jwtService.verifyAsync<{sub: number}>(
         token,
         {
           secret: process.env.JWT_SECRET
@@ -31,7 +31,6 @@ export class AuthGuard implements CanActivate {
       await this.userService.findOne(payload.sub);
       request.userId = payload.sub;
     } catch(e) {
-      console.error(e);
       throw new UnauthorizedException();
     }
     return true;
@@ -39,7 +38,7 @@ export class AuthGuard implements CanActivate {
 
   private extractTokenFromHeader(request: Request): string | undefined {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
+    return type === 'Bearer' && token?.length > 0 ? token : undefined;
   }
 }
 

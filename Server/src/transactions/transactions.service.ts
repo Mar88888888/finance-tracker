@@ -119,7 +119,7 @@ export class TransactionsService {
       const purpose = await this.purposeService
         .findOne(transaction.getPurposeId());
       const member = await this.userService
-        .findOne(transaction.getMemberId());
+        .findOne(transaction.getUserId());
     
       csvStream.write({
         ID: transaction.getId(),

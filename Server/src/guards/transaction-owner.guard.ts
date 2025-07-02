@@ -23,7 +23,7 @@ export class TransactionOwnerGuard implements CanActivate {
       throw new NotFoundException('Transaction not found');
     }
 
-    if (transaction.getMemberId() !== userId) {
+    if (transaction.getUserId() !== userId) {
       throw new ForbiddenException('You are not the owner of this transaction');
     }
 

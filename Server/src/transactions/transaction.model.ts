@@ -11,7 +11,7 @@ export class TransactionModel extends AbstractTransaction {
     this.id = id;
     this.sum = sum;
     this.date = date;
-    this.memberId = memberId;
+    this.userId = memberId;
     this.purposeId = purposeId;
     this.usdEquivalent = usdEquivalent;
   }
@@ -33,7 +33,7 @@ export class TransactionModel extends AbstractTransaction {
     entity.sum = model.getSum();
     entity.date = model.getDate();
     entity.usdEquivalent = model.getUsdEquivalent();
-    entity.member = { id: model.memberId } as UserEntity;
+    entity.member = { id: model.userId } as UserEntity;
     entity.purpose = { id: model.purposeId } as PurposeEntity;
     return entity;
   }
