@@ -1,7 +1,7 @@
 import { IAuthorizedRequest } from "../../src/abstracts/authorized-request.interface";
 import { GroupsController } from "../../src/groups/groups.controller"
-import { groupModels, testTransactions } from "./groups.service.test";
-
+import { groupModels } from "../fixtures/groups.fixtures";
+import { testTransactions } from "../fixtures/transactions.fixtures";
 
 const res = {
   status: jest.fn().mockReturnThis(),
