@@ -2,10 +2,10 @@ import { ExecutionContext, ForbiddenException, NotFoundException, } from "@nestj
 import { members } from "../fixtures/users.fixture";
 import { testTransactions } from "../fixtures/transactions.fixtures";
 import { PurposeOwnerGuard } from "../../src/guards/purpose-owner.guard";
-import { testPurposes } from "../fixtures/purposes.fixtures";
+import { testPurposesModels } from "../fixtures/purposes.fixtures";
 
 const purposeServiceMock = {
-  findOne: jest.fn().mockResolvedValue(testPurposes[0])
+  findOne: jest.fn().mockResolvedValue(testPurposesModels[0])
 };
 
 const executionContextMock: Partial<
@@ -18,7 +18,7 @@ const executionContextMock: Partial<
     getRequest: jest.fn().mockReturnValue({
       userId: members[0].getId(),
       params: {
-        purposeId: testPurposes[0].getId(),
+        purposeId: testPurposesModels[0].getId(),
       }
     }),
     getResponse: jest.fn(),

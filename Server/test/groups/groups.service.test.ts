@@ -1,6 +1,5 @@
 import { FindManyOptions } from "typeorm";
 import { GroupsService } from "../../src/groups/groups.service";
-import { UserModel } from "../../src/users/user.model";
 import { GroupEntity } from "../../src/groups/group.entity";
 import { CreateGroupDto } from "../../src/groups/dto/create.group.dto";
 import { TransactionModel } from "../../src/transactions/transaction.model";
@@ -10,10 +9,9 @@ import * as crypto from 'crypto'
 import { members } from "../fixtures/users.fixture";
 import { groupEntities, groupModels } from "../fixtures/groups.fixtures";
 import { testTransactions } from "../fixtures/transactions.fixtures";
+import { userServiceMock } from "../mocks/services/users.service.mock";
 
 jest.spyOn(crypto, 'randomBytes').mockImplementation((size: number) => Buffer.from('12345678', 'hex'));
-
-
 
 
 const groupRepoMock = {
@@ -41,11 +39,6 @@ const groupRepoMock = {
   delete: jest.fn(),
 }
 
-const userServiceMock = {
-  findOne: jest.fn().mockImplementation(async (id): Promise<UserModel>=>{
-    return Promise.resolve(members.filter(member => member.getId() === id)[0])
-  }),
-}
 
 const transactionServiceMock = {
   getGroupTransactions: jest.fn()

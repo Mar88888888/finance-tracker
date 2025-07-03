@@ -16,7 +16,7 @@ export class PurposesController {
   @UseGuards(AuthGuard)
   @Get()
   async findAll(@Req() req: IAuthorizedRequest): Promise<PurposeModel[]> {
-    return this.purposeService.findUserPurposes(req.userId);
+    return await this.purposeService.findUserPurposes(req.userId);
   }
 
   @UseGuards(AuthGuard)
@@ -37,10 +37,11 @@ export class PurposesController {
   @UseGuards(AuthGuard, PurposeOwnerGuard)
   @Patch('/:purposeId')
   async update(
+    @Req() req: IAuthorizedRequest,
     @Param('purposeId', ParseIntPipe) purposeId: number,
     @Body() updatePurposeDto: UpdatePurposeDto
   ): Promise<PurposeModel> {
-    return this.purposeService.update(purposeId, updatePurposeDto);
+    return this.purposeService.update(req.userId, purposeId, updatePurposeDto);
   }
 
   @UseGuards(AuthGuard, PurposeOwnerGuard)

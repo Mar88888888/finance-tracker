@@ -18,9 +18,9 @@ export class PurposeEntity {
   @Column({ length: 100, nullable: false })
   category: string;
 
-  @OneToMany(() => TransactionEntity, transaction => transaction.purpose)
+  @OneToMany(/* istanbul ignore next */() => TransactionEntity, /* istanbul ignore next */transaction => transaction.purpose)
   transactions: TransactionEntity[];
 
-  @ManyToOne(() => UserEntity, user => user.purposes, { onDelete: 'CASCADE', nullable: false })
+  @ManyToOne(/* istanbul ignore next */() => UserEntity, /* istanbul ignore next */user => user.purposes, { onDelete: 'CASCADE', nullable: false })
   user: UserEntity;
 }

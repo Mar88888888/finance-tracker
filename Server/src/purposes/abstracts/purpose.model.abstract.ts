@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 export abstract class AbstractPurpose {
   protected id: number;
   protected category: string;

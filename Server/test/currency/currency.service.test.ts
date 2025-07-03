@@ -2,6 +2,7 @@ import { CurrencyCode } from '../../src/currency/currency-code.enum';
 import { CurrencyEntity } from '../../src/currency/currency.entity';
 import { CurrencyService } from '../../src/currency/currency.service';
 import axios from 'axios';
+import { cahceManagerMock } from '../mocks/cache-manager.mock';
 
 const someCurrencyEntity: CurrencyEntity = {
   code: CurrencyCode.EUR,
@@ -19,10 +20,7 @@ const CurrencyRepository = {
   find: jest.fn(),
   findOne: jest.fn(),
 }
-const CahceManager = {
-  get: jest.fn().mockResolvedValue(null),
-  set: jest.fn(),
-};
+
 
 
 jest.mock('axios');
@@ -32,7 +30,7 @@ describe('Currency Service', () => {
   beforeEach(() => {
     sut = new CurrencyService(
       CurrencyRepository as any,
-      CahceManager as any,
+      cahceManagerMock as any,
     );
     jest.spyOn(CurrencyRepository, 'find').mockResolvedValue([someCurrencyEntity, someCurrencyEntity2]);
     jest.spyOn(CurrencyRepository, 'findOne').mockImplementation(({ where }) => {
@@ -71,10 +69,10 @@ describe('Currency Service', () => {
   it('should return exchange rate from cache if available', async () => {
     const currencyCode = CurrencyCode.EUR;
     const cachedRate = 1.1;
-    jest.spyOn(CahceManager, 'get').mockResolvedValueOnce(cachedRate);
+    jest.spyOn(cahceManagerMock, 'get').mockResolvedValueOnce(cachedRate);
     const result = await sut.getExchangeRateToUSD(currencyCode, '2023-10-01');
     expect(result).toBe(cachedRate);
-    expect(CahceManager.get).toHaveBeenCalledWith('exchange-rate:EUR->USD@2023-10-01');
+    expect(cahceManagerMock.get).toHaveBeenCalledWith('exchange-rate:EUR->USD@2023-10-01');
   });
 
   it('should fetch exchange rate from API if not in cache', async () => {
@@ -87,8 +85,8 @@ describe('Currency Service', () => {
     const result = await sut.getExchangeRateToUSD(currencyCode, currencyDate);
     expect(axios.get).toHaveBeenCalledTimes(1);
     expect(result).toBe(USDRate);
-    expect(CahceManager.set).toHaveBeenCalledTimes(1);
-    expect(CahceManager.set).toHaveBeenCalledWith(
+    expect(cahceManagerMock.set).toHaveBeenCalledTimes(1);
+    expect(cahceManagerMock.set).toHaveBeenCalledWith(
       sut.getExchangeRateCacheKey(currencyCode, currencyDate), USDRate, 86400
     );
   });

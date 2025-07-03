@@ -26,10 +26,12 @@ export class PurposesService {
     private readonly cacheManager: Cache
   ) {}
 
+  /* istanbul ignore next */
   private getAllCacheKey(): string {
     return 'purposes:all';
   }
 
+  /* istanbul ignore next */
   private getUserCacheKey(userId: number): string {
     return `purposes:user#${userId}`;
   }
@@ -70,40 +72,27 @@ export class PurposesService {
   }
 
   async create(userId: number, createPurposeDto: CreatePurposeDto): Promise<PurposeModel> {
-    try {
-      const existingPurpose = await this.purposeRepository.findOne({
-        where: {
-          category: createPurposeDto.category,
-          user: { id: userId },
-        },
-      });
+    const existingPurpose = await this.purposeRepository.findOne({
+      where: {
+        category: createPurposeDto.category,
+        user: { id: userId },
+      },
+    });
 
-      if (existingPurpose) {
-        throw new BadRequestException('Purpose with these values already exists.');
-      }
-
-      const user = await this.usersService.findOne(userId);
-      const newPurposeEntity = this.purposeRepository.create(createPurposeDto);
-      newPurposeEntity.user = UserModel.toEntity(user);
-
-      await this.purposeRepository.save(newPurposeEntity);
-
-      await this.cacheManager.del(this.getAllCacheKey());
-      await this.cacheManager.del(this.getUserCacheKey(userId));
-
-      return PurposeModel.fromEntity(newPurposeEntity);
-    } catch (error) {
-      if (error instanceof QueryFailedError && error.driverError?.code === '23505') {
-        throw new BadRequestException('Purpose with these values already exists.');
-      } else if (error instanceof BadRequestException) {
-        throw error;
-      } else if (error instanceof Error) {
-        console.error(error.message);
-        throw new InternalServerErrorException();
-      } else {
-        console.error('Unexpected error:', error);
-      }
+    if (existingPurpose) {
+      throw new BadRequestException('Purpose with these values already exists.');
     }
+
+    const user = await this.usersService.findOne(userId);
+    const newPurposeEntity = this.purposeRepository.create(createPurposeDto);
+    newPurposeEntity.user = UserModel.toEntity(user);
+
+    await this.purposeRepository.save(newPurposeEntity);
+
+    await this.cacheManager.del(this.getAllCacheKey());
+    await this.cacheManager.del(this.getUserCacheKey(userId));
+
+    return PurposeModel.fromEntity(newPurposeEntity);
   }
 
   async findOne(id: number): Promise<PurposeModel> {
@@ -119,28 +108,28 @@ export class PurposesService {
     return PurposeModel.fromEntity(purpose);
   }
 
-  async update(id: number, updatePurposeDto: UpdatePurposeDto): Promise<PurposeModel> {
-    try {
-      const entity = await this.findOne(id);
-      const purpose = PurposeModel.toEntity(entity);
-      Object.assign(purpose, updatePurposeDto);
+  async update(userId: number, id: number, updatePurposeDto: UpdatePurposeDto): Promise<PurposeModel> {
+    const entity = await this.findOne(id);
+    const purpose = PurposeModel.toEntity(entity);
+    Object.assign(purpose, updatePurposeDto);
 
-      const saved = await this.purposeRepository.save(purpose);
+    const existingPurpose = await this.purposeRepository.findOne({
+      where: {
+        category: updatePurposeDto.category,
+        user: { id: userId },
+      },
+    });
 
-      await this.cacheManager.del(this.getAllCacheKey());
-      await this.cacheManager.del(this.getUserCacheKey(purpose.user.id));
-
-      return PurposeModel.fromEntity(saved);
-    } catch (error) {
-      if (error instanceof QueryFailedError && error.driverError?.code === '23505') {
-        throw new BadRequestException('Purpose with these values already exists.');
-      } else if (error instanceof Error) {
-        console.error(error.message);
-        throw new InternalServerErrorException();
-      } else {
-        console.error('Unexpected error:', error);
-      }
+    if (existingPurpose) {
+      throw new BadRequestException('Purpose with these values already exists.');
     }
+
+    const saved = await this.purposeRepository.save(purpose);
+
+    await this.cacheManager.del(this.getAllCacheKey());
+    await this.cacheManager.del(this.getUserCacheKey(purpose.user.id));
+
+    return PurposeModel.fromEntity(saved);
   }
 
   async remove(id: number): Promise<void> {

@@ -2,15 +2,13 @@ import { IAuthorizedRequest } from "../../src/abstracts/authorized-request.inter
 import { GroupsController } from "../../src/groups/groups.controller"
 import { groupModels } from "../fixtures/groups.fixtures";
 import { testTransactions } from "../fixtures/transactions.fixtures";
+import { authorizedRequest } from "../mocks/authorized-request.mock";
 
 const res = {
   status: jest.fn().mockReturnThis(),
   json: jest.fn().mockReturnThis(),
   setHeader: jest.fn().mockReturnThis(),
 };
-
-
-
 
 const groupsServiceMock = {
   getGroupCode: jest.fn().mockResolvedValue('gorupCode'),
@@ -31,7 +29,6 @@ const transactionServiceMock = {
   exportToCsv: jest.fn(),
 }
 
-const authorizedRequest = {userId : 5} as IAuthorizedRequest;
 
 describe('Groups Controller', ()=>{
   let sut: GroupsController;
