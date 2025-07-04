@@ -1,11 +1,10 @@
 import { UserEntity } from '../users/user.entity';
-import { AbstractTransaction } from './abstractions/transaction.model.abstract';
+import { AbstractTransaction } from './abstracts/transaction.model.abstract';
 import { TransactionEntity } from './transaction.entity';
 import { PurposeEntity } from '../purposes/purpose.entity';
 
 export class TransactionModel extends AbstractTransaction {
-
-
+  
   constructor(id: number, sum: number, date: Date, memberId: number, purposeId: number, usdEquivalent: number = 0) {
     super();
     this.id = id;

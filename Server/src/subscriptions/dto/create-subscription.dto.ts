@@ -12,10 +12,10 @@ export class CreateSubscriptionDto {
   unit: RecurrenceUnit;
 
   @IsDate()
-  @Type(() => Date)
+  @Type(/* istanbul ignore next */() => Date)
   startDate: Date;
   
   @IsDate()
-  @Type(() => Date)
+  @Type(/* istanbul ignore next */() => Date)
   endDate?: Date;
 }

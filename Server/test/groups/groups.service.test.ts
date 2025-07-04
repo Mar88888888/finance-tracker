@@ -4,7 +4,6 @@ import * as crypto from 'crypto'
 import { createUserEntities, createUserModels } from "../fixtures/users.fixture";
 import { createGroupEntities, createGroupModels } from "../fixtures/groups.fixtures";
 import { usersServiceMock } from "../mocks/services/users.service.mock";
-import { groupRepoMock } from "../mocks/repos/groups.repo.mock";
 import { transactionsServiceMock } from "../mocks/services/transactions.service.mock";
 import { GroupModel } from "../../src/groups/group.model";
 import { UserModel } from "../../src/users/user.model";
@@ -12,6 +11,7 @@ import { UserEntity } from "../../src/users/user.entity";
 import { GroupEntity } from "../../src/groups/group.entity";
 import { TransactionModel } from "../../src/transactions/transaction.model";
 import { createTransactionModels } from "../fixtures/transactions.fixtures";
+import { createGroupRepoMock } from "../mocks/repos/groups.repo.mock";
 
 jest.spyOn(crypto, 'randomBytes').mockImplementation((size: number) => Buffer.from('12345678', 'hex'));
 
@@ -25,20 +25,23 @@ describe('Group Service', ()=>{
 
   let userEntities: UserEntity[];
   let groupEntities: GroupEntity[];
+  let groupRepoMock;
 
   beforeEach(()=>{
-    sut = new GroupsService(
-      groupRepoMock as any,
-      usersServiceMock as any,
-      transactionsServiceMock as any
-    );
-
     userModels = createUserModels();
     groupModels = createGroupModels();
     transactionModels = createTransactionModels();
 
     userEntities = createUserEntities(userModels);
     groupEntities = createGroupEntities(groupModels);
+
+    groupRepoMock = createGroupRepoMock(groupEntities);
+    
+    sut = new GroupsService(
+      groupRepoMock as any,
+      usersServiceMock as any,
+      transactionsServiceMock as any
+    );
   });
 
   afterEach(()=>{
@@ -158,8 +161,18 @@ describe('Group Service', ()=>{
     expect(groupRepoMock.save).toHaveBeenCalledTimes(1);
   });
 
-  it('should return an empty array if no transactions available', async ()=>{
-
+  it('should return an empty array if no transactions available', async () => {
+    transactionsServiceMock.getGroupTransactions.mockResolvedValueOnce([]);
+    const result = await sut.getTransactions(2, undefined);
+    expect(result).toBeDefined();
+    expect(result).toHaveLength(0);    
+  });
+  
+  it('should return an empty array if group has no members or purposes', async () => {
+    jest.spyOn(sut, 'findOne').mockResolvedValueOnce(groupModels[2]);
+    const result = await sut.getTransactions(2, undefined);
+    expect(result).toBeDefined();
+    expect(result).toHaveLength(0);    
   });
 
   it('should return group transactions available', async ()=>{

@@ -25,7 +25,7 @@ export class SubscriptionModel extends AbstractSubscription {
     entity.startDate = model.getStartDate();
     entity.nextExecutionDate = model.getNextExecutionDate();
     entity.endDate = model.getEndDate();
-    entity.isActive = model.getIsActive();
+    entity.isActive = model.IsActive();
     entity.transactionTemplate = { id: model.getTransactionId() } as TransactionEntity; 
     entity.user = { id: model.getUserId() } as UserEntity;
     return entity;

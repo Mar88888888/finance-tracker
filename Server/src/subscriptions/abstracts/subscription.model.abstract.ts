@@ -55,10 +55,10 @@ export abstract class AbstractSubscription {
   setEndDate(endDate: Date | undefined): void {
     this.endDate = endDate;
   }
-  getIsActive(): boolean {
+  IsActive(): boolean {
     return this.isActive;
   }
-  setIsActive(isActive: boolean): void {
+  setActive(isActive: boolean): void {
     this.isActive = isActive;
   }
   getTransactionId(): number {
