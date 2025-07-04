@@ -3,8 +3,8 @@ import { PurposeEntity } from "../../../src/purposes/purpose.entity";
 import { testPurposesEntities } from "../../fixtures/purposes.fixtures";
 
 export const purposeRepoMock = {
-  findOne: jest.fn().mockReturnValue(testPurposesEntities[0]),
-  find: jest.fn().mockReturnValue(testPurposesEntities),
+  findOne: jest.fn().mockResolvedValue(testPurposesEntities[0]),
+  find: jest.fn().mockResolvedValue(testPurposesEntities),
   create: jest.fn().mockImplementation((createPurposeDto: CreatePurposeDto): PurposeEntity=>{
     let entity = new PurposeEntity();
     entity.id = 1;

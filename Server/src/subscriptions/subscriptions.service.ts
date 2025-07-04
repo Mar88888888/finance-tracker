@@ -42,10 +42,11 @@ export class SubscriptionsService {
   }
 
   async getUserSubscriptions(userId: number): Promise<SubscriptionModel[]> {
-    return await this.subscriptionRepository.find({
+    const subscriptions = await this.subscriptionRepository.find({
       where: { user: { id: userId } },
       relations: ['transactionTemplate', 'user'],
-    }).then(subscriptions => subscriptions.map(SubscriptionModel.fromEntity));
+    });
+    return subscriptions.map(SubscriptionModel.fromEntity);
   }
   
 
@@ -71,8 +72,6 @@ export class SubscriptionsService {
   }
 
   async deleteSubscription(subscriptionId: number): Promise<void> {
-    const subscription = await this.findOne(subscriptionId);
     await this.subscriptionRepository.delete(subscriptionId);
-    return;
   }
 }

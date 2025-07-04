@@ -20,7 +20,7 @@ export class SubscriptionsController {
   @Delete('/:subscriptionId')
   @UseGuards(AuthGuard, SubscriptionOwnerGuard)
   async deleteSubscription(
-    @Param('subscriptionId', ParseIntPipe) subscriptionId: number): Promise<void> {
-    return await this.subscriptionService.deleteSubscription(subscriptionId);
+  @Param('subscriptionId', ParseIntPipe) subscriptionId: number): Promise<void> {
+    await this.subscriptionService.deleteSubscription(subscriptionId);
   }
 }

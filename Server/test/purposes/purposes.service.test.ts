@@ -6,7 +6,7 @@ import { testPurposesEntities, testPurposesModels } from "../fixtures/purposes.f
 import { members } from "../fixtures/users.fixture";
 import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { PurposeModel } from "../../src/purposes/purpose.model";
-import { createPurposeDtoMock, updatePurposeDtoMock } from "./purpose-dto.mock";
+import { createPurposeDtoMock, updatePurposeDtoMock } from "./purpose.dto.mock";
 
 
 describe('Purposes service', () => {

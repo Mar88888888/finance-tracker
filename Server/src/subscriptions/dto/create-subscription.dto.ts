@@ -17,5 +17,5 @@ export class CreateSubscriptionDto {
   
   @IsDate()
   @Type(() => Date)
-  endDate?: string;
+  endDate?: Date;
 }

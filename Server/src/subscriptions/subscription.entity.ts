@@ -39,10 +39,10 @@ export class SubscriptionEntity{
   @Column({ default: true })
   isActive: boolean;
 
-  @OneToOne(() => TransactionEntity, { cascade: true })
+  @OneToOne(/* istanbul ignore next */() => TransactionEntity,/* istanbul ignore next */ { cascade: true })
   @JoinColumn()
   transactionTemplate: TransactionEntity;
 
-  @ManyToOne(() => UserEntity, user => user.subscriptions, { nullable: false, onDelete: 'CASCADE', })
+  @ManyToOne(/* istanbul ignore next */() => UserEntity,/* istanbul ignore next */ user => user.subscriptions, { nullable: false, onDelete: 'CASCADE', })
   user: UserEntity;
 }

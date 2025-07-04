@@ -2,7 +2,7 @@ import { PurposesController } from "../../src/purposes/purposes.controller"
 import { testPurposesModels } from "../fixtures/purposes.fixtures";
 import { authorizedRequest } from "../mocks/authorized-request.mock";
 import { purposeServiceMock } from "../mocks/services/purpose.service.mock";
-import { createPurposeDtoMock, updatePurposeDtoMock } from "./purpose-dto.mock";
+import { createPurposeDtoMock, updatePurposeDtoMock } from "./purpose.dto.mock";
 
 describe('Purposes Controller', () => {
   let sut: PurposesController;

@@ -26,3 +26,4 @@ export const testSubscriptions: SubscriptionModel[] = [
   ),
 ];
 
+export const testSubscriptionsEntities = testSubscriptions.map(sub => SubscriptionModel.toEntity(sub));
