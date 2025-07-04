@@ -1,37 +1,27 @@
-import { ExecutionContext, ForbiddenException, NotFoundException, } from "@nestjs/common";
-import { members } from "../fixtures/users.fixture";
-import { testSubscriptions } from "../fixtures/subscriptions.fixtures";
+import { ForbiddenException, NotFoundException } from "@nestjs/common";
 import { SubscriptionOwnerGuard } from "../../src/guards/subscription-owner.guard";
+import { UserModel } from "../../src/users/user.model";
+import { subscriptionsServiceMock } from "../mocks/services/subscriptions.service.mock";
+import { createUserModels } from "../fixtures/users.fixture";
+import { executionContextMock } from "../mocks/execution-context.mock";
+import { createSubscriptionModels } from "../fixtures/subscriptions.fixtures";
+import { SubscriptionModel } from "../../src/subscriptions/subscription.model";
 
-const subscriptionServiceMock = {
-  findOne: jest.fn().mockResolvedValue(testSubscriptions[0])
-};
-
-const executionContextMock: Partial<
-  Record<
-    jest.FunctionPropertyNames<ExecutionContext>,
-    jest.MockedFunction<any>
-  >
-> = {
-  switchToHttp: jest.fn().mockReturnValue({
-    getRequest: jest.fn().mockReturnValue({
-      userId: members[0].getId(),
-      params: {
-        subscriptionId: testSubscriptions[0].getId(),
-      }
-    }),
-    getResponse: jest.fn(),
-  }),
-};
 
 
 describe('Auth Guard', () => {
   let sut: SubscriptionOwnerGuard;
+  let userModels: UserModel[];
+  let subscriptionModels: SubscriptionModel[];
 
   beforeEach(() => {
     sut = new SubscriptionOwnerGuard(
-      subscriptionServiceMock as any
+      subscriptionsServiceMock as any
     );
+
+    userModels = createUserModels();
+    subscriptionModels = createSubscriptionModels();
+
   });
 
   afterEach(() => {
@@ -50,7 +40,7 @@ describe('Auth Guard', () => {
   it('should throw NotFoundException if no subscriptionId provided',  () => {
     jest.spyOn(executionContextMock, 'switchToHttp').mockReturnValueOnce({
       getRequest: jest.fn().mockReturnValueOnce({
-        userId: members[0].getId(),
+        userId: userModels[0].getId(),
         params: {
           subscriptionId: undefined,
         }
@@ -64,7 +54,7 @@ describe('Auth Guard', () => {
   });
 
   it('should throw NotFoundException if no subscription with provided Id found',  () => {
-    jest.spyOn(subscriptionServiceMock, 'findOne').mockResolvedValueOnce(undefined);
+    subscriptionsServiceMock.findOne.mockResolvedValueOnce(undefined);
     sut.canActivate(executionContextMock as any).catch(err => {
       expect(err).toBeInstanceOf(NotFoundException);
       expect(err.message).toBe('Subscription not found');
@@ -72,7 +62,7 @@ describe('Auth Guard', () => {
   });
 
   it('should throw ForbiddenException if user is not an owner of provided subscription',  () => {
-    jest.spyOn(subscriptionServiceMock, 'findOne').mockResolvedValueOnce(testSubscriptions[1]);
+    subscriptionsServiceMock.findOne.mockResolvedValueOnce(subscriptionModels[1]);
     sut.canActivate(executionContextMock as any).catch(err => {
       expect(err).toBeInstanceOf(ForbiddenException);
       expect(err.message).toBe('You are not the owner of this subscription');

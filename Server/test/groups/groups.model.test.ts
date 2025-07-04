@@ -1,5 +1,4 @@
 import { GroupModel } from "../../src/groups/group.model"
-import { PurposeModel } from "../../src/purposes/purpose.model";
 import { UserModel } from "../../src/users/user.model";
 
 const testParams = {

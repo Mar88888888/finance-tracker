@@ -1,15 +1,20 @@
+import { SubscriptionModel } from "../../src/subscriptions/subscription.model";
 import { SubscriptionsController } from "../../src/subscriptions/subscriptions.controller"
-import { testSubscriptions } from "../fixtures/subscriptions.fixtures";
+import { createSubscriptionModels } from "../fixtures/subscriptions.fixtures";
 import { authorizedRequest } from "../mocks/authorized-request.mock";
 import { subscriptionsServiceMock } from "../mocks/services/subscriptions.service.mock";
 
 describe('Subscriptions Controller', () => {
   let sut: SubscriptionsController;
+  let subscriptionModels: SubscriptionModel[];
 
   beforeEach(() => {
     sut = new SubscriptionsController(
       subscriptionsServiceMock as any,
     );
+
+    subscriptionModels = createSubscriptionModels();
+    
   });
 
   afterEach(() => {
@@ -20,13 +25,13 @@ describe('Subscriptions Controller', () => {
   it('should return user subscriptions', async () => {
     const result = await sut.getUserSubscriptions(authorizedRequest);
 
-    const expected = testSubscriptions;
+    const expected = subscriptionModels;
 
     expect(result).toEqual(expected);
   });
 
   it('should delete a user subscription', async () => {
-    const subscriptionId = testSubscriptions[0].getId();
+    const subscriptionId = subscriptionModels[0].getId();
 
     await sut.deleteSubscription(subscriptionId);
 

@@ -1,8 +1,10 @@
 import { UserModel } from "../../../src/users/user.model"
-import { members } from "../../fixtures/users.fixture"
+import { createUserModels } from "../../fixtures/users.fixture"
 
-export const userServiceMock = {
+const users = createUserModels();
+
+export const usersServiceMock = {
   findOne: jest.fn().mockImplementation(async (id): Promise<UserModel>=>{
-    return Promise.resolve(members[0])
+    return Promise.resolve(users[0])
   }),
 }

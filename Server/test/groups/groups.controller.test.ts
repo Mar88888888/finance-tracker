@@ -1,43 +1,28 @@
-import { IAuthorizedRequest } from "../../src/abstracts/authorized-request.interface";
+import { GroupModel } from "../../src/groups/group.model";
 import { GroupsController } from "../../src/groups/groups.controller"
-import { groupModels } from "../fixtures/groups.fixtures";
-import { testTransactions } from "../fixtures/transactions.fixtures";
+import { TransactionModel } from "../../src/transactions/transaction.model";
+import { createGroupModels } from "../fixtures/groups.fixtures";
+import { createTransactionModels } from "../fixtures/transactions.fixtures";
 import { authorizedRequest } from "../mocks/authorized-request.mock";
-
-const res = {
-  status: jest.fn().mockReturnThis(),
-  json: jest.fn().mockReturnThis(),
-  setHeader: jest.fn().mockReturnThis(),
-};
-
-const groupsServiceMock = {
-  getGroupCode: jest.fn().mockResolvedValue('gorupCode'),
-  getTransactions: jest.fn().mockResolvedValue(testTransactions),
-  getUserGroups: jest.fn().mockResolvedValue(groupModels),
-  findOne: jest.fn().mockResolvedValue(groupModels[0]),
-  create: jest.fn().mockResolvedValue(groupModels[0]),
-  addPurposes: jest.fn().mockResolvedValue(groupModels[0]),
-  update: jest.fn().mockResolvedValue(groupModels[0]),
-  joinGroup: jest.fn().mockResolvedValue(groupModels[0]),
-  removeUserFromGroup: jest.fn().mockResolvedValue(groupModels[0]),
-  removePurposeFromGroup: jest.fn().mockResolvedValue(groupModels[0]),
-  remove: jest.fn(),
-
-}
-
-const transactionServiceMock = {
-  exportToCsv: jest.fn(),
-}
+import { res } from "../mocks/response.mock";
+import { groupsServiceMock } from "../mocks/services/groups.service.mock";
+import { transactionsServiceMock } from "../mocks/services/transactions.service.mock";
 
 
 describe('Groups Controller', ()=>{
   let sut: GroupsController;
-  
+  let groupModels: GroupModel[]; 
+  let transactionModels: TransactionModel[];
+
+
   beforeEach(()=>{
     sut = new GroupsController(
       groupsServiceMock as any,
-      transactionServiceMock as any,
-    )
+      transactionsServiceMock as any,
+    );
+
+    groupModels = createGroupModels();
+    transactionModels = createTransactionModels();
   });
 
   afterEach(() => {
@@ -56,13 +41,13 @@ describe('Groups Controller', ()=>{
   
   it('should return group transactions', async ()=>{
     const result = await sut.getTransactions(1, {});
-    expect(result).toEqual(testTransactions)
+    expect(result).toEqual(transactionModels)
     expect(groupsServiceMock.getTransactions).toHaveBeenCalledTimes(1);
   });
 
   it('should export transactions to csv', async () => {
     await sut.exportGroupTransactions({}, 1, res as any);
-    expect(transactionServiceMock.exportToCsv).toHaveBeenCalledTimes(1);
+    expect(transactionsServiceMock.exportToCsv).toHaveBeenCalledTimes(1);
   });
 
   it('should return a group by Id', async () => {

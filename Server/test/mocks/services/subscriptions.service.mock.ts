@@ -1,6 +1,9 @@
-import { testSubscriptions } from "../../fixtures/subscriptions.fixtures";
+import { createSubscriptionModels } from "../../fixtures/subscriptions.fixtures"
+
+const subscriptionModels = createSubscriptionModels();
 
 export const subscriptionsServiceMock = {
-  getUserSubscriptions: jest.fn().mockResolvedValue(testSubscriptions),
+  findOne: jest.fn().mockResolvedValue(subscriptionModels[0]),
+  getUserSubscriptions: jest.fn().mockResolvedValue(subscriptionModels),
   deleteSubscription: jest.fn(),
 }

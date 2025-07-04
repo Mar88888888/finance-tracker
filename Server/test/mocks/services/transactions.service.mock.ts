@@ -1,9 +1,9 @@
-import { testTransactions } from "../../fixtures/transactions.fixtures";
+import { createTransactionModels } from "../../fixtures/transactions.fixtures";
+
+const transactionModels = createTransactionModels();
 
 export const transactionsServiceMock = {
-  findUserPurposes: jest.fn().mockResolvedValue(testTransactions),
-  findOne: jest.fn().mockResolvedValue(testTransactions[0]),
-  create: jest.fn().mockResolvedValue(testTransactions[0]),
-  update: jest.fn().mockResolvedValue(testTransactions[0]),
-  remove: jest.fn(),
+  findOne: jest.fn().mockResolvedValue(transactionModels[0]),
+  getGroupTransactions: jest.fn().mockResolvedValue(transactionModels),
+  exportToCsv: jest.fn(),
 }

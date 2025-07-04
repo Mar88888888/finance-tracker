@@ -1,16 +1,12 @@
 import { ExecutionContext, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { AuthGuard } from "../../src/guards/auth.guard"
-import { members } from "../fixtures/users.fixture";
+import { usersServiceMock } from "../mocks/services/users.service.mock";
 
 const jwtServiceMock = {
   verifyAsync: jest.fn().mockResolvedValue({sub: 5}),
 };
 
 let tokenMock = 'someToken';
-
-const usersServiceMock = {
-  findOne: jest.fn().mockResolvedValue(members[0])
-};
 
 const executionContextMock: Partial<
   Record<

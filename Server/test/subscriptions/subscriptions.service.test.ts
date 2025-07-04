@@ -1,24 +1,35 @@
 import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { SubscriptionsService } from "../../src/subscriptions/subscriptions.service";
-import { testSubscriptions } from "../fixtures/subscriptions.fixtures";
-import { testTransactions } from "../fixtures/transactions.fixtures";
-import { members } from "../fixtures/users.fixture";
 import { subscriptionsRepoMock } from "../mocks/repos/subscriptions.repo.mock";
 import { transactionsServiceMock } from "../mocks/services/transactions.service.mock";
-import { userServiceMock } from "../mocks/services/users.service.mock";
+import { usersServiceMock } from "../mocks/services/users.service.mock";
 import { createSubscriptionDtoMock } from "./subscription.dto.mock";
 import { SubscriptionModel } from "../../src/subscriptions/subscription.model";
+import { UserModel } from "../../src/users/user.model";
+import { createUserModels } from "../fixtures/users.fixture";
+import { TransactionModel } from "../../src/transactions/transaction.model";
+import { createTransactionModels } from "../fixtures/transactions.fixtures";
+import { createSubscriptionModels } from "../fixtures/subscriptions.fixtures";
 
 describe('Subscriptions Service', () => {
 
   let sut: SubscriptionsService;
+  let userModels: UserModel[];
+  let transactionModels: TransactionModel[];
+  let subscriptionModels: SubscriptionModel[];
+  
 
   beforeEach(() => {
     sut = new SubscriptionsService(
       subscriptionsRepoMock as any,
       transactionsServiceMock as any,
-      userServiceMock as any
-    )
+      usersServiceMock as any
+    );
+
+    userModels = createUserModels();
+    transactionModels = createTransactionModels();
+    subscriptionModels = createSubscriptionModels();
+    
   });
 
   afterEach(() => {
@@ -30,10 +41,10 @@ describe('Subscriptions Service', () => {
   });
 
   it('should throw BadRequest exception if subscription for given transaction already exists', () => {
-    jest.spyOn(sut, 'findOneByTransactionId').mockResolvedValueOnce(testSubscriptions[0]);
+    jest.spyOn(sut, 'findOneByTransactionId').mockResolvedValueOnce(subscriptionModels[0]);
     sut.createSubscription(
-      members[0].getId(),
-      testTransactions[0].getId(),
+      userModels[0].getId(),
+      transactionModels[0].getId(),
       createSubscriptionDtoMock
     ).catch(err => {
       expect(err).toBeInstanceOf(BadRequestException);
@@ -44,34 +55,34 @@ describe('Subscriptions Service', () => {
   it('should create a subscription', async () => {
     jest.spyOn(sut, 'findOneByTransactionId').mockResolvedValueOnce(undefined);
     const result = await sut.createSubscription(
-      members[0].getId(),
-      testTransactions[0].getId(),
+      userModels[0].getId(),
+      transactionModels[0].getId(),
       createSubscriptionDtoMock
     );
 
     expect(result).toBeInstanceOf(SubscriptionModel);
-    expect(result).toEqual(testSubscriptions[0]);
+    expect(result).toEqual(subscriptionModels[0]);
   });
 
   it('should return subscription for current user', async () => {
-    const result = await sut.getUserSubscriptions(members[0].getId());
+    const result = await sut.getUserSubscriptions(userModels[0].getId());
 
-    const expected = testSubscriptions;
+    const expected = subscriptionModels;
 
     expect(result).toEqual(expected);
   });
 
   it('should return subscription by transactionId', async () => {
-    const transactionId = testTransactions[0].getId();
+    const transactionId = transactionModels[0].getId();
     const result = await sut.findOneByTransactionId(transactionId);
 
-    const expected = testSubscriptions[0];
+    const expected = subscriptionModels[0];
     expect(result).toEqual(expected);
   });
 
   it('should throw NotFoundException if no subscription with provided id found', () => {
     jest.spyOn(subscriptionsRepoMock, 'findOne').mockResolvedValueOnce(undefined);
-    const subscriptionId = testSubscriptions[0].getId();
+    const subscriptionId = subscriptionModels[0].getId();
     sut.findOne(subscriptionId).catch(err => {
       expect(err).toBeInstanceOf(NotFoundException);
       expect(err.message).toBe('Subscription not found');
@@ -79,16 +90,16 @@ describe('Subscriptions Service', () => {
   });
 
   it('should return subscription by provided id', async () => {
-    const subscriptionId = testSubscriptions[0].getId();
+    const subscriptionId = subscriptionModels[0].getId();
     const result = await sut.findOne(subscriptionId);
 
-    const expected = testSubscriptions[0];
+    const expected = subscriptionModels[0];
 
     expect(result).toEqual(expected);
   });
 
   it('should delete subscription by id', () => {
-    const subscriptionId = testSubscriptions[0].getId();
+    const subscriptionId = subscriptionModels[0].getId();
     sut.deleteSubscription(subscriptionId);
 
     expect(subscriptionsRepoMock.delete).toHaveBeenCalledWith(subscriptionId);

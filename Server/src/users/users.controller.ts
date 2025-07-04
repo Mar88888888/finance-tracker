@@ -84,7 +84,6 @@ export class UsersController {
       const user = await this.authService.getUserFromToken(token);
       return user;
     } catch (error) {
-      console.log('Invalid token')
       throw new UnauthorizedException('Invalid token');
     }
   }

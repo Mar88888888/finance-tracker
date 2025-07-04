@@ -1,9 +1,11 @@
-import { testPurposesModels } from "../../fixtures/purposes.fixtures";
+import { createPurposeModels } from "../../fixtures/purposes.fixtures"
+
+const purposeModels = createPurposeModels();
 
 export const purposeServiceMock = {
-  findUserPurposes: jest.fn().mockResolvedValue(testPurposesModels),
-  findOne: jest.fn().mockResolvedValue(testPurposesModels[0]),
-  create: jest.fn().mockResolvedValue(testPurposesModels[0]),
-  update: jest.fn().mockResolvedValue(testPurposesModels[0]),
+  findUserPurposes: jest.fn().mockResolvedValue(purposeModels),
+  findOne: jest.fn().mockResolvedValue(purposeModels[0]),
+  create: jest.fn().mockResolvedValue(purposeModels[0]),
+  update: jest.fn().mockResolvedValue(purposeModels[0]),
   remove: jest.fn(),
 }

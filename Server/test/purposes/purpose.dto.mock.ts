@@ -1,9 +1,11 @@
-import { testPurposesModels } from "../fixtures/purposes.fixtures";
+import { createPurposeModels } from "../fixtures/purposes.fixtures";
+
+const purposeModels = createPurposeModels();
 
 export const createPurposeDtoMock = {
   category: "New Purpose",
 };
 
 export  const updatePurposeDtoMock = {
-    category: testPurposesModels[1].getCategory(),
+    category: purposeModels[1].getCategory(),
   };

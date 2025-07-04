@@ -1,37 +1,25 @@
 import { ExecutionContext, ForbiddenException, NotFoundException, UnauthorizedException } from "@nestjs/common";
-import { groupModels } from "../fixtures/groups.fixtures";
-import { members } from "../fixtures/users.fixture";
 import { GroupOwnerGuard } from "../../src/guards/group-owner.guard";
-
-const groupsServiceMock = {
-  findOne: jest.fn().mockResolvedValue(groupModels[1])
-};
-
-const executionContextMock: Partial<
-  Record<
-    jest.FunctionPropertyNames<ExecutionContext>,
-    jest.MockedFunction<any>
-  >
-> = {
-  switchToHttp: jest.fn().mockReturnValue({
-    getRequest: jest.fn().mockReturnValue({
-      userId: members[0].getId(),
-      params: {
-        groupId: groupModels[1].getId(),
-      }
-    }),
-    getResponse: jest.fn(),
-  }),
-};
+import { UserModel } from "../../src/users/user.model";
+import { GroupModel } from "../../src/groups/group.model";
+import { createUserModels } from "../fixtures/users.fixture";
+import { createGroupModels } from "../fixtures/groups.fixtures";
+import { groupsServiceMock } from "../mocks/services/groups.service.mock";
+import { executionContextMock } from "../mocks/execution-context.mock";
 
 
 describe('Auth Guard', () => {
   let sut: GroupOwnerGuard;
-
+  let userModels: UserModel[];
+  let groupModels: GroupModel[];
+  
   beforeEach(() => {
     sut = new GroupOwnerGuard(
       groupsServiceMock as any
     );
+
+    userModels = createUserModels();
+    groupModels = createGroupModels();
   });
 
   afterEach(() => {
@@ -50,7 +38,7 @@ describe('Auth Guard', () => {
   it('should throw NotFoundException if no groupId provided',  () => {
     jest.spyOn(executionContextMock, 'switchToHttp').mockReturnValueOnce({
       getRequest: jest.fn().mockReturnValueOnce({
-        userId: members[0].getId(),
+        userId: userModels[0].getId(),
         params: {
           groupId: undefined,
         }
