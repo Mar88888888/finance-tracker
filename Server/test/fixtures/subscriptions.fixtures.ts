@@ -1,12 +1,15 @@
-import { SubscriptionModel } from "../../src/subscriptions/subscription.model";
-import { RecurrenceUnit, SubscriptionEntity } from "../../src/subscriptions/subscription.entity";
+import { SubscriptionModel } from '../../src/subscriptions/subscription.model';
+import {
+  RecurrenceUnit,
+  SubscriptionEntity,
+} from '../../src/subscriptions/subscription.entity';
 
 export function createSubscriptionModels(): SubscriptionModel[] {
   return [
     new SubscriptionModel(
       1,
       2,
-      RecurrenceUnit.DAY,
+      RecurrenceUnit.YEAR,
       new Date('01-01-2001'),
       new Date('01-01-2001'),
       true,
@@ -27,6 +30,8 @@ export function createSubscriptionModels(): SubscriptionModel[] {
     ),
   ];
 }
-export function createSubscriptionEntities(subscriptionModels: SubscriptionModel[]): SubscriptionEntity[] {
+export function createSubscriptionEntities(
+  subscriptionModels: SubscriptionModel[],
+): SubscriptionEntity[] {
   return subscriptionModels.map(SubscriptionModel.toEntity);
 }

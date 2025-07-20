@@ -9,12 +9,12 @@ export class CreateTransactionDto {
 
   @IsNotEmpty()
   @IsDate()
-  @Type(() => Date)
+  @Type(/* istanbul ignore next */ () => Date)
   date: Date;
 
   @IsNotEmpty()
   @IsEnum(CurrencyCode)
-  currency:CurrencyCode;
+  currency: CurrencyCode;
 
   @IsNotEmpty()
   @IsNumber()

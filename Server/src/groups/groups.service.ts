@@ -20,15 +20,17 @@ export class GroupsService {
     private readonly groupRepo: Repository<GroupEntity>,
     private readonly userService: UsersService,
     private readonly transactionService: TransactionsService,
-  ) { }
+  ) {}
 
   public generateJoinCode(): string {
     return crypto.randomBytes(4).toString('hex');
   }
 
   async findOne(id: number): Promise<GroupModel> {
-    const groupEntity = 
-    await this.groupRepo.findOne({ where: { id }, relations: ['members', 'owner', 'purposes'] });
+    const groupEntity = await this.groupRepo.findOne({
+      where: { id },
+      relations: ['members', 'owner', 'purposes'],
+    });
     if (!groupEntity) {
       throw new NotFoundException('Group not found');
     }
@@ -52,7 +54,10 @@ export class GroupsService {
     return groupEntities.map(GroupModel.fromEntity);
   }
 
-  async create(ownerId: number, createGroupDto: CreateGroupDto): Promise<GroupModel> {
+  async create(
+    ownerId: number,
+    createGroupDto: CreateGroupDto,
+  ): Promise<GroupModel> {
     const newGroupEntity = this.groupRepo.create(createGroupDto);
     const owner = UserModel.toEntity(await this.userService.findOne(ownerId));
     newGroupEntity.owner = owner;
@@ -64,8 +69,10 @@ export class GroupsService {
   }
 
   async joinGroup(joinCode: string, userId: number): Promise<GroupModel> {
-    const groupEntity = 
-    await this.groupRepo.findOne({ where: { joinCode }, relations: ['members', 'owner'] });
+    const groupEntity = await this.groupRepo.findOne({
+      where: { joinCode },
+      relations: ['members', 'owner'],
+    });
 
     if (!groupEntity) {
       throw new NotFoundException('Group with this code not found');
@@ -73,7 +80,7 @@ export class GroupsService {
 
     const groupModel = GroupModel.fromEntity(groupEntity);
 
-    const isMember = groupEntity.members.some(member => member.id === userId);
+    const isMember = groupEntity.members.some((member) => member.id === userId);
     if (isMember) {
       return groupModel;
     }
@@ -82,18 +89,26 @@ export class GroupsService {
 
     groupModel.addMember(user);
 
-    const updatedGroupEntity = await this.groupRepo.save(GroupModel.toEntity(groupModel));
+    const updatedGroupEntity = await this.groupRepo.save(
+      GroupModel.toEntity(groupModel),
+    );
 
     return GroupModel.fromEntity(updatedGroupEntity);
   }
 
-  async update(id: number, updateGroupDto: UpdateGroupDto): Promise<GroupModel> {
+  async update(
+    id: number,
+    updateGroupDto: UpdateGroupDto,
+  ): Promise<GroupModel> {
     const group = GroupModel.toEntity(await this.findOne(id));
     Object.assign(group, updateGroupDto);
     return GroupModel.fromEntity(await this.groupRepo.save(group));
   }
 
-  async addPurposes(groupId: number, purposes: AddPurposeDto): Promise<GroupModel> {
+  async addPurposes(
+    groupId: number,
+    purposes: AddPurposeDto,
+  ): Promise<GroupModel> {
     const group = await this.findOne(groupId);
 
     const { purposeIds } = purposes;
@@ -104,33 +119,39 @@ export class GroupsService {
     return group;
   }
 
-  async getTransactions(id: number, filterParams: TransactionFilterDto): Promise<TransactionModel[]> {
+  async getTransactions(
+    id: number,
+    filterParams: TransactionFilterDto,
+  ): Promise<TransactionModel[]> {
     const group = await this.findOne(id);
-
-    const memberIds = group.getMembers().map(member => member.getId());
-    const purposeIds = group.getPurposes();
-    if (memberIds.length === 0 || purposeIds.length === 0) {
-      return [];
-    }
-
-    return this.transactionService.getGroupTransactions(memberIds, purposeIds, filterParams);
+    return this.transactionService.getGroupTransactions(group, filterParams);
   }
 
   async remove(id: number): Promise<void> {
     await this.groupRepo.delete(id);
   }
 
-  async removeUserFromGroup(groupId: number, memberId: number): Promise<GroupModel> {
+  async removeUserFromGroup(
+    groupId: number,
+    memberId: number,
+  ): Promise<GroupModel> {
     let group = await this.findOne(groupId);
 
     group.removeMember(memberId);
-    return GroupModel.fromEntity(await this.groupRepo.save(GroupModel.toEntity(group)));
+    return GroupModel.fromEntity(
+      await this.groupRepo.save(GroupModel.toEntity(group)),
+    );
   }
 
-  async removePurposeFromGroup(groupId: number, purposeId: number): Promise<GroupModel> {
+  async removePurposeFromGroup(
+    groupId: number,
+    purposeId: number,
+  ): Promise<GroupModel> {
     const group = await this.findOne(groupId);
 
     group.removePurpose(purposeId);
-    return GroupModel.fromEntity(await this.groupRepo.save(GroupModel.toEntity(group)));
+    return GroupModel.fromEntity(
+      await this.groupRepo.save(GroupModel.toEntity(group)),
+    );
   }
 }

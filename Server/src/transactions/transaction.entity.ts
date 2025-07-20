@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, Unique, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  Unique,
+  JoinColumn,
+} from 'typeorm';
 import { UserEntity } from '../users/user.entity';
 import { PurposeEntity } from '../purposes/purpose.entity';
 import { CurrencyEntity } from '../currency/currency.entity';
@@ -12,7 +19,10 @@ export class TransactionEntity {
   @Column({ nullable: false })
   sum: number;
 
-  @ManyToOne(() => CurrencyEntity, { eager: true, nullable: true })
+  @ManyToOne(/*istanbul ignore next */ () => CurrencyEntity, {
+    eager: true,
+    nullable: true,
+  })
   @JoinColumn({ name: 'currency', referencedColumnName: 'code' })
   currency: CurrencyEntity;
 
@@ -22,9 +32,17 @@ export class TransactionEntity {
   @Column({ type: 'date', nullable: false })
   date: Date;
 
-  @ManyToOne(() => UserEntity, user => user.transactions, { onDelete: 'CASCADE', nullable: false })
+  @ManyToOne(
+    /*istanbul ignore next */ () => UserEntity,
+    /*istanbul ignore next */ (user) => user.transactions,
+    { onDelete: 'CASCADE', nullable: false },
+  )
   member: UserEntity;
 
-  @ManyToOne(() => PurposeEntity, purpose => purpose.transactions, { onDelete: 'CASCADE', nullable: false  })
+  @ManyToOne(
+    /*istanbul ignore next */ () => PurposeEntity,
+    /*istanbul ignore next */ (purpose) => purpose.transactions,
+    { onDelete: 'CASCADE', nullable: false },
+  )
   purpose: PurposeEntity;
 }

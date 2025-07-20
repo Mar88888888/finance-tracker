@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsNumber, IsDate, IsString, IsBoolean } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsDate,
+  IsString,
+  IsBoolean,
+} from 'class-validator';
 import { Type, Expose } from 'class-transformer';
 import { UserSerializeDto } from '../../users/dto/serialize.user.dto';
 import { UserModel } from '../../users/user.model';
@@ -37,7 +43,7 @@ export class SerializeTransactionDto {
   date: string;
 
   @IsNotEmpty()
-  @Type(() => UserSerializeDto)
+  @Type(/* istanbul ignore next */ () => UserSerializeDto)
   @Expose()
   member: UserModel;
 

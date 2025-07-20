@@ -1,11 +1,23 @@
 import {
-  Controller, Get, Post, Patch, Delete, Body,
-  Param, NotFoundException, Query, UseGuards, Req,
-  UseInterceptors, SerializeOptions, ClassSerializerInterceptor,
-  Res, HttpStatus,
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  NotFoundException,
+  Query,
+  UseGuards,
+  Req,
+  UseInterceptors,
+  SerializeOptions,
+  ClassSerializerInterceptor,
+  Res,
+  HttpStatus,
   ParseIntPipe,
   ForbiddenException,
-  Header
+  Header,
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
@@ -34,7 +46,7 @@ export class TransactionsController {
     private readonly userService: UsersService,
     private readonly subscriptionService: SubscriptionsService,
     private readonly subscriptionProcessorService: SubscriptionProcessorService,
-  ) { }
+  ) {}
 
   @UseGuards(AuthGuard)
   @Get()
@@ -44,7 +56,6 @@ export class TransactionsController {
   ): Promise<TransactionModel[]> {
     return this.transactionsService.find(req.userId, filterDto);
   }
-  
 
   @UseGuards(AuthGuard)
   @Get('export')
@@ -53,13 +64,18 @@ export class TransactionsController {
     @Query() filterDto: TransactionFilterDto,
     @Res() res: Response,
   ) {
-    const transactions = await this.transactionsService.find(req.userId, filterDto);
+    const transactions = await this.transactionsService.find(
+      req.userId,
+      filterDto,
+    );
     res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', 'attachment; filename=transactions.csv');
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename=transactions.csv',
+    );
 
     await this.transactionsService.exportToCsv(transactions, res);
   }
-
 
   @UseGuards(AuthGuard)
   @Post()
@@ -68,7 +84,10 @@ export class TransactionsController {
     @Req() req,
     @Res({ passthrough: true }) res: Response,
   ): Promise<void> {
-    const transaction = await this.transactionsService.create(req.userId, createTransactionDto);
+    const transaction = await this.transactionsService.create(
+      req.userId,
+      createTransactionDto,
+    );
     const locationUrl = `/transactions/${transaction.getId()}`;
 
     res
@@ -80,44 +99,37 @@ export class TransactionsController {
   @SerializeOptions({ type: UserSerializeDto })
   @Get('/:id/member')
   async getUser(@Param('id', ParseIntPipe) id: number): Promise<UserModel> {
-    try {
-      return await this.userService.findOne((await this.transactionsService.findOne(id)).getUserId());
-    } catch (error) {
-      throw new NotFoundException('User not found');
-    }
+    const user = await this.transactionsService.findOne(id);
+    const userId = user.getUserId();
+    return await this.userService.findOne(userId);
   }
 
   @UseGuards(AuthGuard, TransactionOwnerGuard)
   @Get('/:transactionId')
-  async findOne(@Param('transactionId', ParseIntPipe) transactionId: number, @Req() request): Promise<TransactionModel> {
-    let transaction: TransactionModel;
-    try {
-      transaction = await this.transactionsService.findOne(transactionId);
-    } catch (error) {
-      throw new NotFoundException('Transaction not found');
-    }
-
-    if (transaction.getUserId() !== request.userId) {
-      throw new ForbiddenException('You are not allowed to access this transaction');
-    }
-
-    return transaction
+  async findOne(
+    @Param('transactionId', ParseIntPipe) transactionId: number,
+  ): Promise<TransactionModel> {
+    return await this.transactionsService.findOne(transactionId);
   }
 
   @UseGuards(AuthGuard, TransactionOwnerGuard)
   @Patch('/:transactionId')
-  async update(@Param('transactionId', ParseIntPipe) transactionId: number, @Body() updateTransactionDto: UpdateTransactionDto): Promise<TransactionModel> {
-    return await this.transactionsService.update(transactionId, updateTransactionDto);
+  async update(
+    @Param('transactionId', ParseIntPipe) transactionId: number,
+    @Body() updateTransactionDto: UpdateTransactionDto,
+  ): Promise<TransactionModel> {
+    return await this.transactionsService.update(
+      transactionId,
+      updateTransactionDto,
+    );
   }
 
   @UseGuards(AuthGuard, TransactionOwnerGuard)
   @Delete('/:transactionId')
-  async remove(@Param('transactionId', ParseIntPipe) transactionId: number): Promise<void> {
-    try {
-      await this.transactionsService.remove(transactionId);
-    } catch (error) {
-      throw new NotFoundException('Transaction not found');
-    }
+  async remove(
+    @Param('transactionId', ParseIntPipe) transactionId: number,
+  ): Promise<void> {
+    await this.transactionsService.remove(transactionId);
   }
 
   @Post('/:transactionId/subscriptions')
@@ -125,13 +137,12 @@ export class TransactionsController {
   async createSubscription(
     @Req() req: IAuthorizedRequest,
     @Body() dto: CreateSubscriptionDto,
-    @Param('transactionId', ParseIntPipe) transactionId: number): Promise<SubscriptionModel> {
-    return await this.subscriptionService.createSubscription(req.userId, transactionId, dto);
+    @Param('transactionId', ParseIntPipe) transactionId: number,
+  ): Promise<SubscriptionModel> {
+    return await this.subscriptionService.createSubscription(
+      req.userId,
+      transactionId,
+      dto,
+    );
   }
-
-  @Post('process-subscriptions')
-  async processSubscriptionsNow() {
-    return this.subscriptionProcessorService.processRecurringTransactions();
-  }
-
 }

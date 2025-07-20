@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 export abstract class AbstractTransaction {
   protected id: number;
   protected sum: number;

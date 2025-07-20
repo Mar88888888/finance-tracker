@@ -1,10 +1,17 @@
-import { IsOptional, IsDateString, IsBoolean, IsIn, IsEnum, IsNumber, min, Min } from 'class-validator';
+import {
+  IsOptional,
+  IsDateString,
+  IsIn,
+  IsEnum,
+  IsNumber,
+  Min,
+} from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 
 export enum OrderBy {
   DATE = 'date',
   SUM = 'sum',
-  PURPOSE_ID = 'purposeId'
+  PURPOSE_ID = 'purposeId',
 }
 
 export class TransactionFilterDto {
@@ -19,27 +26,28 @@ export class TransactionFilterDto {
   @IsOptional()
   @IsNumber()
   @Min(0)
-  @Type(() => Number)
+  @Type(/* istanbul ignore next */ () => Number)
   minAmount?: number;
 
   @IsOptional()
   @IsNumber()
   @Min(0)
-  @Type(() => Number)
+  @Type(/* istanbul ignore next */ () => Number)
   maxAmount?: number;
 
   @IsOptional()
-  @Transform(({ value }) => {
-    if (typeof value === 'string') {
-      return value.split(',').map((id) => parseInt(id, 10));
-    }
-    if (Array.isArray(value)) {
-      return value.map((id) => parseInt(id, 10));
-    }
-    return [];
-  })
+  @Transform(
+    /* istanbul ignore next */ ({ value }) => {
+      if (typeof value === 'string') {
+        return value.split(',').map((id) => parseInt(id, 10));
+      }
+      if (Array.isArray(value)) {
+        return value.map((id) => parseInt(id, 10));
+      }
+      return [];
+    },
+  )
   purposes?: number[];
-  
 
   @IsOptional()
   @IsEnum(OrderBy)

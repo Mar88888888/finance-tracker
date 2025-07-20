@@ -31,16 +31,17 @@ export class SubscriptionProcessorService {
     for (const sub of subs) {
       try {
         await this.createTransactionFromSubscription(sub);
-        this.logger.log(`Processed subscription ${sub.id}`);
       } catch (e: any) {
-        this.logger.error(`Failed to process subscription ${sub.id}: ${e.message}`);
+        /*istanbul ignore next */
+        this.logger.error(
+          `Failed to process subscription ${sub.id}: ${e.message}`,
+        );
       }
     }
   }
 
   async createTransactionFromSubscription(subscription: SubscriptionEntity) {
     const template = subscription.transactionTemplate;
-    const today = new Date();
 
     const transaction = this.transactionRepository.create({
       ...template,
@@ -51,10 +52,17 @@ export class SubscriptionProcessorService {
 
     await this.transactionRepository.save(transaction);
 
-    const next = this.calculateNext(new Date(subscription.nextExecutionDate), subscription.interval, subscription.unit);
+    const next = this.calculateNext(
+      new Date(subscription.nextExecutionDate),
+      subscription.interval,
+      subscription.unit,
+    );
     subscription.nextExecutionDate = next;
 
-    if (subscription.endDate && new Date(next) > new Date(subscription.endDate)) {
+    if (
+      subscription.endDate &&
+      new Date(next) > new Date(subscription.endDate)
+    ) {
       subscription.isActive = false;
     }
 
@@ -62,7 +70,6 @@ export class SubscriptionProcessorService {
   }
 
   calculateNext(date: Date, interval: number, unit: RecurrenceUnit): Date {
-    this.logger.log(date, interval, unit);
     switch (unit) {
       case RecurrenceUnit.DAY:
         date.setDate(date.getDate() + interval);

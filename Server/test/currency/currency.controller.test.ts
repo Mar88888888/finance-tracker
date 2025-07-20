@@ -1,40 +1,25 @@
-import { CurrencyCode } from "../../src/currency/currency-code.enum";
-import { CurrencyController } from "../../src/currency/currency.controller";
-import { CurrencyEntity } from "../../src/currency/currency.entity";
+import { CurrencyCode } from '../../src/currency/currency-code.enum';
+import { CurrencyController } from '../../src/currency/currency.controller';
+import { CurrencyEntity } from '../../src/currency/currency.entity';
+import { createCurrencyEntities } from '../fixtures/currency.fixtures';
+import { currencyServiceMock } from '../mocks/services/currency.service.mock';
 
-const someCurrencyEntity: CurrencyEntity = {
-  code: CurrencyCode.EUR,
-  name: 'Euro',
-  transactions: [],
-};
-
-const someCurrencyEntity2: CurrencyEntity = {
-  code: CurrencyCode.USD,
-  name: 'US Dollar',
-  transactions: [],
-};
-
-const currencyService = {
-  getAllCurrencies: jest.fn().mockImplementation(async () => {
-    return Promise.resolve([someCurrencyEntity, someCurrencyEntity2]);
-  })
-}
-
-describe('Currency Controller', ()=>{
+describe('Currency Controller', () => {
   let sut: CurrencyController;
-  beforeEach(()=>{
-    sut = new CurrencyController(
-      currencyService as any
-    )
-  })
+  let currencyEntities: CurrencyEntity[];
 
-  it('should be defined', ()=> {
+  beforeEach(() => {
+    currencyEntities = createCurrencyEntities();
+    sut = new CurrencyController(currencyServiceMock as any);
+  });
+
+  it('should be defined', () => {
     expect(sut).toBeDefined();
-  })
+  });
 
-  it('should retrieve currencies from service', async ()=>{
+  it('should retrieve currencies from service', async () => {
     let result = await sut.getAllCurrencies();
-    expect(currencyService.getAllCurrencies).toHaveBeenCalledTimes(1);
-    expect(result).toEqual([someCurrencyEntity, someCurrencyEntity2]);
-  })
+    expect(currencyServiceMock.getAllCurrencies).toHaveBeenCalledTimes(1);
+    expect(result).toEqual(currencyEntities);
+  });
 });
