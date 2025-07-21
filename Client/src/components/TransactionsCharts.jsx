@@ -1,11 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { Pie, Line } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, ArcElement, Tooltip, Legend, LineElement, PointElement } from 'chart.js';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  ArcElement,
+  Tooltip,
+  Legend,
+  LineElement,
+  PointElement,
+} from 'chart.js';
 import API from '../services/AxiosInstance';
 import { format, parseISO } from 'date-fns';
 import '../styles/TransactionsCharts.css';
 
-ChartJS.register(CategoryScale, LinearScale, ArcElement, Tooltip, Legend, LineElement, PointElement);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  ArcElement,
+  Tooltip,
+  Legend,
+  LineElement,
+  PointElement
+);
 
 const TransactionsCharts = ({ transactions, authToken, purposes, members }) => {
   const [purposesMap, setPurposesMap] = useState({});
@@ -23,17 +40,15 @@ const TransactionsCharts = ({ transactions, authToken, purposes, members }) => {
             },
           });
           purposesArr = response.data;
-        }else {
+        } else {
           purposesArr = purposes;
         }
 
-
         const map = {};
-        purposesArr.forEach(p => {
+        purposesArr.forEach((p) => {
           map[p.id] = p.category;
         });
         setPurposesMap(map);
-
       } catch (error) {
         console.error('Error fetching purposes:', error);
       } finally {
@@ -55,23 +70,23 @@ const TransactionsCharts = ({ transactions, authToken, purposes, members }) => {
   const generateColors = (count) => {
     const colors = [];
     const step = 360 / count;
-  
+
     for (let i = 0; i < count; i++) {
       const baseHue = i * step;
-      const randomOffset = Math.random() * 10 - step / 2; 
+      const randomOffset = Math.random() * 10 - step / 2;
       const hue = Math.floor((baseHue + randomOffset + 360) % 360);
       const color = `hsl(${hue}, 80%, 55%)`;
       colors.push(color);
     }
-  
+
     return colors;
   };
-  
 
   const purposeSums = {};
-  transactions.forEach(tx => {
+  transactions.forEach((tx) => {
     const purposeName = purposesMap[tx.purposeId] || 'Unknown';
-    purposeSums[purposeName] = (purposeSums[purposeName] || 0) + Number(tx.usdEquivalent.toFixed(2));
+    purposeSums[purposeName] =
+      (purposeSums[purposeName] || 0) + Number(tx.usdEquivalent.toFixed(2));
   });
 
   const pieData = {
@@ -82,25 +97,28 @@ const TransactionsCharts = ({ transactions, authToken, purposes, members }) => {
         data: Object.values(purposeSums),
         backgroundColor: generateColors(Object.keys(purposeSums).length),
         borderColor: '#333',
-        borderWidth: 1, 
+        borderWidth: 1,
       },
     ],
   };
 
   const dateSums = {};
-  transactions.forEach(tx => {
+  transactions.forEach((tx) => {
     const month = format(parseISO(tx.date), 'yyyy-MM');
-    dateSums[month] = (dateSums[month] || 0) + Number(tx.usdEquivalent.toFixed(2));
+    dateSums[month] =
+      (dateSums[month] || 0) + Number(tx.usdEquivalent.toFixed(2));
   });
 
-  const sortedDates = Object.keys(dateSums).sort((a, b) => new Date(a) - new Date(b));
+  const sortedDates = Object.keys(dateSums).sort(
+    (a, b) => new Date(a) - new Date(b)
+  );
 
   const lineData = {
     labels: sortedDates,
     datasets: [
       {
         label: 'Expenses by Date',
-        data: sortedDates.map(date => dateSums[date]),
+        data: sortedDates.map((date) => dateSums[date]),
         fill: false,
         borderColor: '#36A2EB',
         backgroundColor: '#36A2EB',
@@ -113,11 +131,12 @@ const TransactionsCharts = ({ transactions, authToken, purposes, members }) => {
   let membersData;
   if (members && members.length) {
     const memberSums = {};
-    
-    transactions.forEach(tx => {
-      const member = members.find(m => m.id === tx.memberId);
+
+    transactions.forEach((tx) => {
+      const member = members.find((m) => m.id === tx.userId);
       const memberName = member ? member.name : 'Unknown';
-      memberSums[memberName] = (memberSums[memberName] || 0) + Number(tx.usdEquivalent.toFixed(2));
+      memberSums[memberName] =
+        (memberSums[memberName] || 0) + Number(tx.usdEquivalent.toFixed(2));
     });
 
     membersData = {
@@ -128,7 +147,7 @@ const TransactionsCharts = ({ transactions, authToken, purposes, members }) => {
           data: Object.values(memberSums),
           backgroundColor: generateColors(Object.keys(memberSums).length),
           borderColor: '#333',
-          borderWidth: 1, 
+          borderWidth: 1,
         },
       ],
     };
@@ -144,11 +163,10 @@ const TransactionsCharts = ({ transactions, authToken, purposes, members }) => {
     animation: {
       animateRotate: true,
       animateScale: true,
-      duration: 1000, 
+      duration: 1000,
       easing: 'easeOutQuart',
     },
   };
-  
 
   const lineOptions = {
     responsive: true,
@@ -188,10 +206,9 @@ const TransactionsCharts = ({ transactions, authToken, purposes, members }) => {
       {members && members.length > 0 && (
         <div className="pie-chart">
           <h3>Expenses by Member</h3>
-          <Pie data={membersData}  options={pieOptions} />
+          <Pie data={membersData} options={pieOptions} />
         </div>
       )}
-
     </div>
   );
 };
