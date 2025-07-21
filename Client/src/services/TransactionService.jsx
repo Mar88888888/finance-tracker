@@ -2,7 +2,6 @@ import API from './AxiosInstance';
 
 export const fetchUserById = async (userId, authToken) => {
   try {
-    console.log(userId);
     const userResponse = await API.get(`/users/${userId}`, {
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -34,7 +33,6 @@ export const fetchTransactionsWithRelations = async (
   try {
     const transactionsWithUser = await Promise.all(
       transactions.map(async (transaction) => {
-        console.log(transaction);
         const user = await fetchUserById(transaction.userId, authToken);
         transaction.member = user;
 
