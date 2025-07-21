@@ -6,7 +6,6 @@ import {
   Delete,
   Body,
   Param,
-  NotFoundException,
   Query,
   UseGuards,
   Req,
@@ -16,8 +15,6 @@ import {
   Res,
   HttpStatus,
   ParseIntPipe,
-  ForbiddenException,
-  Header,
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
@@ -81,7 +78,7 @@ export class TransactionsController {
   @Post()
   async create(
     @Body() createTransactionDto: CreateTransactionDto,
-    @Req() req,
+    @Req() req: IAuthorizedRequest,
     @Res({ passthrough: true }) res: Response,
   ): Promise<void> {
     const transaction = await this.transactionsService.create(

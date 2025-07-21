@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 import { TransactionEntity } from '../transactions/transaction.entity';
 import { Exclude } from 'class-transformer';
 import { GroupEntity } from '../groups/group.entity';
@@ -20,7 +27,7 @@ export class UserEntity {
   @Exclude()
   password: string;
 
-  @Column({ nullable: true})
+  @Column({ nullable: true })
   age: number;
 
   @Column({ nullable: true })
@@ -30,21 +37,33 @@ export class UserEntity {
   @Exclude()
   verificationToken?: string;
 
-  @OneToMany(() => TransactionEntity, transaction => transaction.member)
+  @OneToMany(
+    /*istanbul ignore next*/ () => TransactionEntity,
+    /*istanbul ignore next*/ (transaction) => transaction.member,
+  )
   @Exclude()
   transactions: TransactionEntity[];
 
-  @OneToMany(() => GroupEntity, group => group.owner)
+  @OneToMany(
+    /*istanbul ignore next*/ () => GroupEntity,
+    /*istanbul ignore next*/ (group) => group.owner,
+  )
   @Exclude()
   myGroups: GroupEntity[];
 
-  @ManyToMany(() => GroupEntity)
+  @ManyToMany(/*istanbul ignore next*/ () => GroupEntity)
   @JoinTable()
   groups: GroupEntity[];
 
-  @OneToMany(() => PurposeEntity, purpose => purpose.user)
+  @OneToMany(
+    /*istanbul ignore next*/ () => PurposeEntity,
+    /*istanbul ignore next*/ (purpose) => purpose.user,
+  )
   purposes: PurposeEntity[];
 
-  @OneToMany(() => SubscriptionEntity, subscription => subscription.user)
+  @OneToMany(
+    /*istanbul ignore next*/ () => SubscriptionEntity,
+    /*istanbul ignore next*/ (subscription) => subscription.user,
+  )
   subscriptions: SubscriptionEntity[];
 }

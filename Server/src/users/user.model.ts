@@ -1,8 +1,8 @@
-import { TransactionEntity } from "../transactions/transaction.entity";
-import { AbstractUserModel } from "./abstracts/user.model.abstract";
-import { GroupEntity } from "../groups/group.entity";
-import { UserEntity } from "../users/user.entity";
-import { PurposeEntity } from "../purposes/purpose.entity";
+import { TransactionEntity } from '../transactions/transaction.entity';
+import { AbstractUserModel } from './abstracts/user.model.abstract';
+import { GroupEntity } from '../groups/group.entity';
+import { UserEntity } from '../users/user.entity';
+import { PurposeEntity } from '../purposes/purpose.entity';
 
 export interface UserModelParams {
   id: number;
@@ -21,8 +21,7 @@ export interface UserModelParams {
 export class UserModel extends AbstractUserModel {
   constructor(params: UserModelParams) {
     super();
-    if (!params) return;
-    
+
     this.id = params.id;
     this.name = params.name;
     this.email = params.email;
@@ -90,11 +89,11 @@ export class UserModel extends AbstractUserModel {
     this.transactions = transactions;
   }
 
-  getMyGroups(): GroupEntity[] {
+  getOwnedGroups(): GroupEntity[] {
     return this.myGroups;
   }
 
-  setMyGroups(myGroups: GroupEntity[]): void {
+  setOwnedGroups(myGroups: GroupEntity[]): void {
     this.myGroups = myGroups;
   }
 
@@ -131,7 +130,6 @@ export class UserModel extends AbstractUserModel {
     return new UserModel(params);
   }
 
-  
   static toEntity(model: UserModel): UserEntity {
     const entity = new UserEntity();
     entity.id = model.getId();
@@ -141,7 +139,7 @@ export class UserModel extends AbstractUserModel {
     entity.age = model.getAge();
     entity.gender = model.getGender();
     entity.transactions = model.getTransactions();
-    entity.myGroups = model.getMyGroups();
+    entity.myGroups = model.getOwnedGroups();
     entity.groups = model.getGroups();
     entity.purposes = model.getPurposes();
     return entity;

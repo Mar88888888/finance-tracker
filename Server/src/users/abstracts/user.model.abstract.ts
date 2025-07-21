@@ -1,6 +1,6 @@
-import { TransactionEntity } from "../../transactions/transaction.entity";
-import { GroupEntity } from "../../groups/group.entity";
-import { PurposeEntity } from "../../purposes/purpose.entity";
+import { TransactionEntity } from '../../transactions/transaction.entity';
+import { GroupEntity } from '../../groups/group.entity';
+import { PurposeEntity } from '../../purposes/purpose.entity';
 
 export abstract class AbstractUserModel {
   protected id: number;
@@ -28,8 +28,8 @@ export abstract class AbstractUserModel {
   abstract setGender(gender: boolean): void;
   abstract getTransactions(): TransactionEntity[];
   abstract setTransactions(transactions: TransactionEntity[]): void;
-  abstract getMyGroups(): GroupEntity[];
-  abstract setMyGroups(myGroups: GroupEntity[]): void;
+  abstract getOwnedGroups(): GroupEntity[];
+  abstract setOwnedGroups(myGroups: GroupEntity[]): void;
   abstract getGroups(): GroupEntity[];
   abstract setGroups(groups: GroupEntity[]): void;
   abstract getPurposes(): PurposeEntity[];

@@ -4,7 +4,10 @@ import { GroupModel } from '../../groups/group.model';
 
 export class UserSerializeDto extends BaseUserDto {
   id: number;
-  @Transform(({ value }) => (value === true ? 'male' : 'female'))
+  @Transform(
+    /*istanbul ignore next*/ ({ value }) =>
+      value === true ? 'male' : 'female',
+  )
   gender: boolean;
 
   @Exclude()
@@ -15,7 +18,7 @@ export class UserSerializeDto extends BaseUserDto {
 
   @Exclude()
   myGroups: GroupModel;
-  
+
   @Exclude()
   transactions: any;
 

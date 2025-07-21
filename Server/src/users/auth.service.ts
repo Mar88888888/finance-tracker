@@ -20,10 +20,10 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
-  ) {}  
+  ) {}
 
   async signup(userDto: CreateUserDto) {
-    const users = await this.usersService.find({email: userDto.email});
+    const users = await this.usersService.find({ email: userDto.email });
     if (users.length) {
       throw new BadRequestException('email in use');
     }
@@ -32,21 +32,21 @@ export class AuthService {
     const hash = (await scrypt(userDto.password, salt, 32)) as Buffer;
     const result = salt + '.' + hash.toString('hex');
     userDto.password = result;
-    
+
     const user = await this.usersService.create(userDto);
 
     let createdUser = new InnerUserUpdateDto();
-    Object.assign(createdUser, userDto)
-    
+    Object.assign(createdUser, userDto);
+
     await this.usersService.update(user.getId(), createdUser);
     return user;
   }
 
   async signin(userDto: LoginUserDto) {
     const { email, password } = userDto;
-    const [user] = await this.usersService.find({email});
+    const [user] = await this.usersService.find({ email });
     if (!user) {
-      throw new NotFoundException(`User with email ${email} not found`);
+      throw new BadRequestException(`Invalid credentials`);
     }
 
     const [salt, storedHash] = user.getPassword().split('.');
@@ -54,12 +54,12 @@ export class AuthService {
     const hash = (await scrypt(password, salt, 32)) as Buffer;
 
     if (storedHash !== hash.toString('hex')) {
-      throw new BadRequestException('bad password');
+      throw new BadRequestException('Invalid credentials');
     }
     const payload = { sub: user.getId() };
     const accessToken = this.jwtService.sign(payload);
 
-    return { accessToken: accessToken, user };
+    return { token: accessToken, user };
   }
 
   public generateJwtToken(payload: { sub: number }): string {
@@ -80,8 +80,6 @@ export class AuthService {
     return user;
   }
 
-
-
   async getUserFromToken(token: string): Promise<UserModel> {
     try {
       const payload = this.jwtService.verify(token);
@@ -89,9 +87,6 @@ export class AuthService {
 
       return user;
     } catch (error) {
-      if (!(error instanceof TokenExpiredError)) {
-        console.error(error);
-      }
       throw new UnauthorizedException('Invalid or expired token');
     }
   }

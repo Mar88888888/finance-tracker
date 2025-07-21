@@ -1,9 +1,18 @@
-import { Controller, Get, Post, Patch, Body, Param,
-  NotFoundException, Req, UnauthorizedException,
-  UseInterceptors, ClassSerializerInterceptor, SerializeOptions,
-  ParseIntPipe, 
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Body,
+  Param,
+  Req,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+  SerializeOptions,
+  ParseIntPipe,
   UseGuards,
-  Res} from '@nestjs/common';
+  Res,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create.user.dto';
@@ -13,8 +22,10 @@ import { LoginUserDto } from './dto/login.user.dto';
 import { UserSerializeDto } from './dto/serialize.user.dto';
 import { UserModel } from './user.model';
 import { LoginResponseDto } from './dto/login-response.dto';
-import { AuthGuard } from '@nestjs/passport';
+import { AuthGuard as PassportAuthGuard } from '@nestjs/passport';
+import { AuthGuard as JwtAuthGuard } from '../guards/auth.guard';
 import { IGoogleAuthorizedRequest } from './abstracts/google-authorized-request.interface';
+import { IAuthorizedRequest } from '../abstracts/authorized-request.interface';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: UserSerializeDto })
@@ -23,83 +34,53 @@ export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly authService: AuthService,
-  ) { }
+  ) {}
 
   @Get('/:id')
-  async findOne(@Param('id', ParseIntPipe) id: string): Promise<UserModel> {
-    const user = await this.usersService.findOne(parseInt(id));
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    return user;
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<UserModel> {
+    return await this.usersService.findOne(id);
   }
-
-
 
   @Post('/auth/signup')
-  async createUser(
-    @Body() userDto: CreateUserDto,
-  ) {
-    const user = await this.authService.signup(userDto);
-    return user;
+  async createUser(@Body() userDto: CreateUserDto): Promise<UserModel> {
+    return await this.authService.signup(userDto);
   }
-
 
   @SerializeOptions({ type: LoginResponseDto })
   @Post('/auth/signin')
   async signin(@Body() signinDto: LoginUserDto): Promise<LoginResponseDto> {
-    try {
-      const { accessToken: token, user } = await this.authService.signin(signinDto);
-      return { user, token };
-    } catch (e) {
-      if(e instanceof Error){
-        console.error(e.message);
-      }
-      throw e;
-    }
+    return await this.authService.signin(signinDto);
   }
 
   @Patch('/:id')
-  async update(@Param('id', ParseIntPipe) id: string, @Body() updateUserDto: UpdateUserDto): Promise<UserModel> {
-    const user = await this.usersService.findOne(parseInt(id));
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    return await this.usersService.update(parseInt(id), updateUserDto);
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<UserModel> {
+    return await this.usersService.update(id, updateUserDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('/auth/bytoken')
-  async getUser(@Req() req: Request) {
-    const authHeader = req.headers['authorization'];
-    if (!authHeader || typeof authHeader !== 'string') {
-      throw new UnauthorizedException('Authorization header is missing');
-    }
-
-    const token = authHeader.split(' ')[1];
-    if (!token) {
-      throw new UnauthorizedException('Token is missing');
-    }
-
-    try {
-      const user = await this.authService.getUserFromToken(token);
-      return user;
-    } catch (error) {
-      throw new UnauthorizedException('Invalid token');
-    }
+  async getUser(@Req() req: IAuthorizedRequest) {
+    return this.usersService.findOne(req.userId);
   }
 
   @Get('/auth/google')
-  @UseGuards(AuthGuard('google'))
-  async googleAuth() {
-  }
+  @UseGuards(PassportAuthGuard('google'))
+  async googleAuth() {}
 
   @Get('/auth/google/redirect')
-  @UseGuards(AuthGuard('google'))
-  async googleAuthRedirect(@Req() req: IGoogleAuthorizedRequest, @Res() res: Response) {
+  @UseGuards(PassportAuthGuard('google'))
+  async googleAuthRedirect(
+    @Req() req: IGoogleAuthorizedRequest,
+    @Res() res: Response,
+  ) {
     const user = req.user;
     const token = this.authService.generateJwtToken({ sub: user.getId() });
 
-    return res.redirect(`${process.env.FRONTEND_URL}/oauth2-redirect?token=${token}`);
+    return res.redirect(
+      `${process.env.FRONTEND_URL}/oauth2-redirect?token=${token}`,
+    );
   }
-
 }
