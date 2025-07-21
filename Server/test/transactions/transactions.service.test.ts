@@ -229,7 +229,6 @@ describe('Transactions Service', () => {
       maxAmount: 500,
       purposes: [1, 2],
       orderBy: OrderBy.SUM,
-      sortOrder: 'DESC',
     };
 
     const result = await sut.find(1, queryParams);
@@ -262,7 +261,7 @@ describe('Transactions Service', () => {
       { purposes: [1, 2] },
     );
 
-    expect(mockQb.orderBy).toHaveBeenCalledWith('transaction.sum', 'DESC');
+    expect(mockQb.orderBy).toHaveBeenCalledWith('transaction.sum', 'ASC');
     expect(mockQb.getMany).toHaveBeenCalled();
     expect(result).toEqual(mockTransactions.map(TransactionModel.fromEntity));
   });

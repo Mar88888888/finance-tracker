@@ -1,17 +1,19 @@
-import { GroupModel } from "../../src/groups/group.model"
-import { UserModel } from "../../src/users/user.model";
+import { GroupEntity } from '../../src/groups/group.entity';
+import { GroupModel } from '../../src/groups/group.model';
+import { UserEntity } from '../../src/users/user.entity';
+import { UserModel } from '../../src/users/user.model';
 
 const testParams = {
   id: 1,
   title: 'Group Title',
-  owner: {id: 2} as any,
+  owner: { id: 2 } as any,
   joinCode: 'Code',
-}
+};
 
-describe('Group Model', () =>{
+describe('Group Model', () => {
   let sut: GroupModel;
 
-  beforeEach(()=>{
+  beforeEach(() => {
     sut = new GroupModel(testParams);
   });
 
@@ -38,7 +40,7 @@ describe('Group Model', () =>{
   });
 
   it('should set and get group members', () => {
-    const groupMembers: UserModel[] = [{id: 2} as any, {id: 3} as any,];
+    const groupMembers: UserModel[] = [{ id: 2 } as any, { id: 3 } as any];
     const result = sut.getMembers();
     expect(result).toEqual([]);
 
@@ -47,7 +49,7 @@ describe('Group Model', () =>{
   });
 
   it('should set and get group owner', () => {
-    const groupOwner: UserModel = {id: 3} as any;
+    const groupOwner: UserModel = { id: 3 } as any;
     const result = sut.getOwner();
     expect(result).toEqual(testParams.owner);
 
@@ -72,4 +74,23 @@ describe('Group Model', () =>{
     sut.setJoinCode(groupCode);
     expect(sut.getJoinCode()).toBe(groupCode);
   });
-})
+
+  it('should fallback to empty arrays if purposes and members are undefined', () => {
+    const mockOwner = new UserEntity();
+    mockOwner.id = 1;
+    mockOwner.email = 'owner@example.com';
+
+    const mockEntity = new GroupEntity();
+    mockEntity.id = 1;
+    mockEntity.title = 'Test Group';
+    mockEntity.owner = mockOwner;
+    mockEntity.joinCode = 'ABC123';
+    mockEntity.purposes = undefined;
+    mockEntity.members = undefined;
+
+    const result = GroupModel.fromEntity(mockEntity);
+
+    expect(result.getPurposes()).toEqual([]);
+    expect(result.getMembers()).toEqual([]);
+  });
+});

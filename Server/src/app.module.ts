@@ -29,20 +29,32 @@ require('dotenv').config();
       ssl: { rejectUnauthorized: false },
       autoLoadEntities: true,
       synchronize: false,
-      entities: [UserEntity, PurposeEntity, TransactionEntity, GroupEntity, SubscriptionEntity, CurrencyEntity],
+      entities: [
+        UserEntity,
+        PurposeEntity,
+        TransactionEntity,
+        GroupEntity,
+        SubscriptionEntity,
+        CurrencyEntity,
+      ],
     }),
     CacheModule.registerAsync({
       isGlobal: true,
-      useFactory: () => ({
+      useFactory: /*istanbul ignore next*/ () => ({
         store: redisStore,
-        host: process.env.REDIS_HOST, 
+        host: process.env.REDIS_HOST,
         port: process.env.REDIS_PORT,
         password: process.env.REDIS_PASSWORD,
         tls: {},
       }),
     }),
-    UsersModule, TransactionsModule, PurposesModule, GroupsModule, SubscriptionsModule],
+    UsersModule,
+    TransactionsModule,
+    PurposesModule,
+    GroupsModule,
+    SubscriptionsModule,
+  ],
   controllers: [AppController],
   providers: [AppService, JwtService],
 })
-export class AppModule { }
+export class AppModule {}

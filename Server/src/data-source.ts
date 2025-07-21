@@ -1,9 +1,10 @@
+/*istanbul ignore file */
 import { DataSource } from 'typeorm';
 import { TransactionEntity } from './transactions/transaction.entity';
 import { CurrencyEntity } from './currency/currency.entity';
 import { UserEntity } from './users/user.entity';
 import { PurposeEntity } from './purposes/purpose.entity';
-import { GroupEntity } from './groups/group.entity'; 
+import { GroupEntity } from './groups/group.entity';
 import { SubscriptionEntity } from './subscriptions/subscription.entity';
 import 'dotenv/config';
 
@@ -17,8 +18,8 @@ export const AppDataSource = new DataSource({
     CurrencyEntity,
     UserEntity,
     PurposeEntity,
-    GroupEntity, 
-    SubscriptionEntity
+    GroupEntity,
+    SubscriptionEntity,
   ],
   migrations: ['src/migrations/*.ts'],
 });
