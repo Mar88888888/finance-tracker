@@ -28,6 +28,12 @@ jobs:
       - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker europe-central2-docker.pkg.dev --quiet
 
+      - name: Install dependencies and run tests
+        working-directory: ./Server
+        run: |
+          npm ci
+          npm test
+
       - name: Build and push Docker image
         run: |
           docker build -t europe-central2-docker.pkg.dev/$PROJECT_ID/$SERVICE_NAME/$SERVICE_NAME:$GITHUB_SHA ./Server
