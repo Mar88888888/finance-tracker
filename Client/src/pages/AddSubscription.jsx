@@ -10,7 +10,7 @@ const AddSubscription = () => {
     startDate: '',
     endDate: '',
     interval: 1,
-    unit: "MONTH"
+    unit: 'MONTH',
   });
   const [error, setError] = useState(null);
   const { transactionId } = useParams();
@@ -21,18 +21,21 @@ const AddSubscription = () => {
 
     setForm((prev) => ({
       ...prev,
-      [name]: name === 'intervalValue' || name === 'sum'
-        ? parseFloat(value)
-        : value,
+      [name]:
+        name === 'intervalValue' || name === 'sum' ? parseFloat(value) : value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await API.post(`/transactions/${transactionId}/subscriptions`, form, {
-        headers: { Authorization: `Bearer ${authToken}` },
-      });
+      const response = await API.post(
+        `/transactions/${transactionId}/subscriptions`,
+        form,
+        {
+          headers: { Authorization: `Bearer ${authToken}` },
+        }
+      );
       if (response.status === 201) {
         navigate('/subscriptions');
       }
@@ -45,7 +48,7 @@ const AddSubscription = () => {
     const today = new Date();
     const yyyy = today.getFullYear();
     const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
+    const dd = String(today.date).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
   };
 
@@ -69,7 +72,13 @@ const AddSubscription = () => {
           <input
             type="date"
             name="endDate"
-            min={form.startDate ? (form.startDate > getTodayDate() ? form.startDate : getTodayDate()) : getTodayDate()}
+            min={
+              form.startDate
+                ? form.startDate > getTodayDate()
+                  ? form.startDate
+                  : getTodayDate()
+                : getTodayDate()
+            }
             value={form.endDate}
             onChange={handleInputChange}
           />

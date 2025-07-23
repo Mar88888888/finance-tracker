@@ -1,13 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import API from "../services/AxiosInstance";
+import API from '../services/AxiosInstance';
 import { AuthContext } from '../context/AuthContext';
 import '../styles/AddTransaction.css';
 
-
 const AddTransaction = () => {
   const { authToken } = useContext(AuthContext);
-  const [form, setForm] = useState({ purposeId: "", sum: "", currency: "", date: "" });
+  const [form, setForm] = useState({
+    purposeId: '',
+    sum: '',
+    currency: '',
+    date: '',
+  });
   const [currencies, setCurrencies] = useState([]);
   const [purposes, setPurposes] = useState([]);
   const [error, setError] = useState(null);
@@ -16,11 +20,9 @@ const AddTransaction = () => {
   useEffect(() => {
     const fetchPurposes = async () => {
       try {
-        const response = await API.get('/purposes',
-          {
-            headers: { Authorization: `Bearer ${authToken}` },
-          }
-        );
+        const response = await API.get('/purposes', {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
         setPurposes(response.data);
       } catch (err) {
         setError('Failed to load purposes');
@@ -56,16 +58,12 @@ const AddTransaction = () => {
     }));
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await API.post('/transactions',
-        form,
-        {
-          headers: { Authorization: `Bearer ${authToken}` },
-        }
-      );
+      const response = await API.post('/transactions', form, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
       if (response.status === 201) {
         navigate('/transactions');
       }
@@ -78,7 +76,7 @@ const AddTransaction = () => {
     const today = new Date();
     const yyyy = today.getFullYear();
     const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
+    const dd = String(today.date).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
   };
 
@@ -94,7 +92,9 @@ const AddTransaction = () => {
             onChange={handleInputChange}
             required
           >
-            <option value="" disabled>Select a purpose</option>
+            <option value="" disabled>
+              Select a purpose
+            </option>
             {purposes.map((purpose) => (
               <option key={purpose.id} value={purpose.id}>
                 {purpose.category}
@@ -118,7 +118,9 @@ const AddTransaction = () => {
               onChange={handleInputChange}
               required
             >
-              <option value="" disabled>Select</option>
+              <option value="" disabled>
+                Select
+              </option>
               {currencies.map((c) => (
                 <option key={c.code} value={c.code}>
                   {c.code}

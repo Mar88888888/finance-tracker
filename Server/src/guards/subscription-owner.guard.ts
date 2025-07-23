@@ -1,12 +1,15 @@
-import { CanActivate, ExecutionContext, ForbiddenException,
-   Injectable, NotFoundException } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 
 @Injectable()
 export class SubscriptionOwnerGuard implements CanActivate {
-  constructor(
-    private readonly subscriptionService: SubscriptionsService
-  ) { }
+  constructor(private readonly subscriptionService: SubscriptionsService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -17,14 +20,18 @@ export class SubscriptionOwnerGuard implements CanActivate {
       throw new NotFoundException('Subscription ID is required');
     }
 
-    const subscription = await this.subscriptionService.findOne(parseInt(subscriptionId));
+    const subscription = await this.subscriptionService.findOne(
+      parseInt(subscriptionId),
+    );
 
     if (!subscription) {
       throw new NotFoundException('Subscription not found');
     }
 
-    if (subscription.getUserId() !== userId) {
-      throw new ForbiddenException('You are not the owner of this subscription');
+    if (subscription.userId !== userId) {
+      throw new ForbiddenException(
+        'You are not the owner of this subscription',
+      );
     }
 
     return true;

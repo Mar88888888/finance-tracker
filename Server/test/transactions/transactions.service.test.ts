@@ -125,8 +125,8 @@ describe('Transactions Service', () => {
 
     expect(result).toEqual(transactionModels);
     result.map((transaction) => {
-      expect(transaction.getUserId()).toBeDefined();
-      expect(transaction.getPurposeId()).toBeDefined();
+      expect(transaction.userId).toBeDefined();
+      expect(transaction.purposeId).toBeDefined();
     });
   });
 
@@ -162,7 +162,7 @@ describe('Transactions Service', () => {
     expect(transactionsRepoMock.find).toHaveBeenCalled();
   });
   it('should return empty array if given group has no members or purposes', async () => {
-    groupModels[0].setMembers([]);
+    groupModels[0].members = [];
     const result = await sut.getGroupTransactions(groupModels[0], {});
     expect(result).toEqual([]);
   });
@@ -209,8 +209,8 @@ describe('Transactions Service', () => {
     expect(write).toHaveBeenCalledWith(
       expect.objectContaining({
         ID: transactionModels[0].id,
-        Date: transactionModels[0].getDate().toISOString().split('T')[0],
-        Sum: transactionModels[0].getSum(),
+        Date: transactionModels[0].date.toISOString().split('T')[0],
+        Sum: transactionModels[0].sum,
         Purpose: 'Purpose 1',
         Member: 'SomeName',
       }),
@@ -410,8 +410,8 @@ describe('Transactions Service', () => {
 
       const expectedPurpose: PurposeModel = await purposeServiceMock.findOne();
 
-      expect(result.getSum()).toBe(updatedDto.sum);
-      expect(result.getPurposeId()).toBe(expectedPurpose.id);
+      expect(result.sum).toBe(updatedDto.sum);
+      expect(result.purposeId).toBe(expectedPurpose.id);
     });
 
     it('should update transaction without changing purpose if purposeId not provided', async () => {
@@ -426,8 +426,8 @@ describe('Transactions Service', () => {
       expect(purposeServiceMock.findOne).not.toHaveBeenCalled();
       expect(transactionsRepoMock.save).toHaveBeenCalled();
 
-      expect(result.getSum()).toBe(partialDto.sum);
-      expect(result.getPurposeId()).toBe(existingTransaction.getPurposeId());
+      expect(result.sum).toBe(partialDto.sum);
+      expect(result.purposeId).toBe(existingTransaction.purposeId);
     });
 
     it('should throw InternalServerErrorException on error', async () => {

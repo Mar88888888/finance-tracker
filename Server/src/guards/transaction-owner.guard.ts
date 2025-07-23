@@ -1,12 +1,15 @@
-import { CanActivate, ExecutionContext, ForbiddenException,
-   Injectable, NotFoundException } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { TransactionsService } from '../transactions/transactions.service';
 
 @Injectable()
 export class TransactionOwnerGuard implements CanActivate {
-  constructor(
-    private readonly transactionService: TransactionsService
-  ) { }
+  constructor(private readonly transactionService: TransactionsService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -17,13 +20,15 @@ export class TransactionOwnerGuard implements CanActivate {
       throw new NotFoundException('Transaction ID is required');
     }
 
-    const transaction = await this.transactionService.findOne(parseInt(transactionId));
+    const transaction = await this.transactionService.findOne(
+      parseInt(transactionId),
+    );
 
     if (!transaction) {
       throw new NotFoundException('Transaction not found');
     }
 
-    if (transaction.getUserId() !== userId) {
+    if (transaction.userId !== userId) {
       throw new ForbiddenException('You are not the owner of this transaction');
     }
 

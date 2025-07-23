@@ -97,7 +97,7 @@ describe('Transactions Controller', () => {
 
     expect(transactionsServiceMock.findOne).toHaveBeenCalledWith(1);
     expect(usersServiceMock.findOne).toHaveBeenCalledWith(
-      transactionModels[0].getUserId(),
+      transactionModels[0].userId,
     );
     expect(result).toEqual(await usersServiceMock.findOne());
   });

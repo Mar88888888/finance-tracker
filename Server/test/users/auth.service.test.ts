@@ -39,7 +39,7 @@ describe('Auth Service', () => {
       usersServiceMock.find.mockResolvedValueOnce([]);
 
       const createdUser = {
-        getId: jest.fn().mockReturnValueOnce(1),
+        id: 1,
       } as unknown as UserModel;
 
       usersServiceMock.create.mockResolvedValue(createdUser);
@@ -89,8 +89,8 @@ describe('Auth Service', () => {
       const wrongHash = scryptSync('wrong', salt, 32).toString('hex');
       const storedHash = scryptSync('pass', salt, 32).toString('hex');
       const fakeUser = {
-        getPassword: () => `${salt}.${storedHash}`,
-        getId: () => 1,
+        password: `${salt}.${storedHash}`,
+        id: 1,
       };
       usersServiceMock.find.mockResolvedValueOnce([fakeUser]);
 
@@ -103,8 +103,8 @@ describe('Auth Service', () => {
       const salt = 'salt';
       const hash = scryptSync('pass', salt, 32).toString('hex');
       const fakeUser = {
-        getPassword: () => `${salt}.${hash}`,
-        getId: () => 1,
+        password: `${salt}.${hash}`,
+        id: 1,
       };
       usersServiceMock.find.mockResolvedValueOnce([fakeUser]);
       jwtServiceMock.sign.mockReturnValueOnce('jwt-token');

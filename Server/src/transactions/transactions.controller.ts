@@ -97,7 +97,7 @@ export class TransactionsController {
   @Get('/:id/member')
   async getUser(@Param('id', ParseIntPipe) id: number): Promise<UserModel> {
     const user = await this.transactionsService.findOne(id);
-    const userId = user.getUserId();
+    const userId = user.userId;
     return await this.userService.findOne(userId);
   }
 

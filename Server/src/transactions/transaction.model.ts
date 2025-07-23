@@ -35,9 +35,9 @@ export class TransactionModel extends AbstractTransaction {
   static toEntity(model: TransactionModel): TransactionEntity {
     const entity = new TransactionEntity();
     entity.id = model.id;
-    entity.sum = model.getSum();
-    entity.date = model.getDate();
-    entity.usdEquivalent = model.getUsdEquivalent();
+    entity.sum = model.sum;
+    entity.date = model.date;
+    entity.usdEquivalent = model.usdEquivalent;
     entity.member = { id: model.userId } as UserEntity;
     entity.purpose = { id: model.purposeId } as PurposeEntity;
     return entity;

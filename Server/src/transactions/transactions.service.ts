@@ -131,16 +131,14 @@ export class TransactionsService {
     csvStream.pipe(res);
 
     for (const transaction of transactions) {
-      const purpose = await this.purposeService.findOne(
-        transaction.getPurposeId(),
-      );
-      const member = await this.userService.findOne(transaction.getUserId());
+      const purpose = await this.purposeService.findOne(transaction.purposeId);
+      const member = await this.userService.findOne(transaction.userId);
 
       csvStream.write({
         ID: transaction.id,
-        Date: new Date(transaction.getDate()).toISOString().split('T')[0],
-        Sum: transaction.getSum(),
-        Purpose: purpose.getCategory(),
+        Date: new Date(transaction.date).toISOString().split('T')[0],
+        Sum: transaction.sum,
+        Purpose: purpose.category,
         Member: member.name,
       });
     }

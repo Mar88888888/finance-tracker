@@ -1,11 +1,15 @@
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PurposesService } from '../purposes/purposes.service';
 
 @Injectable()
 export class PurposeOwnerGuard implements CanActivate {
-  constructor(
-    private readonly purposesService: PurposesService
-  ) { }
+  constructor(private readonly purposesService: PurposesService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -22,7 +26,7 @@ export class PurposeOwnerGuard implements CanActivate {
       throw new NotFoundException('Purpose not found');
     }
 
-    if (purpose.getUserId() !== userId) {
+    if (purpose.userId !== userId) {
       throw new ForbiddenException('You are not the owner of this purpose');
     }
 

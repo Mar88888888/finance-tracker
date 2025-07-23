@@ -26,7 +26,7 @@ describe('Group Model', () => {
     const result = sut.id;
     expect(result).toBe(testParams.id);
 
-    sut.setId(groupId);
+    sut.id = groupId;
     expect(sut.id).toBe(groupId);
   });
 
@@ -35,7 +35,7 @@ describe('Group Model', () => {
     const result = sut.title;
     expect(result).toBe(testParams.title);
 
-    sut.setTitle(groupTitle);
+    sut.title = groupTitle;
     expect(sut.title).toBe(groupTitle);
   });
 
@@ -44,7 +44,7 @@ describe('Group Model', () => {
     const result = sut.members;
     expect(result).toEqual([]);
 
-    sut.setMembers(groupMembers);
+    sut.members = groupMembers;
     expect(sut.members).toEqual(groupMembers);
   });
 
@@ -53,7 +53,7 @@ describe('Group Model', () => {
     const result = sut.owner;
     expect(result).toEqual(testParams.owner);
 
-    sut.setOwner(groupOwner);
+    sut.owner = groupOwner;
     expect(sut.owner).toEqual(groupOwner);
   });
 
@@ -71,7 +71,7 @@ describe('Group Model', () => {
     const result = sut.joinCode;
     expect(result).toBe(testParams.joinCode);
 
-    sut.setJoinCode(groupCode);
+    sut.joinCode = groupCode;
     expect(sut.joinCode).toBe(groupCode);
   });
 

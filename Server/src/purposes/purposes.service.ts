@@ -2,8 +2,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
-  InternalServerErrorException,
-  Inject
+  Inject,
 } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -23,7 +22,7 @@ export class PurposesService {
     private readonly purposeRepository: Repository<PurposeEntity>,
     private readonly usersService: UsersService,
     @Inject(CACHE_MANAGER)
-    private readonly cacheManager: Cache
+    private readonly cacheManager: Cache,
   ) {}
 
   /* istanbul ignore next */
@@ -47,7 +46,9 @@ export class PurposesService {
       },
     };
 
-    const result = (await this.purposeRepository.find(options)).map(PurposeModel.fromEntity);
+    const result = (await this.purposeRepository.find(options)).map(
+      PurposeModel.fromEntity,
+    );
     await this.cacheManager.set(cacheKey, result, 3600);
     return result;
   }
@@ -66,12 +67,17 @@ export class PurposesService {
       relations: ['user'],
     };
 
-    const result = (await this.purposeRepository.find(options)).map(PurposeModel.fromEntity);
+    const result = (await this.purposeRepository.find(options)).map(
+      PurposeModel.fromEntity,
+    );
     await this.cacheManager.set(cacheKey, result, 3600);
     return result;
   }
 
-  async create(userId: number, createPurposeDto: CreatePurposeDto): Promise<PurposeModel> {
+  async create(
+    userId: number,
+    createPurposeDto: CreatePurposeDto,
+  ): Promise<PurposeModel> {
     const existingPurpose = await this.purposeRepository.findOne({
       where: {
         category: createPurposeDto.category,
@@ -80,7 +86,9 @@ export class PurposesService {
     });
 
     if (existingPurpose) {
-      throw new BadRequestException('Purpose with these values already exists.');
+      throw new BadRequestException(
+        'Purpose with these values already exists.',
+      );
     }
 
     const user = await this.usersService.findOne(userId);
@@ -108,7 +116,11 @@ export class PurposesService {
     return PurposeModel.fromEntity(purpose);
   }
 
-  async update(userId: number, id: number, updatePurposeDto: UpdatePurposeDto): Promise<PurposeModel> {
+  async update(
+    userId: number,
+    id: number,
+    updatePurposeDto: UpdatePurposeDto,
+  ): Promise<PurposeModel> {
     const entity = await this.findOne(id);
     const purpose = PurposeModel.toEntity(entity);
     Object.assign(purpose, updatePurposeDto);
@@ -121,7 +133,9 @@ export class PurposesService {
     });
 
     if (existingPurpose) {
-      throw new BadRequestException('Purpose with these values already exists.');
+      throw new BadRequestException(
+        'Purpose with these values already exists.',
+      );
     }
 
     const saved = await this.purposeRepository.save(purpose);
@@ -137,6 +151,6 @@ export class PurposesService {
     await this.purposeRepository.delete(id);
 
     await this.cacheManager.del(this.getAllCacheKey());
-    await this.cacheManager.del(this.getUserCacheKey(purpose.getUserId()));
+    await this.cacheManager.del(this.getUserCacheKey(purpose.userId));
   }
 }

@@ -76,7 +76,7 @@ describe('Users Controller', () => {
   });
 
   it('should redirect with token after Google login', () => {
-    const mockUser = { getId: () => 123 };
+    const mockUser = { id: 123 };
     const mockRequest = { user: mockUser } as any;
     const mockResponse = {
       redirect: jest.fn(),

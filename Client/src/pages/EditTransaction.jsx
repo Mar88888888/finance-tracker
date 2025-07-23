@@ -1,19 +1,17 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import API from "../services/AxiosInstance";
+import API from '../services/AxiosInstance';
 import { AuthContext } from '../context/AuthContext';
 import '../styles/AddTransaction.css';
-
 
 const EditTransaction = () => {
   const { transactionId } = useParams();
   const { authToken } = useContext(AuthContext);
-  const [form, setForm] = useState({ purposeId: "", sum: "", date: '' });
+  const [form, setForm] = useState({ purposeId: '', sum: '', date: '' });
   const [purposes, setPurposes] = useState([]);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const [transaction, setTransaction] = useState(null);
-
 
   const fetchTransactionDetails = useCallback(async () => {
     try {
@@ -34,11 +32,9 @@ const EditTransaction = () => {
   useEffect(() => {
     const fetchPurposes = async () => {
       try {
-        const response = await API.get('/purposes',
-          {
-            headers: { Authorization: `Bearer ${authToken}` },
-          }
-        );
+        const response = await API.get('/purposes', {
+          headers: { Authorization: `Bearer ${authToken}` },
+        });
         setPurposes(response.data);
       } catch (err) {
         setError('Failed to load purposes');
@@ -52,13 +48,12 @@ const EditTransaction = () => {
   useEffect(() => {
     if (transaction) {
       setForm({
-        purposeId: transaction.purposeId || "",
-        sum: transaction.sum || "",
-        date: transaction.date ? transaction.date.split("T")[0] : "",
+        purposeId: transaction.purposeId || '',
+        sum: transaction.sum || '',
+        date: transaction.date ? transaction.date.split('T')[0] : '',
       });
     }
   }, [transaction]);
-
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -72,7 +67,8 @@ const EditTransaction = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await API.patch(`/transactions/${transaction.id}`,
+      const response = await API.patch(
+        `/transactions/${transaction.id}`,
         form,
         {
           headers: { Authorization: `Bearer ${authToken}` },
@@ -90,7 +86,7 @@ const EditTransaction = () => {
     const today = new Date();
     const yyyy = today.getFullYear();
     const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
+    const dd = String(today.date).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
   };
 
@@ -106,7 +102,9 @@ const EditTransaction = () => {
             onChange={handleInputChange}
             required
           >
-            <option value="" disabled>Select a purpose</option>
+            <option value="" disabled>
+              Select a purpose
+            </option>
             {purposes.map((purpose) => (
               <option key={purpose.id} value={purpose.id}>
                 {purpose.category}
