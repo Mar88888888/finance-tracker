@@ -13,7 +13,7 @@ const OAuth2RedirectHandler = () => {
 
     if (token) {
       setAuthToken(token);
-      API.get('/users/auth/bytoken', {
+      API.get('/users/auth/profile', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
