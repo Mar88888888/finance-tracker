@@ -44,7 +44,7 @@ export class GroupModel extends AbstractGroupModel {
     const params: GroupModelParams = {
       id: entity.id,
       title: entity.title,
-      owner: UserModel.fromEntity(entity.owner),
+      owner: entity.owner && UserModel.fromEntity(entity.owner),
       joinCode: entity.joinCode,
       purposes: entity.purposes?.map((purpose) => purpose.id) || [],
       members: entity.members?.map((user) => UserModel.fromEntity(user)) || [],

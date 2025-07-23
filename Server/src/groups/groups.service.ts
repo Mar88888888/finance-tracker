@@ -48,7 +48,6 @@ export class GroupsService {
           id: userId,
         },
       },
-      relations: ['members', 'owner'],
     });
 
     return groupEntities.map(GroupModel.fromEntity);
