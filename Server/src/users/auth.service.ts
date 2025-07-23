@@ -38,7 +38,7 @@ export class AuthService {
     let createdUser = new InnerUserUpdateDto();
     Object.assign(createdUser, userDto);
 
-    await this.usersService.update(user.getId(), createdUser);
+    await this.usersService.update(user.id, createdUser);
     return user;
   }
 
@@ -49,14 +49,14 @@ export class AuthService {
       throw new BadRequestException(`Invalid credentials`);
     }
 
-    const [salt, storedHash] = user.getPassword().split('.');
+    const [salt, storedHash] = user.password.split('.');
 
     const hash = (await scrypt(password, salt, 32)) as Buffer;
 
     if (storedHash !== hash.toString('hex')) {
       throw new BadRequestException('Invalid credentials');
     }
-    const payload = { sub: user.getId() };
+    const payload = { sub: user.id };
     const accessToken = this.jwtService.sign(payload);
 
     return { token: accessToken, user };

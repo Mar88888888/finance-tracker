@@ -1,6 +1,13 @@
-import { PurposeEntity } from "../purposes/purpose.entity";
-import { UserEntity } from "../users/user.entity";
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { PurposeEntity } from '../purposes/purpose.entity';
+import { UserEntity } from '../users/user.entity';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'group' })
 export class GroupEntity {
@@ -10,14 +17,17 @@ export class GroupEntity {
   @Column({ nullable: false, length: 100 })
   title: string;
 
-  @ManyToOne(/* istanbul ignore next */() => UserEntity,/* istanbul ignore next */ user => user.myGroups)
+  @ManyToOne(
+    /* istanbul ignore next */ () => UserEntity,
+    /* istanbul ignore next */ (user) => user.ownedGroups,
+  )
   owner: UserEntity;
 
-  @ManyToMany(/* istanbul ignore next */() => UserEntity)
+  @ManyToMany(/* istanbul ignore next */ () => UserEntity)
   @JoinTable()
   members: UserEntity[];
 
-  @ManyToMany(/* istanbul ignore next */() => PurposeEntity)
+  @ManyToMany(/* istanbul ignore next */ () => PurposeEntity)
   @JoinTable()
   purposes: PurposeEntity[];
 

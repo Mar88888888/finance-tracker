@@ -131,7 +131,7 @@ describe('Transactions Service', () => {
   });
 
   it('should return transactions for given user', async () => {
-    const userId = userModels[0].getId();
+    const userId = userModels[0].id;
     const result = await sut.getUserTransactions(userId);
 
     expect(result).toEqual(transactionModels);
@@ -208,7 +208,7 @@ describe('Transactions Service', () => {
     expect(pipe).toHaveBeenCalled();
     expect(write).toHaveBeenCalledWith(
       expect.objectContaining({
-        ID: transactionModels[0].getId(),
+        ID: transactionModels[0].id,
         Date: transactionModels[0].getDate().toISOString().split('T')[0],
         Sum: transactionModels[0].getSum(),
         Purpose: 'Purpose 1',
@@ -411,7 +411,7 @@ describe('Transactions Service', () => {
       const expectedPurpose: PurposeModel = await purposeServiceMock.findOne();
 
       expect(result.getSum()).toBe(updatedDto.sum);
-      expect(result.getPurposeId()).toBe(expectedPurpose.getId());
+      expect(result.getPurposeId()).toBe(expectedPurpose.id);
     });
 
     it('should update transaction without changing purpose if purposeId not provided', async () => {

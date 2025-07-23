@@ -77,7 +77,7 @@ export class UsersController {
     @Res() res: Response,
   ) {
     const user = req.user;
-    const token = this.authService.generateJwtToken({ sub: user.getId() });
+    const token = this.authService.generateJwtToken({ sub: user.id });
 
     return res.redirect(
       `${process.env.FRONTEND_URL}/oauth2-redirect?token=${token}`,

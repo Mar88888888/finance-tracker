@@ -4,8 +4,14 @@ import { TransactionEntity } from './transaction.entity';
 import { PurposeEntity } from '../purposes/purpose.entity';
 
 export class TransactionModel extends AbstractTransaction {
-  
-  constructor(id: number, sum: number, date: Date, memberId: number, purposeId: number, usdEquivalent: number = 0) {
+  constructor(
+    id: number,
+    sum: number,
+    date: Date,
+    memberId: number,
+    purposeId: number,
+    usdEquivalent: number = 0,
+  ) {
     super();
     this.id = id;
     this.sum = sum;
@@ -28,7 +34,7 @@ export class TransactionModel extends AbstractTransaction {
 
   static toEntity(model: TransactionModel): TransactionEntity {
     const entity = new TransactionEntity();
-    entity.id = model.getId();
+    entity.id = model.id;
     entity.sum = model.getSum();
     entity.date = model.getDate();
     entity.usdEquivalent = model.getUsdEquivalent();

@@ -87,7 +87,7 @@ describe('Transactions Controller', () => {
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.header).toHaveBeenCalledWith(
       'Location',
-      `/transactions/${transactionModels[0].getId()}`,
+      `/transactions/${transactionModels[0].id}`,
     );
     expect(res.json).toHaveBeenCalledWith(transactionModels[0]);
   });

@@ -26,16 +26,16 @@ describe('UserModel', () => {
   it('should initialize with params', () => {
     const model = new UserModel(baseParams);
 
-    expect(model.getId()).toBe(1);
-    expect(model.getName()).toBe('John Doe');
-    expect(model.getEmail()).toBe('john@example.com');
-    expect(model.getPassword()).toBe('hashed.password');
-    expect(model.getAge()).toBe(30);
-    expect(model.getGender()).toBe(true);
-    expect(model.getTransactions()).toEqual([]);
-    expect(model.getOwnedGroups()).toEqual([]);
-    expect(model.getGroups()).toEqual([]);
-    expect(model.getPurposes()).toEqual([]);
+    expect(model.id).toBe(1);
+    expect(model.name).toBe('John Doe');
+    expect(model.email).toBe('john@example.com');
+    expect(model.password).toBe('hashed.password');
+    expect(model.age).toBe(30);
+    expect(model.gender).toBe(true);
+    expect(model.transactions).toEqual([]);
+    expect(model.ownedGroups).toEqual([]);
+    expect(model.groups).toEqual([]);
+    expect(model.purposes).toEqual([]);
   });
 
   it('should allow setting properties', () => {
@@ -60,16 +60,16 @@ describe('UserModel', () => {
     model.setGroups(mockGroups);
     model.setPurposes(mockPurposes);
 
-    expect(model.getId()).toBe(2);
-    expect(model.getName()).toBe('Jane Doe');
-    expect(model.getEmail()).toBe('jane@example.com');
-    expect(model.getPassword()).toBe('newpass');
-    expect(model.getAge()).toBe(25);
-    expect(model.getGender()).toBe(false);
-    expect(model.getTransactions()).toEqual(mockTransactions);
-    expect(model.getOwnedGroups()).toEqual(mockGroups);
-    expect(model.getGroups()).toEqual(mockGroups);
-    expect(model.getPurposes()).toEqual(mockPurposes);
+    expect(model.id).toBe(2);
+    expect(model.name).toBe('Jane Doe');
+    expect(model.email).toBe('jane@example.com');
+    expect(model.password).toBe('newpass');
+    expect(model.age).toBe(25);
+    expect(model.gender).toBe(false);
+    expect(model.transactions).toEqual(mockTransactions);
+    expect(model.ownedGroups).toEqual(mockGroups);
+    expect(model.groups).toEqual(mockGroups);
+    expect(model.purposes).toEqual(mockPurposes);
   });
 
   it('should convert from UserEntity to UserModel', () => {
@@ -78,7 +78,7 @@ describe('UserModel', () => {
 
     const model = UserModel.fromEntity(entity);
     expect(model).toBeInstanceOf(UserModel);
-    expect(model.getEmail()).toBe(baseParams.email);
+    expect(model.email).toBe(baseParams.email);
   });
 
   it('should convert from UserModel to UserEntity', () => {

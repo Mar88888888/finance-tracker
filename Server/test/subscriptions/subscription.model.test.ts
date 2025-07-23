@@ -1,5 +1,5 @@
-import { RecurrenceUnit } from "../../src/subscriptions/subscription.entity"
-import { SubscriptionModel } from "../../src/subscriptions/subscription.model";
+import { RecurrenceUnit } from '../../src/subscriptions/subscription.entity';
+import { SubscriptionModel } from '../../src/subscriptions/subscription.model';
 
 describe('Subscription Model', () => {
   let sub: SubscriptionModel;
@@ -27,8 +27,8 @@ describe('Subscription Model', () => {
       subscriptionModelParameters.transactionId,
       subscriptionModelParameters.userId,
       subscriptionModelParameters.endDate,
-    )
-  })
+    );
+  });
 
   it('should create a subscription via contructor', () => {
     expect(sub).toBeDefined();
@@ -38,7 +38,7 @@ describe('Subscription Model', () => {
     const subId = 5;
     sub.setId(subId);
 
-    expect(sub.getId()).toBe(subId);
+    expect(sub.id).toBe(subId);
   });
 
   it('should set interval', () => {
@@ -96,5 +96,4 @@ describe('Subscription Model', () => {
 
     expect(sub.getUserId()).toBe(subUserId);
   });
-  
-})
+});

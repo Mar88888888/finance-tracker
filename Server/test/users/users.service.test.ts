@@ -85,6 +85,6 @@ describe('User Service', () => {
     expect(usersRepoMock.findOne).toHaveBeenCalledWith({
       where: { id: userId },
     });
-    expect(result.getEmail()).toEqual(updateUserDto.email);
+    expect(result.email).toEqual(updateUserDto.email);
   });
 });

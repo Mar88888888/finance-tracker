@@ -6,7 +6,6 @@ import { UserEntity } from '../users/user.entity';
 export class PurposeModel extends AbstractPurpose {
   private transactions: TransactionEntity[] = [];
 
-
   constructor(id: number, category: string, userId: number) {
     super();
     this.id = id;
@@ -14,7 +13,7 @@ export class PurposeModel extends AbstractPurpose {
     this.userId = userId;
   }
 
-  getTransactions(): TransactionEntity[] {
+  transactions: TransactionEntity[] {
     return this.transactions;
   }
 
@@ -23,20 +22,16 @@ export class PurposeModel extends AbstractPurpose {
   }
 
   static fromEntity(entity: PurposeEntity): PurposeModel {
-    const model = new PurposeModel(
-      entity.id,
-      entity.category,
-      entity.user.id
-    );
+    const model = new PurposeModel(entity.id, entity.category, entity.user.id);
     model.setTransactions(entity.transactions || []);
     return model;
   }
 
   static toEntity(model: PurposeModel): PurposeEntity {
     const entity = new PurposeEntity();
-    entity.id = model.getId();
+    entity.id = model.id;
     entity.category = model.getCategory();
-    entity.transactions = model.getTransactions();
+    entity.transactions = model.transactions;
     entity.user = { id: model.userId } as UserEntity;
     return entity;
   }

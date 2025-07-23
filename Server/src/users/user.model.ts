@@ -13,7 +13,7 @@ export interface UserModelParams {
   gender: boolean;
   verificationToken?: string;
   transactions?: TransactionEntity[];
-  myGroups?: GroupEntity[];
+  ownedGroups?: GroupEntity[];
   groups?: GroupEntity[];
   purposes?: PurposeEntity[];
 }
@@ -29,90 +29,10 @@ export class UserModel extends AbstractUserModel {
     this.age = params.age;
     this.gender = params.gender;
     this.transactions = params.transactions || [];
-    this.myGroups = params.myGroups || [];
+    this.ownedGroups = params.ownedGroups || [];
     this.groups = params.groups || [];
     this.purposes = params.purposes || [];
   }
-  getId(): number {
-    return this.id;
-  }
-
-  setId(id: number): void {
-    this.id = id;
-  }
-
-  getName(): string {
-    return this.name;
-  }
-
-  setName(name: string): void {
-    this.name = name;
-  }
-
-  getEmail(): string {
-    return this.email;
-  }
-
-  setEmail(email: string): void {
-    this.email = email;
-  }
-
-  getPassword(): string {
-    return this.password;
-  }
-
-  setPassword(password: string): void {
-    this.password = password;
-  }
-
-  getAge(): number {
-    return this.age;
-  }
-
-  setAge(age: number): void {
-    this.age = age;
-  }
-
-  getGender(): boolean {
-    return this.gender;
-  }
-
-  setGender(gender: boolean): void {
-    this.gender = gender;
-  }
-
-  getTransactions(): TransactionEntity[] {
-    return this.transactions;
-  }
-
-  setTransactions(transactions: TransactionEntity[]): void {
-    this.transactions = transactions;
-  }
-
-  getOwnedGroups(): GroupEntity[] {
-    return this.myGroups;
-  }
-
-  setOwnedGroups(myGroups: GroupEntity[]): void {
-    this.myGroups = myGroups;
-  }
-
-  getGroups(): GroupEntity[] {
-    return this.groups;
-  }
-
-  setGroups(groups: GroupEntity[]): void {
-    this.groups = groups;
-  }
-
-  getPurposes(): PurposeEntity[] {
-    return this.purposes;
-  }
-
-  setPurposes(purposes: PurposeEntity[]): void {
-    this.purposes = purposes;
-  }
-
   static fromEntity(entity: UserEntity): UserModel {
     const params: UserModelParams = {
       id: entity.id,
@@ -123,7 +43,7 @@ export class UserModel extends AbstractUserModel {
       gender: entity.gender,
       verificationToken: entity.verificationToken,
       transactions: entity.transactions || [],
-      myGroups: entity.myGroups || [],
+      ownedGroups: entity.ownedGroups || [],
       groups: entity.groups || [],
       purposes: entity.purposes || [],
     };
@@ -132,16 +52,16 @@ export class UserModel extends AbstractUserModel {
 
   static toEntity(model: UserModel): UserEntity {
     const entity = new UserEntity();
-    entity.id = model.getId();
-    entity.name = model.getName();
-    entity.email = model.getEmail();
-    entity.password = model.getPassword();
-    entity.age = model.getAge();
-    entity.gender = model.getGender();
-    entity.transactions = model.getTransactions();
-    entity.myGroups = model.getOwnedGroups();
-    entity.groups = model.getGroups();
-    entity.purposes = model.getPurposes();
+    entity.id = model.id;
+    entity.name = model.name;
+    entity.email = model.email;
+    entity.password = model.password;
+    entity.age = model.age;
+    entity.gender = model.gender;
+    entity.transactions = model.transactions;
+    entity.ownedGroups = model.ownedGroups;
+    entity.groups = model.groups;
+    entity.purposes = model.purposes;
     return entity;
   }
 }

@@ -71,8 +71,8 @@ export class TransactionsService {
       sortOrder = 'ASC',
     } = filterDto;
 
-    const memberIds = group.getMembers().map((member) => member.getId());
-    const purposeIds = group.getPurposes();
+    const memberIds = group.members.map((member) => member.id);
+    const purposeIds = group.purposes;
     if (memberIds.length === 0 || purposeIds.length === 0) {
       return [];
     }
@@ -137,11 +137,11 @@ export class TransactionsService {
       const member = await this.userService.findOne(transaction.getUserId());
 
       csvStream.write({
-        ID: transaction.getId(),
+        ID: transaction.id,
         Date: new Date(transaction.getDate()).toISOString().split('T')[0],
         Sum: transaction.getSum(),
         Purpose: purpose.getCategory(),
-        Member: member.getName(),
+        Member: member.name,
       });
     }
 

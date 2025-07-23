@@ -1,12 +1,15 @@
-import { CanActivate, ExecutionContext, ForbiddenException,
-   Injectable, NotFoundException } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { GroupsService } from '../groups/groups.service';
 
 @Injectable()
 export class MemberGuard implements CanActivate {
-  constructor(
-    private readonly groupsService: GroupsService
-  ) { }
+  constructor(private readonly groupsService: GroupsService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -23,7 +26,7 @@ export class MemberGuard implements CanActivate {
       throw new NotFoundException('Group not found');
     }
 
-    if (!group.getMembers().some(member => member.getId() === userId)) {
+    if (!group.members.some((member) => member.id === userId)) {
       throw new ForbiddenException('You are not a member of this group');
     }
 

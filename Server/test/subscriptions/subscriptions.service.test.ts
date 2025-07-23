@@ -43,8 +43,8 @@ describe('Subscriptions Service', () => {
       .mockResolvedValueOnce(subscriptionModels[0]);
     sut
       .createSubscription(
-        userModels[0].getId(),
-        transactionModels[0].getId(),
+        userModels[0].id,
+        transactionModels[0].id,
         createSubscriptionDtoMock,
       )
       .catch((err) => {
@@ -56,8 +56,8 @@ describe('Subscriptions Service', () => {
   it('should create a subscription', async () => {
     jest.spyOn(sut, 'findOneByTransactionId').mockResolvedValueOnce(undefined);
     const result = await sut.createSubscription(
-      userModels[0].getId(),
-      transactionModels[0].getId(),
+      userModels[0].id,
+      transactionModels[0].id,
       createSubscriptionDtoMock,
     );
 
@@ -66,7 +66,7 @@ describe('Subscriptions Service', () => {
   });
 
   it('should return subscription for current user', async () => {
-    const result = await sut.getUserSubscriptions(userModels[0].getId());
+    const result = await sut.getUserSubscriptions(userModels[0].id);
 
     const expected = subscriptionModels;
 
@@ -74,7 +74,7 @@ describe('Subscriptions Service', () => {
   });
 
   it('should return subscription by transactionId', async () => {
-    const transactionId = transactionModels[0].getId();
+    const transactionId = transactionModels[0].id;
     const result = await sut.findOneByTransactionId(transactionId);
 
     const expected = subscriptionModels[0];
@@ -85,7 +85,7 @@ describe('Subscriptions Service', () => {
     jest
       .spyOn(subscriptionsRepoMock, 'findOne')
       .mockResolvedValueOnce(undefined);
-    const subscriptionId = subscriptionModels[0].getId();
+    const subscriptionId = subscriptionModels[0].id;
     sut.findOne(subscriptionId).catch((err) => {
       expect(err).toBeInstanceOf(NotFoundException);
       expect(err.message).toBe('Subscription not found');
@@ -93,7 +93,7 @@ describe('Subscriptions Service', () => {
   });
 
   it('should return subscription by provided id', async () => {
-    const subscriptionId = subscriptionModels[0].getId();
+    const subscriptionId = subscriptionModels[0].id;
     const result = await sut.findOne(subscriptionId);
 
     const expected = subscriptionModels[0];
@@ -102,7 +102,7 @@ describe('Subscriptions Service', () => {
   });
 
   it('should delete subscription by id', () => {
-    const subscriptionId = subscriptionModels[0].getId();
+    const subscriptionId = subscriptionModels[0].id;
     sut.deleteSubscription(subscriptionId);
 
     expect(subscriptionsRepoMock.delete).toHaveBeenCalledWith(subscriptionId);

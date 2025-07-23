@@ -17,7 +17,7 @@ export class UserSerializeDto extends BaseUserDto {
   groups: GroupModel;
 
   @Exclude()
-  myGroups: GroupModel;
+  ownedGroups: GroupModel;
 
   @Exclude()
   transactions: any;

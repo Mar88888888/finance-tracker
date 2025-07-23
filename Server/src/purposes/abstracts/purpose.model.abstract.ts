@@ -5,7 +5,7 @@ export abstract class AbstractPurpose {
   protected type: boolean;
   protected userId: number;
 
-  getId(): number {
+  id: number {
     return this.id;
   }
 

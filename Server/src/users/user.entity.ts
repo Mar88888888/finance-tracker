@@ -49,7 +49,7 @@ export class UserEntity {
     /*istanbul ignore next*/ (group) => group.owner,
   )
   @Exclude()
-  myGroups: GroupEntity[];
+  ownedGroups: GroupEntity[];
 
   @ManyToMany(/*istanbul ignore next*/ () => GroupEntity)
   @JoinTable()

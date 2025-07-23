@@ -14,7 +14,7 @@ export abstract class AbstractSubscription {
   ){}
 
 
-  getId(): number {
+  id: number {
     return this.id;
   }
 

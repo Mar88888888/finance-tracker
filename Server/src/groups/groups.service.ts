@@ -38,7 +38,7 @@ export class GroupsService {
   }
 
   async getGroupCode(id: number): Promise<string> {
-    return (await this.findOne(id)).getJoinCode();
+    return (await this.findOne(id)).joinCode;
   }
 
   async getUserGroups(userId: number): Promise<GroupModel[]> {

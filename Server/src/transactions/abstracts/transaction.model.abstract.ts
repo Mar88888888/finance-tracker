@@ -7,7 +7,7 @@ export abstract class AbstractTransaction {
   protected purposeId: number;
   protected usdEquivalent: number;
 
-  getId(): number {
+  id: number {
     return this.id;
   }
 

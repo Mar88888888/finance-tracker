@@ -82,12 +82,12 @@ describe('Group Service', () => {
 
   it('should return a valid group Code', async () => {
     const group = groupModels[0];
-    const result = await sut.getGroupCode(group.getId());
-    expect(result).toBe(group.getJoinCode());
+    const result = await sut.getGroupCode(group.id);
+    expect(result).toBe(group.joinCode);
   });
 
   it('should return groups for specific user', async () => {
-    const userId = userModels[0].getId();
+    const userId = userModels[0].id;
     const result = await sut.getUserGroups(userId);
     expect(result).toEqual(groupModels);
   });
@@ -107,18 +107,18 @@ describe('Group Service', () => {
       title: 'GroupTitle',
     };
 
-    const result = await sut.create(userModels[0].getId(), groupParams);
+    const result = await sut.create(userModels[0].id, groupParams);
 
-    expect(result.getJoinCode()).toBe(joinCode);
-    expect(result.getTitle()).toBe(groupParams.title);
-    expect(result.getId()).toBeDefined();
-    expect(result.getOwner()).toEqual(userModels[0]);
-    expect(result.getMembers()).toEqual([userModels[0]]);
+    expect(result.joinCode).toBe(joinCode);
+    expect(result.title).toBe(groupParams.title);
+    expect(result.id).toBeDefined();
+    expect(result.owner).toEqual(userModels[0]);
+    expect(result.members).toEqual([userModels[0]]);
   });
 
   it('should add user to a group', async () => {
-    const joinCode = groupModels[2].getJoinCode();
-    const userId = userModels[0].getId();
+    const joinCode = groupModels[2].joinCode;
+    const userId = userModels[0].id;
 
     groupRepoMock.findOne.mockResolvedValueOnce(groupEntities[2]);
 
@@ -133,43 +133,43 @@ describe('Group Service', () => {
     });
     expect(usersServiceMock.findOne).toHaveBeenCalledWith(userId);
     expect(groupRepoMock.save).toHaveBeenCalledWith(updatedGroup);
-    expect(result.getMembers()).toEqual([userModels[0]]);
+    expect(result.members).toEqual([userModels[0]]);
   });
 
   it('should throw a NotFoundException if invalid joinCode provided', async () => {
     groupRepoMock.findOne.mockResolvedValueOnce(null);
 
     await expect(
-      sut.joinGroup('SomeRandomCode', userModels[1].getId()),
+      sut.joinGroup('SomeRandomCode', userModels[1].id),
     ).rejects.toThrow(new NotFoundException('Group with this code not found'));
 
     expect(groupRepoMock.save).not.toHaveBeenCalled();
   });
 
   it('should return unchanged group if user is already a member of the group', async () => {
-    const joinCode = groupModels[0].getJoinCode();
-    const result = await sut.joinGroup(joinCode, userModels[0].getId());
+    const joinCode = groupModels[0].joinCode;
+    const result = await sut.joinGroup(joinCode, userModels[0].id);
 
     expect(result).toEqual(groupModels[0]);
     expect(groupRepoMock.save).toHaveBeenCalledTimes(0);
   });
 
   it('should update a group', async () => {
-    const result = await sut.update(groupModels[0].getId(), {
+    const result = await sut.update(groupModels[0].id, {
       title: 'New Title',
     });
 
-    expect(result.getTitle()).toBe('New Title');
+    expect(result.title).toBe('New Title');
     expect(groupRepoMock.save).toHaveBeenCalled();
   });
 
   it('should add purposes to group', async () => {
     const purposeIds = [1, 2];
-    const result = await sut.addPurposes(groupModels[0].getId(), {
+    const result = await sut.addPurposes(groupModels[0].id, {
       purposeIds,
     });
 
-    expect(result.getPurposes().sort()).toEqual(purposeIds.sort());
+    expect(result.purposes.sort()).toEqual(purposeIds.sort());
     expect(groupRepoMock.save).toHaveBeenCalledTimes(1);
   });
 
@@ -206,7 +206,7 @@ describe('Group Service', () => {
       userId = 5;
     const result = await sut.removeUserFromGroup(groupId, userId);
     expect(
-      result.getMembers().filter((member) => member.getId() === userId),
+      result.members.filter((member) => member.id === userId),
     ).toHaveLength(0);
   });
 
@@ -215,7 +215,7 @@ describe('Group Service', () => {
       testPurposeId = 2;
     const result = await sut.removePurposeFromGroup(groupId, testPurposeId);
     expect(
-      result.getPurposes().filter((purposeId) => purposeId === testPurposeId),
+      result.purposes.filter((purposeId) => purposeId === testPurposeId),
     ).toHaveLength(0);
   });
 });

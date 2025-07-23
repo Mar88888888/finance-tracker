@@ -19,17 +19,17 @@ export class SubscriptionModel extends AbstractSubscription {
   }
   static toEntity(model: SubscriptionModel): SubscriptionEntity {
     const entity = new SubscriptionEntity();
-    entity.id = model.getId();
+    entity.id = model.id;
     entity.interval = model.getInterval();
     entity.unit = model.getUnit();
     entity.startDate = model.getStartDate();
     entity.nextExecutionDate = model.getNextExecutionDate();
     entity.endDate = model.getEndDate();
     entity.isActive = model.IsActive();
-    entity.transactionTemplate = { id: model.getTransactionId() } as TransactionEntity; 
+    entity.transactionTemplate = {
+      id: model.getTransactionId(),
+    } as TransactionEntity;
     entity.user = { id: model.getUserId() } as UserEntity;
     return entity;
   }
-  
-
 }

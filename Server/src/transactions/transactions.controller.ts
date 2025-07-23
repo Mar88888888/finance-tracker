@@ -85,7 +85,7 @@ export class TransactionsController {
       req.userId,
       createTransactionDto,
     );
-    const locationUrl = `/transactions/${transaction.getId()}`;
+    const locationUrl = `/transactions/${transaction.id}`;
 
     res
       .status(HttpStatus.CREATED)
