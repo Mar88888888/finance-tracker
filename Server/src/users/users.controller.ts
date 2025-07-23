@@ -61,7 +61,7 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('/auth/bytoken')
+  @Get('/auth/profile')
   async getUser(@Req() req: IAuthorizedRequest) {
     return this.usersService.findOne(req.userId);
   }
