@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
-import TransactionsList from '../components/TransactionsList';
+import TransactionsList from '../../components/transactions/TransactionsList';
 import API from '../../services/AxiosInstance';
-import TransactionsCharts from '../components/TransactionsCharts';
+import TransactionsCharts from '../../components/transactions/TransactionsCharts';
 
-import '../styles/TransactionsPage.css';
+import '../../styles/transactions/TransactionsPage.css';
 
 const TransactionsPage = () => {
   const { authToken, setUser, setAuthToken } = useContext(AuthContext);

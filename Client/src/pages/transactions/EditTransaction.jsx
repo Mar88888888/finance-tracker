@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import { useState, useEffect, useContext, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import API from '../../services/AxiosInstance';
 import { AuthContext } from '../../context/AuthContext';
-import '../styles/AddTransaction.css';
+import '../../styles/transactions/AddTransaction.css';
 
 const EditTransaction = () => {
   const { transactionId } = useParams();

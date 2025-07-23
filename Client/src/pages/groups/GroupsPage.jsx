@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import API from '../../services/AxiosInstance';
 import { AuthContext } from '../../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
-import '../styles/GroupsPage.css';
+import '../../styles/groups/GroupsPage.css';
 
 const GroupsPage = () => {
   const { authToken, setUser, setAuthToken } = useContext(AuthContext);

@@ -1,5 +1,3 @@
-import React from 'react';
-
 const SubscriptionItem = ({ subscription, onDelete }) => {
   return (
     <div className="subscription-item">
@@ -14,7 +12,12 @@ const SubscriptionItem = ({ subscription, onDelete }) => {
       )}
       <div>{subscription.isActive ? 'Active' : 'Inactive'}</div>
       <div>
-        <button className="delete-btn" onClick={() => onDelete(subscription.id)}>Delete</button>
+        <button
+          className="delete-btn"
+          onClick={() => onDelete(subscription.id)}
+        >
+          Delete
+        </button>
       </div>
     </div>
   );

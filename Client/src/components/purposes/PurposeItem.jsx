@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import '../styles/PurposeItem.css';
+import '../../styles/purposes/PurposeItem.css';
 import API from '../../services/AxiosInstance';
 import { AuthContext } from '../../context/AuthContext';
 

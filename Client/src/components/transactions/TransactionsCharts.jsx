@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pie, Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -12,7 +12,7 @@ import {
 } from 'chart.js';
 import API from '../../services/AxiosInstance';
 import { format, parseISO } from 'date-fns';
-import '../styles/TransactionsCharts.css';
+import '../../styles/transactions/TransactionsCharts.css';
 
 ChartJS.register(
   CategoryScale,

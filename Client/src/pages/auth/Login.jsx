@@ -1,8 +1,8 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import API from '../../services/AxiosInstance';
 import { AuthContext } from '../../context/AuthContext';
-import '../styles/Login.css';
+import '../../styles/Login.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import '../styles/TransactionsList.css';
+import '../../styles/transactions/TransactionsList.css';
 import TransactionItem from './TransactionItem';
-import { fetchTransactionsWithRelations } from '../../services/TransactionService';
+import { fetchTransactionsWithRelations } from '../../pages/transactions/TransactionService';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import API from '../../services/AxiosInstance';
 

@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
-import SubscriptionsList from '../components/SubscriptionsList';
+import SubscriptionsList from '../../components/subscriptions/SubscriptionsList';
 import API from '../../services/AxiosInstance';
 
-import '../styles/SubscriptionsPage.css';
+import '../../styles/subscriptions/SubscriptionsPage.css';
 
 const SubscriptionsPage = () => {
   const { authToken, setUser, setAuthToken } = useContext(AuthContext);

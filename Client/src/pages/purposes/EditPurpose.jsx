@@ -1,8 +1,8 @@
-import React, { useState, useContext, useCallback, useEffect } from 'react';
+import { useState, useContext, useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import API from '../../services/AxiosInstance';
 import { AuthContext } from '../../context/AuthContext';
-import '../styles/AddTransaction.css';
+import '../../styles/transactions/AddTransaction.css';
 
 const EditPurpose = () => {
   const { purposeId } = useParams();

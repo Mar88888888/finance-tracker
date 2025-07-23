@@ -1,8 +1,8 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../../services/AxiosInstance';
 import { AuthContext } from '../../context/AuthContext';
-import '../styles/AddTransaction.css';
+import '../../styles/transactions/AddTransaction.css';
 
 const AddPurpose = () => {
   const { authToken } = useContext(AuthContext);

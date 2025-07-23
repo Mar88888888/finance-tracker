@@ -2,7 +2,7 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import SubscriptionItem from './SubscriptionItem';
 
-import '../styles/SubscriptionsList.css';
+import '../../styles/subscriptions/SubscriptionsList.css';
 
 const SubscriptionsList = ({ subscriptions, onDeleteSubscription }) => {
   const [currentPage, setCurrentPage] = useState(1);

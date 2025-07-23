@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import API from "../services/AxiosInstance";
+import API from '../services/AxiosInstance';
 import { AuthContext } from '../context/AuthContext';
-import TransactionsList from '../components/TransactionsList';
+import TransactionsList from '../components/transactions/TransactionsList';
 import '../styles/HomePage.css';
-import { fetchTransactionsWithRelations } from '../services/TransactionService';
+import { fetchTransactionsWithRelations } from '../pages/transactions/TransactionService';
 
 const HomePage = () => {
   const { authToken, user, setUser, setAuthToken } = useContext(AuthContext);
@@ -48,7 +48,12 @@ const HomePage = () => {
     }
   }, [authToken, user, setUser, setAuthToken, navigate]);
 
-  if (loading) return <div>Loading...(Please, be patient, it can take a minute for the first time)</div>;
+  if (loading)
+    return (
+      <div>
+        Loading...(Please, be patient, it can take a minute for the first time)
+      </div>
+    );
   if (error) return <div>{error}</div>;
 
   return (
@@ -58,7 +63,10 @@ const HomePage = () => {
           <h1>Welcome back, {user.name}!</h1>
           <div className="transactions-section">
             <h2>Recent Transactions</h2>
-            <TransactionsList transactionsData={transactions} authToken={authToken} />
+            <TransactionsList
+              transactionsData={transactions}
+              authToken={authToken}
+            />
           </div>
         </>
       ) : (

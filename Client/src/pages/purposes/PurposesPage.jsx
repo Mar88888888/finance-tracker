@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../../services/AxiosInstance';
 import { AuthContext } from '../../context/AuthContext';
-import PurposesList from '../components/PurposesList';
-
-import '../styles/PurposesPage.css';
+import PurposesList from '../../components/purposes/PurposesList';
+import '../../styles/purposes/PurposesPage.css';
 
 const PurposesPage = () => {
   const { authToken, setUser, setAuthToken } = useContext(AuthContext);

@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useContext, useCallback } from 'react';
+import { useEffect, useState, useContext, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import API from '../../services/AxiosInstance';
 import { AuthContext } from '../../context/AuthContext';
-import '../styles/GroupDetailPage.css';
-import TransactionsList from '../components/TransactionsList';
-import PurposesList from '../components/PurposesList';
-import TransactionsCharts from '../components/TransactionsCharts';
+import '../../styles/groups/GroupDetailPage.css';
+import TransactionsList from '../../components/transactions/TransactionsList';
+import PurposesList from '../../components/purposes/PurposesList';
+import TransactionsCharts from '../../components/transactions/TransactionsCharts';
 
 const GroupDetailPage = () => {
   const { groupId } = useParams();
