@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import API from '../services/AxiosInstance';
-import { AuthContext } from '../context/AuthContext';
+import API from '../../services/AxiosInstance';
+import { AuthContext } from '../../context/AuthContext';
 
 const OAuth2RedirectHandler = () => {
   const navigate = useNavigate();
@@ -15,14 +15,16 @@ const OAuth2RedirectHandler = () => {
       setAuthToken(token);
       API.get('/users/auth/bytoken', {
         headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }).then((res) => {
-        setUser(res.data);
-        navigate('/');
-      }).catch(() => {
-        navigate('/login');
-      });
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => {
+          setUser(res.data);
+          navigate('/');
+        })
+        .catch(() => {
+          navigate('/login');
+        });
     } else {
       navigate('/login');
     }

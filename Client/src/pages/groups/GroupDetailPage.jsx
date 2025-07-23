@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import API from "../services/AxiosInstance";
-import { AuthContext } from '../context/AuthContext';
+import API from '../../services/AxiosInstance';
+import { AuthContext } from '../../context/AuthContext';
 import '../styles/GroupDetailPage.css';
 import TransactionsList from '../components/TransactionsList';
 import PurposesList from '../components/PurposesList';
@@ -36,8 +36,6 @@ const GroupDetailPage = () => {
   useEffect(() => {
     if (authToken) fetchAvailablePurposes();
   }, [authToken, fetchAvailablePurposes]);
-
-
 
   const fetchGroupDetails = useCallback(async () => {
     try {
@@ -96,7 +94,8 @@ const GroupDetailPage = () => {
     if (selectedPurposeIds.length === 0) return;
 
     try {
-      await API.post(`/groups/${groupId}/purposes`,
+      await API.post(
+        `/groups/${groupId}/purposes`,
         { purposeIds: selectedPurposeIds.map((p) => p.id) },
         {
           headers: { Authorization: `Bearer ${authToken}` },
@@ -113,7 +112,8 @@ const GroupDetailPage = () => {
   };
 
   const handleKickMember = async (memberId, memberName) => {
-    if (!window.confirm(`Are you sure you want to remove ${memberName}?`)) return;
+    if (!window.confirm(`Are you sure you want to remove ${memberName}?`))
+      return;
 
     try {
       await API.delete(`/groups/${groupId}/members/${memberId}`, {
@@ -129,7 +129,6 @@ const GroupDetailPage = () => {
     }
   };
 
-
   useEffect(() => {
     if (authToken) {
       fetchGroupDetails();
@@ -141,7 +140,13 @@ const GroupDetailPage = () => {
     return () => {
       if (copyTimeout) clearTimeout(copyTimeout);
     };
-  }, [authToken, groupId, fetchGroupDetails, fetchGroupTransactions, copyTimeout]);
+  }, [
+    authToken,
+    groupId,
+    fetchGroupDetails,
+    fetchGroupTransactions,
+    copyTimeout,
+  ]);
 
   useEffect(() => {
     if (group) fetchPurposes();
@@ -165,52 +170,78 @@ const GroupDetailPage = () => {
     setSelectedPurposeIds((prev) => prev.filter((p) => p.id !== purpose.id));
   };
 
-
-
   return (
     <div className="groupdetailpage-container">
-      {loading ? <div>Loading...(Please, be patient, it can take a minute for the first time)</div> : error ? <div>{error}</div> : (
+      {loading ? (
+        <div>
+          Loading...(Please, be patient, it can take a minute for the first
+          time)
+        </div>
+      ) : error ? (
+        <div>{error}</div>
+      ) : (
         <>
           <h1>{group.title}</h1>
           <div className="join-code-container" onClick={copyToClipboard}>
             <p className="join-code-label">Join Code:</p>
             <p className="join-code">{group.joinCode}</p>
           </div>
-          {copySuccess && <div className="copy-success-message">{copySuccess}</div>}
+          {copySuccess && (
+            <div className="copy-success-message">{copySuccess}</div>
+          )}
           <div className="view-mode-toggle">
-            <button className={viewMode === 'members' ? 'active' : ''} onClick={() => setViewMode('members')}>
+            <button
+              className={viewMode === 'members' ? 'active' : ''}
+              onClick={() => setViewMode('members')}
+            >
               View Members
             </button>
-            <button className={viewMode === 'transactions' ? 'active' : ''} onClick={() => setViewMode('transactions')}>
+            <button
+              className={viewMode === 'transactions' ? 'active' : ''}
+              onClick={() => setViewMode('transactions')}
+            >
               View Transactions
             </button>
-            <button className={viewMode === 'settings' ? 'active' : ''} onClick={() => setViewMode('settings')}>
+            <button
+              className={viewMode === 'settings' ? 'active' : ''}
+              onClick={() => setViewMode('settings')}
+            >
               View Purposes
             </button>
           </div>
           {viewMode === 'members' && (
             <div>
               <h2>Members</h2>
-              {group.members.length === 0 ? <p>No members in this group.</p> : (
+              {group.members.length === 0 ? (
+                <p>No members in this group.</p>
+              ) : (
                 <div className="members-list">
                   {group.members.map((member) => (
                     <div key={member.id} className="member-item">
                       <h3>
-                        {member.name} {member.isOwner && <span className="owner-badge">Owner</span>}
+                        {member.name}{' '}
+                        {member.isOwner && (
+                          <span className="owner-badge">Owner</span>
+                        )}
                       </h3>
                       <p>Email: {member.email}</p>
-                      {member.age === undefined ? ('') : (
-                        <p>Age: {member.age}</p>
-                      )}
-                      {member.gender === undefined ? ('') : (
+                      {member.age === undefined ? '' : <p>Age: {member.age}</p>}
+                      {member.gender === undefined ? (
+                        ''
+                      ) : (
                         <p>Gender: {member.gender ? 'Male' : 'Female'}</p>
                       )}
-                      {group.owner.id === user.id && member.id !== group.owner.id && (
-                        <button className="kick-btn" onClick={() => handleKickMember(member.id, member.name)}>
-                          Kick
-                        </button>
-                      )
-                      }
+                      {group.owner.id === user.id &&
+                        member.id !== group.owner.id && (
+                          <button
+                            className="kick-btn"
+                            onClick={() =>
+                              handleKickMember(member.id, member.name)
+                            }
+                          >
+                            Kick
+                          </button>
+                        )}
                     </div>
                   ))}
                 </div>
@@ -220,20 +251,39 @@ const GroupDetailPage = () => {
           {viewMode === 'transactions' && (
             <div>
               <h2>Transactions</h2>
-              {transactions.length === 0 ? <p>No transactions available for this group.</p> : (
+              {transactions.length === 0 ? (
+                <p>No transactions available for this group.</p>
+              ) : (
                 <>
-                  <TransactionsList transactionsData={transactions} authToken={authToken} groupId={groupId} />
-                  {transactions.length > 0 && <TransactionsCharts transactions={transactions} purposes={groupPurposes} authToken={authToken} members={group.members} />}
+                  <TransactionsList
+                    transactionsData={transactions}
+                    authToken={authToken}
+                    groupId={groupId}
+                  />
+                  {transactions.length > 0 && (
+                    <TransactionsCharts
+                      transactions={transactions}
+                      purposes={groupPurposes}
+                      authToken={authToken}
+                      members={group.members}
+                    />
+                  )}
                 </>
-
               )}
             </div>
           )}
           {viewMode === 'settings' && (
             <div>
               <h2>Group Purposes</h2>
-              {groupPurposes.length === 0 ? <p>No purposes assigned to this group.</p> : (
-                <PurposesList purposesData={groupPurposes} isOwner={group.owner.id === user.id} groupId={group.id} setPurposes={setGroupPurposes} />
+              {groupPurposes.length === 0 ? (
+                <p>No purposes assigned to this group.</p>
+              ) : (
+                <PurposesList
+                  purposesData={groupPurposes}
+                  isOwner={group.owner.id === user.id}
+                  groupId={group.id}
+                  setPurposes={setGroupPurposes}
+                />
               )}
               <button
                 className="add-purpose-btn"
@@ -242,8 +292,14 @@ const GroupDetailPage = () => {
                 Add Purpose
               </button>
               {showAddPurposeForm && (
-                <div className="modal-overlay" onClick={() => setShowAddPurposeForm(false)}>
-                  <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+                <div
+                  className="modal-overlay"
+                  onClick={() => setShowAddPurposeForm(false)}
+                >
+                  <div
+                    className="modal-container"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <h3>Select Purposes</h3>
 
                     <div className="selected-purposes">
@@ -256,21 +312,31 @@ const GroupDetailPage = () => {
                             className="selected-purpose-item"
                             onClick={() => removeFromSelected(purpose)}
                           >
-                            {purpose.category} <span className="remove-icon">✖</span>
+                            {purpose.category}{' '}
+                            <span className="remove-icon">✖</span>
                           </div>
                         ))
                       )}
                     </div>
 
                     <div className="available-purposes">
-                      {availablePurposes
-                        .filter((purpose) => !groupPurposes.some((p) => p.id === purpose.id))
-                        .length === 0 ? (
+                      {availablePurposes.filter(
+                        (purpose) =>
+                          !groupPurposes.some((p) => p.id === purpose.id)
+                      ).length === 0 ? (
                         <p className="no-selection">No purposes to add.</p>
                       ) : (
                         availablePurposes
-                          .filter((purpose) => !groupPurposes.some((p) => p.id === purpose.id))
-                          .filter((purpose) => !selectedPurposeIds.some((p) => p.id === purpose.id))
+                          .filter(
+                            (purpose) =>
+                              !groupPurposes.some((p) => p.id === purpose.id)
+                          )
+                          .filter(
+                            (purpose) =>
+                              !selectedPurposeIds.some(
+                                (p) => p.id === purpose.id
+                              )
+                          )
                           .map((purpose) => (
                             <div
                               key={purpose.id}
@@ -284,7 +350,10 @@ const GroupDetailPage = () => {
                     </div>
 
                     <div className="modal-footer">
-                      <button className="cancel-btn" onClick={() => setShowAddPurposeForm(false)}>
+                      <button
+                        className="cancel-btn"
+                        onClick={() => setShowAddPurposeForm(false)}
+                      >
                         Cancel
                       </button>
                       <button className="add-btn" onClick={handleAddPurpose}>
@@ -294,11 +363,11 @@ const GroupDetailPage = () => {
                   </div>
                 </div>
               )}
-
-
             </div>
           )}
-          <Link to="/groups" className="back-link">Back to Groups</Link>
+          <Link to="/groups" className="back-link">
+            Back to Groups
+          </Link>
         </>
       )}
     </div>

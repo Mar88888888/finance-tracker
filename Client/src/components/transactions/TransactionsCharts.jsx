@@ -10,7 +10,7 @@ import {
   LineElement,
   PointElement,
 } from 'chart.js';
-import API from '../services/AxiosInstance';
+import API from '../../services/AxiosInstance';
 import { format, parseISO } from 'date-fns';
 import '../styles/TransactionsCharts.css';
 

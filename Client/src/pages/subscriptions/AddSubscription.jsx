@@ -1,7 +1,7 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import API from '../services/AxiosInstance';
-import { AuthContext } from '../context/AuthContext';
+import API from '../../services/AxiosInstance';
+import { AuthContext } from '../../context/AuthContext';
 import '../styles/AddSubscription.css';
 
 const AddSubscription = () => {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
-import API from "../services/AxiosInstance";
-import { AuthContext } from '../context/AuthContext';
+import API from '../../services/AxiosInstance';
+import { AuthContext } from '../../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/GroupsPage.css';
 
@@ -45,7 +45,8 @@ const GroupsPage = () => {
 
   const handleJoinGroup = async () => {
     try {
-      const response = await API.post('/groups/members',
+      const response = await API.post(
+        '/groups/members',
         { joinCode },
         {
           headers: {
@@ -60,7 +61,7 @@ const GroupsPage = () => {
       }
     } catch (err) {
       if (err.status === 409) {
-        setJoinError('You are already a member of this group')
+        setJoinError('You are already a member of this group');
       } else {
         setJoinError('Failed to join group. Please check the join code.');
       }
@@ -74,7 +75,12 @@ const GroupsPage = () => {
     navigate('/new-group');
   };
 
-  if (loading) return <div>Loading...(Please, be patient, it can take a minute for the first time)</div>;
+  if (loading)
+    return (
+      <div>
+        Loading...(Please, be patient, it can take a minute for the first time)
+      </div>
+    );
   if (error) return <div>{error}</div>;
 
   return (

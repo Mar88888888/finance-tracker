@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../../context/AuthContext';
 import TransactionsList from '../components/TransactionsList';
-import API from "../services/AxiosInstance";
+import API from '../../services/AxiosInstance';
 import TransactionsCharts from '../components/TransactionsCharts';
 
 import '../styles/TransactionsPage.css';
@@ -58,26 +58,39 @@ const TransactionsPage = () => {
     }
   }, [authToken, navigate, setAuthToken, setUser]);
 
-  if (loading) return <div>Loading...(Please, be patient, it can take a minute for the first time)</div>;
+  if (loading)
+    return (
+      <div>
+        Loading...(Please, be patient, it can take a minute for the first time)
+      </div>
+    );
   if (error) return <div>{error}</div>;
 
   return (
-  <>
-    <div className="transactions-page-container">
+    <>
+      <div className="transactions-page-container">
+        <h1>My Transactions</h1>
 
-      <h1>My Transactions</h1>
-
-      <button
-        className="create-btn"
-        onClick={() => navigate('/transactions/add')}
+        <button
+          className="create-btn"
+          onClick={() => navigate('/transactions/add')}
         >
-        Add Transaction
-      </button>
+          Add Transaction
+        </button>
 
-      <TransactionsList transactionsData={transactions} authToken={authToken} onDeleteTransaction={handleDeleteTransaction} />
-      {transactions.length > 0 && <TransactionsCharts transactions={transactions}  authToken={authToken} />}
-    </div>
-  </>
+        <TransactionsList
+          transactionsData={transactions}
+          authToken={authToken}
+          onDeleteTransaction={handleDeleteTransaction}
+        />
+        {transactions.length > 0 && (
+          <TransactionsCharts
+            transactions={transactions}
+            authToken={authToken}
+          />
+        )}
+      </div>
+    </>
   );
 };
 

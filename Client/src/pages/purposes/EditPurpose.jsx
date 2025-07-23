@@ -1,18 +1,16 @@
 import React, { useState, useContext, useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import API from "../services/AxiosInstance";
-import { AuthContext } from '../context/AuthContext';
+import API from '../../services/AxiosInstance';
+import { AuthContext } from '../../context/AuthContext';
 import '../styles/AddTransaction.css';
 
 const EditPurpose = () => {
   const { purposeId } = useParams();
   const { authToken } = useContext(AuthContext);
-  const [form, setForm] = useState({ category: "", type: false });
+  const [form, setForm] = useState({ category: '', type: false });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const [purpose, setPurpose] = useState(null);
-
-
 
   const fetchPurposeDetails = useCallback(async () => {
     try {
@@ -30,7 +28,6 @@ const EditPurpose = () => {
     }
   }, [purposeId, authToken]);
 
-
   useEffect(() => {
     if (authToken) {
       fetchPurposeDetails();
@@ -39,10 +36,9 @@ const EditPurpose = () => {
 
   useEffect(() => {
     if (purpose) {
-      setForm((prev) => ({ ...prev, category: purpose.category || "" }));
+      setForm((prev) => ({ ...prev, category: purpose.category || '' }));
     }
   }, [purpose]);
-
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -52,12 +48,9 @@ const EditPurpose = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await API.patch(`/purposes/${purpose.id}`,
-        form,
-        {
-          headers: { Authorization: `Bearer ${authToken}` },
-        }
-      );
+      const response = await API.patch(`/purposes/${purpose.id}`, form, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
       if (response.status === 201 || response.status === 200) {
         navigate('/purposes');
       }
@@ -65,7 +58,6 @@ const EditPurpose = () => {
       setError(err.response?.data?.message || 'Failed to add transaction');
     }
   };
-
 
   return (
     <div className="add-transaction-container">
@@ -89,4 +81,3 @@ const EditPurpose = () => {
 };
 
 export default EditPurpose;
-

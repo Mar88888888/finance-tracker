@@ -1,4 +1,4 @@
-import API from './AxiosInstance';
+import API from '../../services/AxiosInstance';
 
 export const fetchUserById = async (userId, authToken) => {
   try {

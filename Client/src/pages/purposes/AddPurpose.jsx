@@ -1,12 +1,12 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import API from "../services/AxiosInstance";
-import { AuthContext } from '../context/AuthContext';
+import API from '../../services/AxiosInstance';
+import { AuthContext } from '../../context/AuthContext';
 import '../styles/AddTransaction.css';
 
 const AddPurpose = () => {
   const { authToken } = useContext(AuthContext);
-  const [form, setForm] = useState({ category: ""});
+  const [form, setForm] = useState({ category: '' });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -18,12 +18,9 @@ const AddPurpose = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await API.post('/purposes',
-        form,
-        {
-          headers: { Authorization: `Bearer ${authToken}` },
-        }
-      );
+      const response = await API.post('/purposes', form, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
       if (response.status === 201) {
         navigate('/purposes');
       }
@@ -31,7 +28,6 @@ const AddPurpose = () => {
       setError(err.response?.data?.message || 'Failed to add transaction');
     }
   };
-
 
   return (
     <div className="add-transaction-container">
@@ -55,4 +51,3 @@ const AddPurpose = () => {
 };
 
 export default AddPurpose;
-

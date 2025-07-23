@@ -2,11 +2,16 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import '../styles/TransactionsList.css';
 import TransactionItem from './TransactionItem';
-import { fetchTransactionsWithRelations } from '../services/TransactionService';
+import { fetchTransactionsWithRelations } from '../../services/TransactionService';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import API from '../services/AxiosInstance';
+import API from '../../services/AxiosInstance';
 
-const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction, groupId }) => {
+const TransactionsList = ({
+  transactionsData,
+  authToken,
+  onDeleteTransaction,
+  groupId,
+}) => {
   const [transactions, setEnrichedTransactions] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
   const [currentPage, setCurrentPage] = useState(1);
@@ -20,19 +25,27 @@ const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction, gr
     minAmount: '',
     maxAmount: '',
     startDate: '',
-    endDate: ''
+    endDate: '',
   });
-  
+
   const filteredTransactions = transactions.filter((tx) => {
-    const memberMatch = tx.member.name.toLowerCase().includes(filters.member.toLowerCase());
-    const purposeMatch = tx.purpose.category.toLowerCase().includes(filters.purpose.toLowerCase());
-    const minAmountMatch = filters.minAmount === '' || tx.sum >= parseFloat(filters.minAmount);
-    const maxAmountMatch = filters.maxAmount === '' || tx.sum <= parseFloat(filters.maxAmount);
+    const memberMatch = tx.member.name
+      .toLowerCase()
+      .includes(filters.member.toLowerCase());
+    const purposeMatch = tx.purpose.category
+      .toLowerCase()
+      .includes(filters.purpose.toLowerCase());
+    const minAmountMatch =
+      filters.minAmount === '' || tx.sum >= parseFloat(filters.minAmount);
+    const maxAmountMatch =
+      filters.maxAmount === '' || tx.sum <= parseFloat(filters.maxAmount);
     const txDate = new Date(tx.date);
-  
-    const startDateMatch = filters.startDate === '' || txDate >= new Date(filters.startDate);
-    const endDateMatch = filters.endDate === '' || txDate <= new Date(filters.endDate);
-  
+
+    const startDateMatch =
+      filters.startDate === '' || txDate >= new Date(filters.startDate);
+    const endDateMatch =
+      filters.endDate === '' || txDate <= new Date(filters.endDate);
+
     return (
       memberMatch &&
       purposeMatch &&
@@ -42,13 +55,14 @@ const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction, gr
       endDateMatch
     );
   });
-  
-  
-  useEffect(() => {
 
+  useEffect(() => {
     const enrichTransactions = async () => {
       if (transactionsData.length > 0) {
-        const enriched = await fetchTransactionsWithRelations(transactionsData, authToken);
+        const enriched = await fetchTransactionsWithRelations(
+          transactionsData,
+          authToken
+        );
         setEnrichedTransactions(enriched);
       }
     };
@@ -56,9 +70,10 @@ const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction, gr
     enrichTransactions();
   }, [transactionsData, authToken]);
 
-
   const getNestedValue = (object, keyPath) => {
-    return keyPath.split('.').reduce((value, key) => (value ? value[key] : undefined), object);
+    return keyPath
+      .split('.')
+      .reduce((value, key) => (value ? value[key] : undefined), object);
   };
 
   const sortedTransactions = React.useMemo(() => {
@@ -104,7 +119,7 @@ const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction, gr
 
   const handleExportCSV = async () => {
     const params = new URLSearchParams();
-  
+
     if (filters.startDate) params.append('startDate', filters.startDate);
     if (filters.endDate) params.append('endDate', filters.endDate);
     if (filters.minAmount) params.append('minAmount', filters.minAmount);
@@ -113,26 +128,33 @@ const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction, gr
       params.append('orderBy', sortConfig.key);
       params.append('sortOrder', sortConfig.direction?.toUpperCase() || 'ASC');
     }
-  
-    const purposeIds = [...new Set(filteredTransactions.map(tx => tx.purpose?.id).filter(Boolean))];
+
+    const purposeIds = [
+      ...new Set(
+        filteredTransactions.map((tx) => tx.purpose?.id).filter(Boolean)
+      ),
+    ];
     if (purposeIds.length > 0) {
       params.append('purposes', purposeIds.join(','));
     }
-  
+
     try {
       const response = await API.get(
-        groupId ? `/groups/${groupId}/transactions/export` : `/transactions/export`, 
+        groupId
+          ? `/groups/${groupId}/transactions/export`
+          : `/transactions/export`,
         {
           params,
           responseType: 'blob',
           headers: {
             Authorization: `Bearer ${authToken}`,
           },
-        });
-  
+        }
+      );
+
       const blob = new Blob([response.data], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
-  
+
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', 'transactions_export.csv');
@@ -145,16 +167,21 @@ const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction, gr
       alert('CSV export failed.');
     }
   };
-  
 
   return (
     <>
-      <button onClick={() => setShowFilters(!showFilters)} className="filter-toggle-btn">
-        <i className={`fa ${showFilters ? 'fa-chevron-up' : 'fa-chevron-down'} fa-lg white-icon ${showFilters ? 'rotated' : ''}`}></i>
+      <button
+        onClick={() => setShowFilters(!showFilters)}
+        className="filter-toggle-btn"
+      >
+        <i
+          className={`fa ${
+            showFilters ? 'fa-chevron-up' : 'fa-chevron-down'
+          } fa-lg white-icon ${showFilters ? 'rotated' : ''}`}
+        ></i>
       </button>
 
       <div className={`filters-wrapper ${showFilters ? 'show' : ''}`}>
-
         <div className="filters">
           <div className="filter-group">
             <label htmlFor="member">Member</label>
@@ -163,7 +190,9 @@ const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction, gr
               type="text"
               placeholder="Filter by Member"
               value={filters.member}
-              onChange={(e) => setFilters({ ...filters, member: e.target.value })}
+              onChange={(e) =>
+                setFilters({ ...filters, member: e.target.value })
+              }
             />
           </div>
 
@@ -174,7 +203,9 @@ const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction, gr
               type="text"
               placeholder="Filter by Purpose"
               value={filters.purpose}
-              onChange={(e) => setFilters({ ...filters, purpose: e.target.value })}
+              onChange={(e) =>
+                setFilters({ ...filters, purpose: e.target.value })
+              }
             />
           </div>
 
@@ -185,7 +216,9 @@ const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction, gr
               type="number"
               placeholder="Min Amount"
               value={filters.minAmount}
-              onChange={(e) => setFilters({ ...filters, minAmount: e.target.value })}
+              onChange={(e) =>
+                setFilters({ ...filters, minAmount: e.target.value })
+              }
             />
           </div>
 
@@ -196,7 +229,9 @@ const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction, gr
               type="number"
               placeholder="Max Amount"
               value={filters.maxAmount}
-              onChange={(e) => setFilters({ ...filters, maxAmount: e.target.value })}
+              onChange={(e) =>
+                setFilters({ ...filters, maxAmount: e.target.value })
+              }
             />
           </div>
 
@@ -206,7 +241,9 @@ const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction, gr
               id="startDate"
               type="date"
               value={filters.startDate}
-              onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
+              onChange={(e) =>
+                setFilters({ ...filters, startDate: e.target.value })
+              }
             />
           </div>
 
@@ -216,11 +253,13 @@ const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction, gr
               id="endDate"
               type="date"
               value={filters.endDate}
-              onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
+              onChange={(e) =>
+                setFilters({ ...filters, endDate: e.target.value })
+              }
             />
           </div>
         </div>
-        <button 
+        <button
           onClick={() => {
             setFilters({
               member: '',
@@ -230,68 +269,67 @@ const TransactionsList = ({ transactionsData, authToken, onDeleteTransaction, gr
               startDate: '',
               endDate: '',
             });
-          }} 
+          }}
           className="reset-filters-btn"
         >
           Reset Filters
         </button>
-
       </div>
 
       <button onClick={handleExportCSV} className="export-btn">
         <i className="fa fa-download" /> Export to CSV
       </button>
 
-    <div className="transactions-list">
-      {transactions.length === 0 ? (
-        <p>No transactions available.</p>
-      ) : (
-        <>
-          <div className="transaction-header">
-            <div onClick={() => handleSort('member.name')}>
-              Member {renderSortIndicator('member.name')}
-            </div>
-            <div onClick={() => handleSort('purpose.category')}>
-              Purpose {renderSortIndicator('purpose.category')}
-            </div>
-            <div onClick={() => handleSort('sum')}>
-              Amount {renderSortIndicator('sum')}
-            </div>
-            <div onClick={() => handleSort('date')}>
-              Date {renderSortIndicator('date')}
-            </div>
-            {onDeleteTransaction &&
-              <>
-                <div>
-                </div>
-                <div>
-                  Actions
-                </div>
+      <div className="transactions-list">
+        {transactions.length === 0 ? (
+          <p>No transactions available.</p>
+        ) : (
+          <>
+            <div className="transaction-header">
+              <div onClick={() => handleSort('member.name')}>
+                Member {renderSortIndicator('member.name')}
+              </div>
+              <div onClick={() => handleSort('purpose.category')}>
+                Purpose {renderSortIndicator('purpose.category')}
+              </div>
+              <div onClick={() => handleSort('sum')}>
+                Amount {renderSortIndicator('sum')}
+              </div>
+              <div onClick={() => handleSort('date')}>
+                Date {renderSortIndicator('date')}
+              </div>
+              {onDeleteTransaction && (
+                <>
+                  <div></div>
+                  <div>Actions</div>
 
-                <div>
-                </div>
-              </>
-            }
-          </div>
+                  <div></div>
+                </>
+              )}
+            </div>
 
-          {paginatedTransactions.map((transaction) => (
-            <TransactionItem key={transaction.id} transaction={transaction} onDeleteTransaction={onDeleteTransaction} />
-          ))}
-
-          <div className="pagination">
-            {Array.from({ length: totalPages }, (_, index) => (
-              <button
-              key={index + 1}
-              className={currentPage === index + 1 ? 'active' : ''}
-              onClick={() => handlePageChange(index + 1)}
-              >
-                {index + 1}
-              </button>
+            {paginatedTransactions.map((transaction) => (
+              <TransactionItem
+                key={transaction.id}
+                transaction={transaction}
+                onDeleteTransaction={onDeleteTransaction}
+              />
             ))}
-          </div>
-        </>
-      )}
-    </div>
+
+            <div className="pagination">
+              {Array.from({ length: totalPages }, (_, index) => (
+                <button
+                  key={index + 1}
+                  className={currentPage === index + 1 ? 'active' : ''}
+                  onClick={() => handlePageChange(index + 1)}
+                >
+                  {index + 1}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
     </>
   );
 };

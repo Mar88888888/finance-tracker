@@ -2,8 +2,8 @@ import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import '../styles/PurposeItem.css';
-import API from "../services/AxiosInstance";
-import { AuthContext } from '../context/AuthContext';
+import API from '../../services/AxiosInstance';
+import { AuthContext } from '../../context/AuthContext';
 
 const PurposeItem = ({ purpose, groupId, setPurposes, purposes, isOwner }) => {
   const { authToken } = useContext(AuthContext);
@@ -23,21 +23,25 @@ const PurposeItem = ({ purpose, groupId, setPurposes, purposes, isOwner }) => {
       }
       console.error(err);
     }
-  }
+  };
 
   const handleEditPurpose = async () => {
     navigate(`/purposes/edit/${purpose.id}`);
-  }
+  };
 
   return (
     <div className="purpose-item">
-      <div className='category-container'>{purpose.category}</div>
+      <div className="category-container">{purpose.category}</div>
       {isOwner && (
-        <div className='btn-container'>
-          {!groupId &&
-            <button onClick={handleEditPurpose} className='create-btn'>Edit</button>
-          }
-          <button onClick={handleDeletePurpose} className='create-btn'>Delete</button>
+        <div className="btn-container">
+          {!groupId && (
+            <button onClick={handleEditPurpose} className="create-btn">
+              Edit
+            </button>
+          )}
+          <button onClick={handleDeletePurpose} className="create-btn">
+            Delete
+          </button>
         </div>
       )}
     </div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import API from "../services/AxiosInstance";
-import { AuthContext } from '../context/AuthContext';
+import API from '../../services/AxiosInstance';
+import { AuthContext } from '../../context/AuthContext';
 import PurposesList from '../components/PurposesList';
 
 import '../styles/PurposesPage.css';
@@ -42,19 +42,25 @@ const PurposesPage = () => {
     }
   }, [authToken, navigate, setAuthToken, setUser]);
 
-  if (loading) return <div>Loading...(Please, be patient, it can take a minute for the first time)</div>;
+  if (loading)
+    return (
+      <div>
+        Loading...(Please, be patient, it can take a minute for the first time)
+      </div>
+    );
   if (error) return <div>{error}</div>;
 
   return (
     <div className="purposes-page-container">
       <h1>My Purposes</h1>
-      <button
-        className="create-btn"
-        onClick={() => navigate('/purposes/add')}
-      >
+      <button className="create-btn" onClick={() => navigate('/purposes/add')}>
         Add Purpose
       </button>
-      <PurposesList purposesData={purposes} isOwner={true} setPurposes={setPurposes} />
+      <PurposesList
+        purposesData={purposes}
+        isOwner={true}
+        setPurposes={setPurposes}
+      />
     </div>
   );
 };

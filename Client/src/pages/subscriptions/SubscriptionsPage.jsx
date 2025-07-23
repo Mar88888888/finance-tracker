@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../../context/AuthContext';
 import SubscriptionsList from '../components/SubscriptionsList';
-import API from "../services/AxiosInstance";
+import API from '../../services/AxiosInstance';
 
 import '../styles/SubscriptionsPage.css';
 
@@ -55,7 +55,12 @@ const SubscriptionsPage = () => {
     }
   }, [authToken, setAuthToken, setUser, navigate]);
 
-  if (loading) return <div>Loading...(Please, be patient, it can take a minute for the first time)</div>;
+  if (loading)
+    return (
+      <div>
+        Loading...(Please, be patient, it can take a minute for the first time)
+      </div>
+    );
   if (error) return <div>{error}</div>;
 
   return (
