@@ -5,8 +5,8 @@ const TransactionItem = ({ transaction, onDeleteTransaction }) => {
 
   return (
     <div className="transaction-item">
-      <div>{transaction.member.name}</div>
-      <div>{transaction.purpose.category}</div>
+      <div>{transaction.userName}</div>
+      <div>{transaction.purposeCategory}</div>
       <div>${transaction.usdEquivalent.toFixed(2)}</div>
       <div>{new Date(transaction.date).toLocaleDateString()}</div>
       {onDeleteTransaction && (

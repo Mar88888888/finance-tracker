@@ -1,9 +1,11 @@
 /* istanbul ignore file */
-export abstract class AbstractTransaction {
+export interface AbstractTransaction {
   id: number;
   sum: number;
   date: Date;
   userId: number;
   purposeId: number;
   usdEquivalent: number;
+  userName?: string;
+  purposeCategory?: string;
 }

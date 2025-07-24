@@ -4,7 +4,6 @@ import API from '../services/AxiosInstance';
 import { AuthContext } from '../context/AuthContext';
 import TransactionsList from '../components/transactions/TransactionsList';
 import '../styles/HomePage.css';
-import { fetchTransactionsWithRelations } from '../pages/transactions/TransactionService';
 
 const HomePage = () => {
   const { authToken, user, setUser, setAuthToken } = useContext(AuthContext);
@@ -22,12 +21,7 @@ const HomePage = () => {
           },
         });
 
-        const transactionsWithDetails = await fetchTransactionsWithRelations(
-          transactionsResponse.data.slice(0, 10),
-          authToken
-        );
-
-        setTransactions(transactionsWithDetails);
+        setTransactions(transactionsResponse.data.slice(0, 10));
         setLoading(false);
       } catch (err) {
         if (err.response && err.response.status === 401) {

@@ -3,23 +3,17 @@ import { AbstractTransaction } from './abstracts/transaction.model.abstract';
 import { TransactionEntity } from './transaction.entity';
 import { PurposeEntity } from '../purposes/purpose.entity';
 
-export class TransactionModel extends AbstractTransaction {
+export class TransactionModel implements AbstractTransaction {
   constructor(
-    id: number,
-    sum: number,
-    date: Date,
-    memberId: number,
-    purposeId: number,
-    usdEquivalent: number = 0,
-  ) {
-    super();
-    this.id = id;
-    this.sum = sum;
-    this.date = date;
-    this.userId = memberId;
-    this.purposeId = purposeId;
-    this.usdEquivalent = usdEquivalent;
-  }
+    public id: number,
+    public sum: number,
+    public date: Date,
+    public userId: number,
+    public purposeId: number,
+    public usdEquivalent: number = 0,
+    public userName?: string,
+    public purposeCategory?: string,
+  ) {}
 
   static fromEntity(entity: TransactionEntity): TransactionModel {
     return new TransactionModel(
@@ -29,6 +23,8 @@ export class TransactionModel extends AbstractTransaction {
       entity.member.id,
       entity.purpose.id,
       entity.usdEquivalent || 0,
+      entity.member.name,
+      entity.purpose.category,
     );
   }
 

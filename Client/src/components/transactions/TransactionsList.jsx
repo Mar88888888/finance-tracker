@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import '../../styles/transactions/TransactionsList.css';
 import TransactionItem from './TransactionItem';
-import { fetchTransactionsWithRelations } from '../../pages/transactions/TransactionService';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import API from '../../services/AxiosInstance';
 
@@ -12,11 +11,11 @@ const TransactionsList = ({
   onDeleteTransaction,
   groupId,
 }) => {
-  const [transactions, setEnrichedTransactions] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
   const [currentPage, setCurrentPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
 
+  const transactions = transactionsData;
   const itemsPerPage = 10;
 
   const [filters, setFilters] = useState({
@@ -29,10 +28,10 @@ const TransactionsList = ({
   });
 
   const filteredTransactions = transactions.filter((tx) => {
-    const memberMatch = tx.member.name
+    const memberMatch = tx.userName
       .toLowerCase()
       .includes(filters.member.toLowerCase());
-    const purposeMatch = tx.purpose.category
+    const purposeMatch = tx.purposeCategory
       .toLowerCase()
       .includes(filters.purpose.toLowerCase());
     const minAmountMatch =
@@ -55,20 +54,6 @@ const TransactionsList = ({
       endDateMatch
     );
   });
-
-  useEffect(() => {
-    const enrichTransactions = async () => {
-      if (transactionsData.length > 0) {
-        const enriched = await fetchTransactionsWithRelations(
-          transactionsData,
-          authToken
-        );
-        setEnrichedTransactions(enriched);
-      }
-    };
-
-    enrichTransactions();
-  }, [transactionsData, authToken]);
 
   const getNestedValue = (object, keyPath) => {
     return keyPath
@@ -286,11 +271,11 @@ const TransactionsList = ({
         ) : (
           <>
             <div className="transaction-header">
-              <div onClick={() => handleSort('member.name')}>
-                Member {renderSortIndicator('member.name')}
+              <div onClick={() => handleSort('userName')}>
+                Member {renderSortIndicator('userName')}
               </div>
-              <div onClick={() => handleSort('purpose.category')}>
-                Purpose {renderSortIndicator('purpose.category')}
+              <div onClick={() => handleSort('purposeCategory')}>
+                Purpose {renderSortIndicator('purposeCategory')}
               </div>
               <div onClick={() => handleSort('sum')}>
                 Amount {renderSortIndicator('sum')}
@@ -335,15 +320,11 @@ const TransactionsList = ({
 };
 
 TransactionsList.propTypes = {
-  transactions: PropTypes.arrayOf(
+  transactionsData: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,
-      member: PropTypes.shape({
-        name: PropTypes.string.isRequired,
-      }).isRequired,
-      purpose: PropTypes.shape({
-        category: PropTypes.string.isRequired,
-      }).isRequired,
+      userName: PropTypes.string.isRequired,
+      purposeCategory: PropTypes.string.isRequired,
       sum: PropTypes.number.isRequired,
       date: PropTypes.string.isRequired,
     })
